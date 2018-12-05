@@ -23,5 +23,5 @@ G'DOS is a personal project at the moment, and will be until i have a basic fram
 
 ## Authors
 
-* **Carson Herrington / NotArtyom** - *All Code* - [Website](http://notartyoms-box.com)
+* **NotArtyom** - *All Code* - [Website](http://notartyoms-box.com)
 
