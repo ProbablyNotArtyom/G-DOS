@@ -6,4 +6,4 @@ post:
 
 .PHONY: run
 run: all
-	export ARGS="./src/arch/BSVC/BSVC.setup ./bin/Impact.s68" && exec wish -f ../../Utils/bsvc/src/UI/bsvc.tk
+	bsvc ./src/arch/BSVC/BSVC.setup ./bin/Impact.s68

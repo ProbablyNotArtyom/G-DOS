@@ -13,7 +13,8 @@ all: clean
 	make post
 
 clean:
-	rm ./bin/* -vf
+	mkdir -p $(BINDIR)
+	rm $(BINDIR)/* -vf
 	rm ./src/*.o $(OBJS) -vrf
 	rm ./src/*.S -vrf
 	find ./ -maxdepth 10 -type l -delete
