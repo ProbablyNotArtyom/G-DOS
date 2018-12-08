@@ -4,7 +4,7 @@ SOURCES += $(shell find . -maxdepth 1 -name '*.S')
 OBJECTS := $(SOURCES:%.c=%.o)
 OBJECTS := $(OBJECTS:%.S=%.o)
 ARCHNAME := main
-SUBDIRS = arch drv
+SUBDIRS = arch drv monitor fs
 ifeq ($(BAREMETAL), TRUE) 
 	SUBDIRS += lib
 endif

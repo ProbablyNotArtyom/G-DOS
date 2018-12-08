@@ -9,6 +9,7 @@ all: clean
 	for dir in $(SUBDIRS); do \
 		$(MAKE) -C $$dir -f Makefile $@; \
 	done
+	make romfs
 	make link
 	make post
 
@@ -21,6 +22,11 @@ clean:
 	for dir in $(SUBDIRS); do \
 		$(MAKE) -C $$dir -f Makefile $@; \
 	done
+
+romfs:
+	rm -f ./bin/ROM0.o
+	./tool/genromfs/genromfs -f ./bin/romfs.dat -d ./root/ -V ROM0
+	$(PREFIX)objcopy -I binary -O elf32-m68k -B m68k ./bin/romfs.dat ./bin/ROM0.o
 
 link:
 	cd ./bin && for lib in `find . -name '*.a'` ; do \

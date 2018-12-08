@@ -9,6 +9,6 @@ AS = $(PREFIX)as
 AR = $(PREFIX)ar
 CPY = $(PREFIX)objcopy
 
-CCFLAGS = -Wall -m$(CPU) -nostdlib -static -I ${PWD}/src -O3
+CCFLAGS = -Wall -m$(CPU) -nostdlib -static -I ${PWD}/src/include -O3
 LDFLAGS = -Bstatic 
 LDLIBS := -T $(PWD)/src/arch/BSVC/link.ld 
