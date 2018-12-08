@@ -25,7 +25,8 @@ static enum errList {
 		errUNDEF,
 		errNOARGS,
 		errEND,
-		errHEX
+		errHEX,
+		errBADRANGE
 	};
 
 extern const enum errList const (*funcTable[])();

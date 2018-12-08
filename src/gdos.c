@@ -24,11 +24,12 @@ int main(void){
 		puts("Init sequence failed!\n\rHaulting execution...");
 		while (1);
 	}
+	fsInit();
+	romfsInit();
+	
 	puts("NotArtyom 02/11/18");
 	puts("G'DOS Shell");
 
-	fsInit();
-	romfsInit();
 	loadELF(fsLoad("test.elf"), 0x00400000);
 
 	monBegin();
