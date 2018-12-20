@@ -11,6 +11,7 @@
 #define _HEADER_STDTOOLS
 
 	#include <stddef.h>
+	#include <limits.h>
 
 //---------------------------------------------------
 
@@ -41,4 +42,11 @@ typedef __UINT64_TYPE__ uint64_t;
 
 //---------------------------------------------------
 
+typedef void (*initcall_t)(void);
+extern initcall_t __start_initsec, __stop_initsec;
+
+#define data_attr         __attribute__ ((section ("initsec")))
+#define setInit(fn)  	initcall_t _##fn data_attr = fn
+
+//---------------------------------------------------
 #endif

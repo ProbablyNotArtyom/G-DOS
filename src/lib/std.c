@@ -118,12 +118,21 @@ void printLong(uint32_t num){
 	return;
 }
 
-void free(void* ptr){ 
-	return;				// DUMMY !! NEEDS A PROPER IMPLEMENTATION
-}
+void *memset(void *s, int c, size_t n);
 
-void* malloc(unsigned int bytes){ 
-	return NULL;
+void * mem_chain;		/* points at next block to allocate */
+
+void *malloc(size_t size)
+{
+	register void * memory;
+	register int sizee;
+	
+	sizee = (size + (sizeof(int)-1)) & (-sizeof(int));
+	memory = mem_chain;
+	mem_chain += sizee;
+	memset(memory, 0, sizee);
+
+	return memory;
 }
 
 int strcmp(const char *s1, const char *s2){

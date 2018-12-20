@@ -25,12 +25,11 @@ int main(void){
 		while (1);
 	}
 	fsInit();
-	romfsInit();
-	
+
 	puts("NotArtyom 02/11/18");
 	puts("G'DOS Shell");
 
-	loadELF(fsLoad("test.elf"), 0x00400000);
+	//loadELF(fsLoad("test.elf"), 0x00400000);
 
 	monBegin();
 
