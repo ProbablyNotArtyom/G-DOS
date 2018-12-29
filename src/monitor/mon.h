@@ -19,6 +19,15 @@
 
 //---------------------------------------------------
 
+	#define ifEOI(err)						\
+				if (*skipBlank() == '\0')	\
+					return err;
+
+	#define getArg(var)						\
+				if (*skipBlank() == '\0')	\
+					return errNOARGS;		\
+				var = (void*)strToHEX();
+
 static enum errList {
 		errNONE,
 		errSYNTAX,

@@ -48,8 +48,10 @@ SECTIONS
 
  	__text_start = .;
   	*(.text .text.*)
+	. = ALIGN(0x4);
   	*(.rodata .rodata.*)
 	__text_end = .;
+
 	__data_rom = .;
  } > rom
 
@@ -57,6 +59,7 @@ SECTIONS
  .data :
  AT ( ADDR(.text) + SIZEOF (.text) ) {
 
+	. = ALIGN(0x4);
 	 __data_start = . ;
 	 *(.data);
 	 __data_end = . ;
@@ -65,9 +68,11 @@ SECTIONS
 
  .bss : {
 
+	. = ALIGN(0x4);
 	__bss_start = .;
   	*(.bss)
   	_end = .;
  } > ram
+
 
 }

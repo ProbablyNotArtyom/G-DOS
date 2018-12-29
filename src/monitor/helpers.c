@@ -34,7 +34,7 @@ char* skipHex(){
 	uint8_t i;
 	while (true){
 		for (i = 0; *parse != hexTable[i] && hexTable[i] != '\0'; i++);
-		if (hexTable[i] == '\0') return parse; 
+		if (hexTable[i] == '\0') return parse;
 		parse++;
 	}
 }
@@ -52,8 +52,8 @@ ADDRSIZE strToHEX(){
 	uint8_t i;
 	ADDRSIZE val = 0;
 	while (*parse != ' ' && *parse != '\0'){
-		for (i = 0; *parse != hexTable[i] && hexTable[i] != '\0'; i++); 
-		if (hexTable[i] == '\0') return val;	
+		for (i = 0; *parse != hexTable[i] && hexTable[i] != '\0'; i++);
+		if (hexTable[i] == '\0') return val;
 		val = (val << 4) | i;
 		parse++;
 	}

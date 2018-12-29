@@ -12,32 +12,14 @@
 
 	#include <stddef.h>
 	#include <limits.h>
+	#include <stdint.h>
 
 //---------------------------------------------------
 
-#ifdef __INT8_TYPE__
-typedef __INT8_TYPE__ int8_t;
-#endif
-#ifdef __INT16_TYPE__
-typedef __INT16_TYPE__ int16_t;
-#endif
-#ifdef __INT32_TYPE__
-typedef __INT32_TYPE__ int32_t;
-#endif
-#ifdef __INT64_TYPE__
-typedef __INT64_TYPE__ int64_t;
-#endif
-#ifdef __UINT8_TYPE__
-typedef __UINT8_TYPE__ uint8_t;
-#endif
-#ifdef __UINT16_TYPE__
-typedef __UINT16_TYPE__ uint16_t;
-#endif
-#ifdef __UINT32_TYPE__
-typedef __UINT32_TYPE__ uint32_t;
-#endif
-#ifdef __UINT64_TYPE__
-typedef __UINT64_TYPE__ uint64_t;
+#if __SIZEOF_SIZE_T__ == 8
+typedef int64_t ssize_t;
+#elif __SIZEOF_SIZE_T__ == 4
+typedef int32_t ssize_t;
 #endif
 
 //---------------------------------------------------
@@ -47,6 +29,29 @@ extern initcall_t __start_initsec, __stop_initsec;
 
 #define data_attr         __attribute__ ((section ("initsec")))
 #define setInit(fn)  	initcall_t _##fn data_attr = fn
+
+//---------------------------------------------------
+
+void putnl(void);
+void putsl(char *str, int len);
+void fputs(char *str);
+void puts(char *str);
+char *gets(char *buff, int len);
+char *sgets(char *buff, int len);
+void *memcpy (void *str1, const void *str2, size_t n);
+void printHex(char num);
+void printByte(char num);
+void printWord(uint16_t num);
+void printLong(uint32_t num);
+void *memset(void *s, int c, size_t n);
+void *malloc(size_t size);
+int strcmp(const char *s1, const char *s2);
+int strcmpl(const char *s1, const char *s2, int len);
+
+/* ser.c */
+void putc(char out);
+char read(void);
+char query(void);
 
 //---------------------------------------------------
 #endif

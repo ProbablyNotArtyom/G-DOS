@@ -41,4 +41,3 @@ char query(void){
 
 	return read;
 }
-

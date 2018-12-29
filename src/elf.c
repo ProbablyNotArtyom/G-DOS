@@ -20,7 +20,7 @@
 
 //---------------------------------------------------
 
-int loadELF(char* args[], uint8_t argCount, struct f_file *file){
+int loadELF(char* args[], uint8_t argCount, f_file *file){
 
 	size_t highMem = 0;
 	size_t lowMem = ~0;
@@ -76,12 +76,14 @@ int loadELF(char* args[], uint8_t argCount, struct f_file *file){
 					progHeader.memSize -= 0x100;
 					progHeader.fileSize -= 0x100;
 				}
-				fputs("Loading 0x");
-				printLong(progHeader.fileSize);
-				fputs(" byte segment from offset 0x");
-				printLong(progHeader.offset);
-				fputs(" to address 0x");
-				printLong(progHeader.physAddr);
+				nprintf("Loading %d byte segment from offset 0x%x to address 0x%x",
+					progHeader.fileSize, progHeader.offset, progHeader.physAddr);
+				//fputs("Loading 0x");
+				//printLong(progHeader.fileSize);
+				//fputs(" byte segment from offset 0x");
+				//printLong(progHeader.offset);
+				//fputs(" to address 0x");
+				//printLong(progHeader.physAddr);
 				f_seek(file, progHeader.offset);
 				f_read(file, progHeader.physAddr, progHeader.fileSize);
 				if(progHeader.fileSize < progHeader.memSize)
@@ -99,7 +101,81 @@ int loadELF(char* args[], uint8_t argCount, struct f_file *file){
 		progIndex++;
 	}
 
-	/*
+	/* Check for a linux kernel */
+	bVersion = (struct bootversion *)lowMem;
+	if(bVersion->magic == BOOTINFOV_MAGIC){
+		fputs("Linux kernel found");
+		int i = 0;
+		while(bVersion->machversions[i].machine != MACH_BLITZ){
+			if(bVersion->machversions[i].machine == 0x0000){
+				puts("[!] Blitz machine type not supported.");
+				return -1;
+			}
+			i++;
+		}
+		if(bVersion->machversions[i].version != BLITZ_BOOTI_VERSION){
+			puts("[!] bootinfo version mismatch");
+			return -1;
+		}
+
+		nprintf("Creating kernel bootinfo at 0x%x", bootInfo);
+
+		/* Machine type */
+		bootInfo = (struct biRecord*)((highMem + 0xFFF) & ~0xFFF);
+		bootInfo->size = sizeof(struct biRecord) + sizeof(long);
+		bootInfo->tag = BI_MACHTYPE;
+		bootInfo->entry[0] = MACH_BLITZ;
+
+		/* CPU type */
+		bootInfo = (struct biRecord *)((uint8_t*)bootInfo + bootInfo->size);
+		bootInfo->size = sizeof(struct biRecord) + sizeof(long);
+		bootInfo->tag = BI_CPUTYPE;
+		bootInfo->entry[0] = CPU_68030;
+
+		/* MMU type */
+		bootInfo = (struct biRecord *)((uint8_t*)bootInfo + bootInfo->size);
+		bootInfo->size = sizeof(struct biRecord) + sizeof(long);
+		bootInfo->tag = BI_MMUTYPE;
+		bootInfo->entry[0] = MMU_68030;
+
+		/* FPU type */
+		bootInfo = (struct biRecord *)((uint8_t*)bootInfo + bootInfo->size);
+		bootInfo->size = sizeof(struct biRecord) + sizeof(long);
+		bootInfo->tag = BI_FPUTYPE;
+		bootInfo->entry[0] = FPU_68882;
+
+		/* FPU type */
+		bootInfo = (struct biRecord *)((uint8_t*)bootInfo + bootInfo->size);
+		bootInfo->size = sizeof(struct biRecord) + sizeof(struct memBlock);
+		bootInfo->tag = BI_MEMBLOCK;
+		memSeg = (struct memBlock *)bootInfo->entry;
+		memSeg->addr = 0x800000;		// Memory address
+		memSeg->size = 0x500000;		// Memory size
+
+		char kernelArgs[ARGBUFF];
+		int argLen;
+		int charsLeft = ARGBUFF - 1;
+		for(i = 1; i < argCount; i++){
+			if(kernelArgs[0] && charsLeft > 0){
+				strncat(kernelArgs, " ", charsLeft);
+				charsLeft -= 1;
+			}
+			argLen = strlen(args[i]);
+			if(charsLeft >= argLen) {
+				strncat(kernelArgs, args[i], charsLeft);
+				charsLeft -= 1;
+			} else {
+				puts("[!] Kernel arguments exceed buffer length");
+				return -1;
+			}
+		}
+
+		/* -=-=-=-=-=-=-=-=-=- */
+	}
+}
+
+
+int loadELF_flat(char* args[], uint8_t argCount, char *loadAddr){
 	uint32_t entry, progTable, secTable, progSize, secSize;
 	uint32_t numProgs, numSecs, nameTable;
 	uint8_t type;
@@ -154,5 +230,4 @@ int loadELF(char* args[], uint8_t argCount, struct f_file *file){
 	}
 	int (*entrypoint)(int, char*) = entry;
 	(*entrypoint)(0, "");
-	*/
 }

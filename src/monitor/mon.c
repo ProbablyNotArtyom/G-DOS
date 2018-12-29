@@ -17,7 +17,7 @@
 	#include <stdarg.h>
 	#include <stdbool.h>
 	#include <std.h>
-	
+
 	#include "mon.h"
 
 //-----------------------Main------------------------
@@ -47,16 +47,15 @@ void monBegin(){
 
 /* Exits the monitor */
 static enum errList exit(){
-	doExit = true;										// Sets the exit flag true 
+	doExit = true;										// Sets the exit flag true
 	return errNONE;										// and returns without error
 }
 
 /* Writes bytes to memory */
 static enum errList deposit(){
-	if (*skipBlank() == '\0') return errNOARGS;			// Error if there are no given arguments
-	char *ptr = strToHEX();								// Take the argument in as the starting memory pointer
-	if (*skipBlank() == '\0') return errNOARGS;			// Error if there are no more arguments
-
+	char *ptr;
+	getArg(ptr);
+	ifEOI(errNOARGS);
 	while (*parse != '\0'){								// Keep reading in arguments until we hit the end of input
 		*ptr++ = strToHEX();							// Take those arguments and store them to memory in succesion
 		skipBlank();
@@ -65,38 +64,48 @@ static enum errList deposit(){
 }
 
 /* Handles viewing of memory */
-static enum errList read(){
+static enum errList view(){
 	char *ptr, *end;									// Create start and end pointers
 
-	if (*skipBlank() == '\0') return errNOARGS;			// Error if there arent any inputs
 	while (*parse != '.' && *parse != '\0'){			// Keep reading in values to print until a range identifier is found, if at all
-		ptr = strToHEX();									// Get the location to read from
+		getArg(ptr);										// Get the location to read from
 		skipBlank();										// Go ahead and align with the next argument
 		puts("");											// Print a newline
 		printLong(ptr);										// Print the memory location itself
 		fputs(" | ");										// Fancy seperators
 		printByte(*ptr++);									// Print the data at that memory location
 		putc(' ');											// Cool spaces
-	} 
+	}
 
 	if (*parse == '.'){									// If we hit a range identifier...
 		parse++;										// Then skip over it
 		skipBlank();									// And move to the next argument
 		uint8_t column = 1;								// Create something to track how many columns have been printed so far
-		if (*skipBlank() == '\0') return errNOARGS;		// Error if there arent more args
+		ifEOI(errNOARGS);
 		end = strToHEX();								// Read in the end of the range
 		if (end == NULL) return errHEX;					// Error out if end is 0, thats wack
+		char *addrBuff;
 		while (ptr != end){								// Continue until we've reached the end of the range
-			if (column == 16){								// If we've printed 16 columns,
+			int i;
+			while (column < 16 && ptr != end){
+				printByte(*ptr++);							// Print data byte at this address
+				putc(' ');									// Space between bytes
+				column++;									// Increase our column number
+			}
+			for (i = column; i < 16; i++) fputs("   ");
+			fputs("| ");
+			addrBuff = ptr - column;
+			for (i = 0; i < column; addrBuff++){
+				if (*addrBuff >= 0x20) putc(*addrBuff);
+				else putc('.');
+				i++;
+			}
+			if (ptr != end){
 				puts("");									// Then set up a new line
 				column = 0;									// And print out the location header
 				printLong(ptr);
 				fputs(" | ");
 			}
-			printByte(*ptr);								// Print data byte at this address
-			column++;										// Increase our column number
-			putc(' ');										// Space between bytes
-			ptr++;											// Increase the data pointer
 		}
 	}
 	return errNONE;										// Return error free
@@ -106,15 +115,11 @@ static enum errList read(){
 static enum errList copy(){
 	char *ptr, *end, *dest;								// Create pointers for start, end, and destination of block
 
-	if (*skipBlank() == '\0') return errNOARGS;			// Error if there are no more arguments
-	ptr = strToHEX();									// Store the next argument as the start pointer
+	getArg(ptr);
 	if (*skipBlank() != '.') return errBADRANGE;		// Error if there is no range identifier
 	parse++;											// Step over the range identifier '.'
-	if (*skipBlank() == '\0') return errNOARGS;			// Error if there are no more arguments
-	end = strToHEX();									// Store the next argument as the end pointer
-	if (*skipBlank() == '\0') return errNOARGS;			// Error if there are no more arguments
-	dest = strToHEX();									// Store the next argument as the destination pointer
-
+	getArg(end);										// Store the next argument as the end pointer
+	getArg(dest);
 	if (dest <= ptr) {									// If the destination is below the source in memory,
 		while (ptr <= end) *dest++ = *ptr++;			// then copy it starting at the beginning
 	} else {
@@ -129,14 +134,11 @@ static enum errList copy(){
 static enum errList move(){
 	char *ptr, *end, *dest;								// Create pointers for start, end, and destination of block
 
-	if (*skipBlank() == '\0') return errNOARGS;			// Error if there are no more arguments
-	ptr = strToHEX();									// Store the next argument as the start pointer
+	getArg(ptr);
 	if (*skipBlank() != '.') return errBADRANGE;		// Error if there is no range identifier
 	parse++;											// Step over the range identifier '.'
-	if (*skipBlank() == '\0') return errNOARGS;			// Error if there are no more arguments
-	end = strToHEX();									// Store the next argument as the end pointer
-	if (*skipBlank() == '\0') return errNOARGS;			// Error if there are no more arguments
-	dest = strToHEX();									// Store the next argument as the destination pointer
+	getArg(end);
+	getArg(dest);
 
 	if (dest <= ptr) {									// If the destination is below the source in memory,
 		while (ptr <= end) *dest++ = *ptr++;			// then copy it starting at the beginning
@@ -153,14 +155,11 @@ static enum errList fill(){
 	char *ptr, *end;									// Create pointers for the start and end of the section
 	uint8_t val;										// The fill pattern itself
 
-	if (*skipBlank() == '\0') return errNOARGS;			// Error if there are no more arguments
-	ptr = strToHEX();									// Store the next argument as the start pointer
-	if (*skipBlank() != '.') return errNOARGS;			// Error if the next argument isn't a range identifier
+	getArg(ptr);
+	if (*skipBlank() != '.') return errBADRANGE;		// Error if the next argument isn't a range identifier
 	parse++;											// Step over the identifier
-	if (*skipBlank() == '\0') return errNOARGS;			// Error if there are no more arguments
-	end = strToHEX();									// Store the next argument as the end pointer
-	if (*skipBlank() == '\0') return errNOARGS;			// Error if there are no more arguments
-	val = strToHEX();									// Store whats left as the value to use as the fill
+	getArg(end);
+	getArg(val);
 
 	while (ptr <= end) *ptr++ = val;					// Set every byte from *ptr to *end to the pattern in val
 
@@ -169,9 +168,9 @@ static enum errList fill(){
 
 /* Starts executing code from a place in memory */
 static enum errList execute(){
-	if (*skipBlank() == '\0') return errNOARGS;			// Error if no address is given
+	ifEOI(errNOARGS);
 	void (*ptr)(void) = strToHEX();						// Create a function pointer that points to wherever the next argument tells it to
-	(*ptr)();											// Call that function 
+	(*ptr)();											// Call that function
 	return errNONE;										// Return error free, assuming that whatever we call actually returns (good chance it wont)
 }
 
@@ -180,7 +179,7 @@ static enum errList execute(){
 const enum errList const (*funcTable[])() = {
 	exit,
 	deposit,
-	read,
+	view,
 	copy,
 	move,
 	fill,

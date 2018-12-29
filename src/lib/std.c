@@ -89,7 +89,10 @@ char *sgets(char *buff, int len){
 void *memcpy (void *str1, const void *str2, size_t n){
 	char *d = str1;
 	const char *s = str2;
-	while (n--) *d++ = *s++;
+	while (n--){
+		*d++ = *s++;
+		
+	}
 	return str1;
 }
 
@@ -126,7 +129,7 @@ void *malloc(size_t size)
 {
 	register void * memory;
 	register int sizee;
-	
+
 	sizee = (size + (sizeof(int)-1)) & (-sizeof(int));
 	memory = mem_chain;
 	mem_chain += sizee;

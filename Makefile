@@ -25,6 +25,6 @@ link:
 	cd ./bin && for lib in `find . -name '*.a'` ; do \
 		$(AR) -x $$lib; \
 	done
-	cd ./bin && $(LD)  *.o $(LDFLAGS) $(LDLIBS) -o Impact
+	cd ./bin && $(LD) *.o $(LDLIBS) $(LDFLAGS) -o Impact
 
 -include ${PWD}/src/arch/${PLATFORM}/post.mk
