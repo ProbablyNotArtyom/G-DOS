@@ -10,116 +10,66 @@
 #ifndef _HEADER_FSTOOLS
 #define _HEADER_FSTOOLS
 
-#define	MAX_SECSIZE 512
-
 	#include <stdbool.h>
+	#include <../fs/fat.h>
 
 //-------------------Type Protos---------------------
 
+/* Results of Disk Functions */
 typedef enum {
-	SEEK_TOP = 0,
-	SEEK_CUR,
-	SEEK_END
-} SEEKTYPE;
+	RES_OK = 0,		/* 0: Successful */
+	RES_ERROR,		/* 1: R/W Error */
+	RES_WRPRT,		/* 2: Write Protected */
+	RES_NOTRDY,		/* 3: Not Ready */
+	RES_PARERR		/* 4: Invalid Parameter */
+} diskResult;
 
-typedef enum {
-	DSK_OK = 0,
-	DSK_ERR,
-	DSK_PROTECT,
-	DSK_NORDY,
-	DSK_ARGS
-} diskStatus;
+typedef DSTATUS diskStatus;
+typedef FRESULT f_error;
+typedef FIL f_file;
+typedef DIR f_dir;
+typedef FILINFO f_info;
 
-enum f_type {
-	_ftype_directory,
-	_ftype_binary,
-	_ftype_hardlink,
-	_ftype_symbolic,
-	_ftype_blockdev,
-	_ftype_chardev
-};
-
-typedef enum {
-	ER_OK = 0,
-	ER_DISK_ERR,
-	ER_NOT_READY,
-	ER_NO_FILE,
-	ER_INVALID_NAME,
-	ER_DENIED,
-	ER_WRITE_PROTECTED,
-	ER_INVALID_DRIVE,
-	ER_INVALID_PARAMETER,
-	ER_INVALID_FILE
-} f_error;
-
-typedef struct {
-	struct f_handler *fs;		// Host filesystem
-	struct f_dir *parent;		// Directory that contains the file
-	uint8_t	flags;
-	size_t	size;				// Size of file in bytes
-	size_t	ptr;				// Access pointer
-	size_t	node;				// Position on disk
-	uint8_t	buff[MAX_SECSIZE];	// Data buffer for disk stuff
-} f_file;
-
-typedef struct {
-	char		name[13];
-	size_t		size;
-	int16_t		lastTime;
-	int16_t		lastDate;
-	enum f_type	type;
-} f_info;
-
-typedef struct {
-	struct f_handler *fs;		// Host filesystem
-	size_t		index;			// Cursor position for read/write
-	size_t		dirStart;
-	size_t		blockPtr;
-	size_t		nodePtr;
-	char		*fileNames;		// Filename lookup table pointer
-} f_dir;
-
-typedef struct {
-	uint8_t		drive;				// Drive number
-	uint16_t	blockSize;			// Bytes per block
-	size_t		lastBlock;			// Newest block
-	size_t		freeBlocks;			// Number of free blocks
-
-	size_t		currentDir;			// Current directory
-	size_t		blockNum;			// Total number of blocks
-	size_t		nodeNum;			// Total number of nodes
-	size_t		volume;				// Start of volume
-	size_t		superblock;			// Start of superblock
-	size_t		rootNode;			// Root directory
-	size_t		dataStart;			// Start of data blocks
-	size_t		buffSector;			// Sector in buffer
-	uint8_t		buff[MAX_SECSIZE];	// Data buffer for table stuff
-} f_instance;
-
-struct f_handler {
-	f_error (*fs_seek)(f_file *file, size_t bytes);
-	f_error (*fs_read)(f_file *file, void *buff, size_t bytes);
-	f_error (*fs_write)(f_file *file, const void *buff, size_t bytes, size_t offset);
-	f_error (*fs_open)(f_file *file, const char *path, uint8_t mode);
-	f_error (*fs_openDir)(f_dir *dir, const char *path);
-	f_error (*fs_closeDir)(f_dir *dir, const char *path);
-	f_error (*fs_readDir)(f_dir *dir, f_info info);
-	bool (*fs_detect)(struct dev_disk *disk);
-};
+/*
+f_error:
+	FR_OK = 0,				(0) Succeeded
+	FR_DISK_ERR,			(1) A hard error occurred in the low level disk I/O layer
+	FR_INT_ERR,				(2) Assertion failed
+	FR_NOT_READY,			(3) The physical drive cannot work
+	FR_NO_FILE,				(4) Could not find the file
+	FR_NO_PATH,				(5) Could not find the path
+	FR_INVALID_NAME,		(6) The path name format is invalid
+	FR_DENIED,				(7) Access denied due to prohibited access or directory full
+	FR_EXIST,				(8) Access denied due to prohibited access
+	FR_INVALID_OBJECT,		(9) The file/directory object is invalid
+	FR_WRITE_PROTECTED,		(10) The physical drive is write protected
+	FR_INVALID_DRIVE,		(11) The logical drive number is invalid
+	FR_NOT_ENABLED,			(12) The volume has no work area
+	FR_NO_FILESYSTEM,		(13) There is no valid FAT volume
+	FR_MKFS_ABORTED,		(14) The f_mkfs() aborted due to any problem
+	FR_TIMEOUT,				(15) Could not get a grant to access the volume within defined period
+	FR_LOCKED,				(16) The operation is rejected according to the file sharing policy
+	FR_NOT_ENOUGH_CORE,		(17) LFN working buffer could not be allocated
+	FR_TOO_MANY_OPEN_FILES,	(18) Number of open files > FF_FS_LOCK
+	FR_INVALID_PARAMETER	(19) Given parameter is invalid
+*/
 
 //-----------------Function Protos-------------------
 
 void fsInit(void);
-f_error f_seek(f_file *file, size_t bytes);
-f_error f_read(f_file *file, void *buff, size_t bytes);
-f_error f_write(f_file *file, const void *buff, size_t bytes, size_t offset);
-f_error f_open(f_file *file, const char *path);
-f_error f_close(f_file *file);
-f_error f_openDir(struct f_dir *dir, const char *path);
-f_error f_closeDir(struct f_dir *dir, const char *path);
-f_error f_readDir(struct f_dir *dir, f_info info);
-f_error f_getCWD(char *buff, uint16_t len);
-f_error f_getLabel(const uint8_t disknum, char *label);
-f_error f_chdir(const char* path);
+
+f_error fs_seek(f_file *file, size_t bytes);
+f_error fs_read(f_file *file, void *buff, size_t bytes, size_t *numRead);
+f_error fs_write(f_file *file, const void *buff, size_t bytes, size_t *numRead);
+f_error fs_open(f_file *file, const char *path);
+f_error fs_close(f_file *file);
+f_error fs_openDir(f_dir *dir, const char *path);
+f_error fs_closeDir(f_dir *dir, const char *path);
+f_error fs_readDir(f_dir *dir, f_info *info);
+f_error fs_getCWD(char *buff, uint16_t len);
+f_error fs_getLabel(const uint8_t disknum, char *label);
+f_error fs_chdir(const char* path);
+
+void fs_putsError(f_error error);
 
 #endif

@@ -13,11 +13,10 @@
 	#include <stdbool.h>
 	#include <std.h>
 
-	#include <device.h>
+	#include <disk.h>
 	#include <fs.h>
 
 //-----------------Variable Protos-------------------
-
 
 
 //-----------------------Main------------------------
@@ -38,6 +37,14 @@ int main(void){
 	/* Init filesystems and mount disks */
 	fsInit();
 	diskInit();
+
+	FATFS fsFat;
+	char buf[20];
+
+	fs_putsError(f_mount(&fsFat, "", 1));
+	fs_putsError(f_getcwd(buf, 20));
+	puts(buf);
+	printByte(buf[0]);
 
 	puts("NotArtyom 02/11/18");
 	puts("G'DOS Shell");

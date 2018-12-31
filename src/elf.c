@@ -20,10 +20,10 @@
 
 //---------------------------------------------------
 
-int loadELF(char* args[], uint8_t argCount, f_file *file){
-
+int loadELF(char* args[], uint8_t argCount, FIL *file){
 	size_t highMem = 0;
 	size_t lowMem = ~0;
+	size_t numBytes;
 	elf32_header header;
 	elf32_program_header progHeader;
 	struct bootversion *bVersion;
@@ -31,8 +31,8 @@ int loadELF(char* args[], uint8_t argCount, f_file *file){
 	struct biRecord	*bootInfo;
 	unsigned int progIndex = 0;
 
-	f_seek(file, 0);
-	f_read(file, &header, sizeof(header));
+	fs_seek(file, 0);
+	fs_read(file, &header, sizeof(header), &numBytes);
 
 	if(header.magic[0] != 0x7F ||
 		header.magic[1] != 'E' ||
@@ -58,8 +58,8 @@ int loadELF(char* args[], uint8_t argCount, f_file *file){
 	}
 
 	while (progIndex < header.progNum){
-		f_seek(file, progIndex * header.progSize + header.progOffset);
-		f_read(file, &progHeader, sizeof(progHeader));
+		fs_seek(file, progIndex * header.progSize + header.progOffset);
+		fs_read(file, &progHeader, sizeof(progHeader), &numBytes);
 		switch (progHeader.type){
 			case PHT_NULL:
 			case PHT_PHDR:
@@ -78,14 +78,8 @@ int loadELF(char* args[], uint8_t argCount, f_file *file){
 				}
 				nprintf("Loading %d byte segment from offset 0x%x to address 0x%x",
 					progHeader.fileSize, progHeader.offset, progHeader.physAddr);
-				//fputs("Loading 0x");
-				//printLong(progHeader.fileSize);
-				//fputs(" byte segment from offset 0x");
-				//printLong(progHeader.offset);
-				//fputs(" to address 0x");
-				//printLong(progHeader.physAddr);
-				f_seek(file, progHeader.offset);
-				f_read(file, progHeader.physAddr, progHeader.fileSize);
+				fs_seek(file, progHeader.offset);
+				fs_read(file, progHeader.physAddr, progHeader.fileSize, &numBytes);
 				if(progHeader.fileSize < progHeader.memSize)
 					memset((uint8_t*)progHeader.physAddr + progHeader.fileSize,
 						0, progHeader.memSize - progHeader.fileSize);
