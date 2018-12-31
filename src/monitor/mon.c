@@ -6,13 +6,6 @@
 //
 //---------------------------------------------------
 
-	#define	BUFFLEN		0xFF
-	#define NUMFUNCS	7
-
-	#define	ADDRSIZE	uint32_t
-
-//---------------------Includes----------------------
-
 	#include <stddef.h>
 	#include <stdarg.h>
 	#include <stdbool.h>
@@ -174,6 +167,22 @@ static enum errList execute(){
 	return errNONE;										// Return error free, assuming that whatever we call actually returns (good chance it wont)
 }
 
+static enum errList sirpinski(){
+	int x, y, i;
+	puts("");
+	for (y = (1 << 4) - 1; y >= 0; y--, puts("")) {
+		for (i = 0; i < y; i++) putc(' ');
+		for (x = 0; x + y < (1 << 4); x++)
+		printf((x & y) ? "  " : "* ");
+	}
+	for (y = 1; y <= (1 << 4); y++, puts("")) {
+		for (i = 0; i < y; i++) putc(' ');
+		for (x = 0; x + y < (1 << 4); x++)
+		printf((x & y) ? "  " : "* ");
+	}
+	return errNONE;
+}
+
 //----------------------Tables-----------------------
 
 const enum errList const (*funcTable[])() = {
@@ -184,6 +193,7 @@ const enum errList const (*funcTable[])() = {
 	move,
 	fill,
 	execute,
+	sirpinski,
 	NULL
 };
 
@@ -195,6 +205,7 @@ const char* const funcNames[] = {
 	"move ",
 	"fill ",
 	"go ",
+	"demo ",
 	"\0"
 };
 

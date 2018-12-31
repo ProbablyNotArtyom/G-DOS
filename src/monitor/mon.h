@@ -13,7 +13,7 @@
 //---------------------------------------------------
 
 	#define	BUFFLEN		0xFF
-	#define NUMFUNCS	7
+	#define NUMFUNCS	8
 
 	#define	ADDRSIZE	uint32_t
 

@@ -46,6 +46,14 @@ SECTIONS
  	*(initsec);
  	__stop_initsec = .;
 
+	__start_fsinitsec = .;
+ 	*(fsinitsec);
+ 	__stop_fsinitsec = .;
+
+	__start_diskinitsec = .;
+ 	*(diskinitsec);
+ 	__stop_diskinitsec = .;
+
  	__text_start = .;
   	*(.text .text.*)
 	. = ALIGN(0x4);

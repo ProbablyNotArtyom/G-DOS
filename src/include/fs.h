@@ -12,6 +12,8 @@
 
 #define	MAX_SECSIZE 512
 
+	#include <stdbool.h>
+
 //-------------------Type Protos---------------------
 
 typedef enum {
@@ -51,7 +53,7 @@ typedef enum {
 } f_error;
 
 typedef struct {
-	struct f_instance *fs;		// Host filesystem
+	struct f_handler *fs;		// Host filesystem
 	struct f_dir *parent;		// Directory that contains the file
 	uint8_t	flags;
 	size_t	size;				// Size of file in bytes
@@ -69,7 +71,7 @@ typedef struct {
 } f_info;
 
 typedef struct {
-	struct f_instance *fs;		// Host filesystem
+	struct f_handler *fs;		// Host filesystem
 	size_t		index;			// Cursor position for read/write
 	size_t		dirStart;
 	size_t		blockPtr;
@@ -95,18 +97,20 @@ typedef struct {
 } f_instance;
 
 struct f_handler {
-	f_error (*fs_seek)();
-	f_error (*fs_read)();
-	f_error (*fs_write)();
-	f_error (*fs_openDir)();
-	f_error (*fs_closeDir)();
-	f_error (*fs_readDir)();
+	f_error (*fs_seek)(f_file *file, size_t bytes);
+	f_error (*fs_read)(f_file *file, void *buff, size_t bytes);
+	f_error (*fs_write)(f_file *file, const void *buff, size_t bytes, size_t offset);
+	f_error (*fs_open)(f_file *file, const char *path, uint8_t mode);
+	f_error (*fs_openDir)(f_dir *dir, const char *path);
+	f_error (*fs_closeDir)(f_dir *dir, const char *path);
+	f_error (*fs_readDir)(f_dir *dir, f_info info);
+	bool (*fs_detect)(struct dev_disk *disk);
 };
 
 //-----------------Function Protos-------------------
 
 void fsInit(void);
-f_error f_seek(f_file *file, uint32_t bytes);
+f_error f_seek(f_file *file, size_t bytes);
 f_error f_read(f_file *file, void *buff, size_t bytes);
 f_error f_write(f_file *file, const void *buff, size_t bytes, size_t offset);
 f_error f_open(f_file *file, const char *path);

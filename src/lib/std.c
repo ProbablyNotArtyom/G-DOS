@@ -13,6 +13,8 @@
 
 //-----------------Variable Protos-------------------
 
+extern const size_t _end;
+
 static const char hexTable[16] = {								// Hex to ASCII lookup table
 	'0', '1', '2', '3', '4', '5', '6', '7',
 	'8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
@@ -91,7 +93,7 @@ void *memcpy (void *str1, const void *str2, size_t n){
 	const char *s = str2;
 	while (n--){
 		*d++ = *s++;
-		
+
 	}
 	return str1;
 }
@@ -123,21 +125,6 @@ void printLong(uint32_t num){
 
 void *memset(void *s, int c, size_t n);
 
-void * mem_chain;		/* points at next block to allocate */
-
-void *malloc(size_t size)
-{
-	register void * memory;
-	register int sizee;
-
-	sizee = (size + (sizeof(int)-1)) & (-sizeof(int));
-	memory = mem_chain;
-	mem_chain += sizee;
-	memset(memory, 0, sizee);
-
-	return memory;
-}
-
 int strcmp(const char *s1, const char *s2){
 	while (*s1 == *s2++)
 		if (*s1++ == '\0')
@@ -151,4 +138,12 @@ int strcmpl(const char *s1, const char *s2, int len){
 		len--;
 	}
 	return (*(unsigned char *)s1 - *(unsigned char *)--s2);
+}
+
+static uint8_t *nextMem = &_end;
+void *malloc(size_t bytes){
+
+	uint8_t *memory = nextMem;
+	nextMem += bytes;
+	return memory;
 }

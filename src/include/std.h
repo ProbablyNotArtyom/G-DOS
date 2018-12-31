@@ -26,9 +26,17 @@ typedef int32_t ssize_t;
 
 typedef void (*initcall_t)(void);
 extern initcall_t __start_initsec, __stop_initsec;
+typedef void (*fsinitcall_t)(struct f_handler *fs);
+extern fsinitcall_t __start_fsinitsec, __stop_fsinitsec;
+typedef void (*diskinitcall_t)(struct dev_disk *disk);
+extern diskinitcall_t __start_diskinitsec, __stop_diskinitsec;
 
 #define data_attr         __attribute__ ((section ("initsec")))
 #define setInit(fn)  	initcall_t _##fn data_attr = fn
+#define fs_data_attr      __attribute__ ((section ("fsinitsec")))
+#define setFSInit(fn)  	fsinitcall_t _##fn fs_data_attr = fn
+#define disk_data_attr      __attribute__ ((section ("diskinitsec")))
+#define setDiskInit(fn)  	diskinitcall_t _##fn disk_data_attr = fn
 
 //---------------------------------------------------
 

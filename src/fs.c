@@ -13,15 +13,24 @@
 	#include <stdarg.h>
 	#include <stdbool.h>
 	#include <std.h>
+
 	#include <fs.h>
 
+//---------------------------------------------------
 
-
+uint8_t numFS = 0;
+struct f_handler fsList[4];
 
 //-----------------------Main------------------------
 
 void fsInit(void){
 
+	fsinitcall_t *fn = &__start_fsinitsec;
+	while (fn < &__stop_fsinitsec) {
+		(*fn)(&fsList[numFS]);
+		numFS++;
+		fn++;
+	}
 	return;
 }
 

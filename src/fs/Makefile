@@ -11,7 +11,7 @@ all:
 	make objects
 	$(AR) Prvs $(ARCHNAME).a $(OBJECTS)
 	cp $(ARCHNAME).a $(BINDIR)
-	cp fatROM $(BINDIR)/fatROM.o
+	cp ROMFSTEST $(BINDIR)/ROMFSTEST.o
 	for dir in $(SUBDIRS); do \
 		$(MAKE) -C $$dir -f Makefile $@; \
 	done
