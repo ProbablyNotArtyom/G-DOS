@@ -36,7 +36,7 @@ static enum errList {
 		errEND,
 		errHEX,
 		errBADRANGE
-	};
+};
 
 extern const enum errList const (*funcTable[])();
 extern const char* const funcNames[];

@@ -61,5 +61,15 @@ void putc(char out);
 char read(void);
 char query(void);
 
+unsigned long int strtoul(const char *nptr, char **endptr, int base);
+long int strtol(const char *nptr, char **endptr, int base);
+int isSpace(int val);
+int isLower(int val);
+int isUpper(int val);
+int isAlpha(int val);
+int isDigit(int val);
+int toUpper(int val);
+int toLower(int val);
+
 //---------------------------------------------------
 #endif

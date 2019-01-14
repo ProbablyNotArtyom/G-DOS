@@ -1,15 +1,10 @@
-
 SOURCES := $(shell find . -maxdepth 1 -name '*.c')
 SOURCES += $(shell find . -maxdepth 1 -name '*.S')
 OBJECTS := $(SOURCES:%.c=%.o)
 OBJECTS := $(OBJECTS:%.S=%.o)
-ARCHNAME := drv
-SUBDIRS = $(PLATFORM)
+SUBDIRS = $(ARCH)
 
 all: clean
-	make objects
-	$(AR) Prvs $(ARCHNAME).a $(OBJECTS) fatROM
-	cp $(ARCHNAME).a $(BINDIR)
 	for dir in $(SUBDIRS); do \
 		$(MAKE) -C $$dir -f Makefile $@; \
 	done
@@ -19,9 +14,4 @@ clean:
 	rm -vf *.o
 	for dir in $(SUBDIRS); do \
 		$(MAKE) -C $$dir -f Makefile $@; \
-	done
-
-objects:
-	for file in $(SOURCES); do \
-		$(CC) $(CCFLAGS) -c $$file; \
 	done

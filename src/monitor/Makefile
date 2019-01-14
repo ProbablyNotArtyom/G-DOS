@@ -3,9 +3,9 @@ SOURCES := $(shell find . -maxdepth 1 -name '*.c')
 SOURCES += $(shell find . -maxdepth 1 -name '*.S')
 OBJECTS := $(SOURCES:%.c=%.o)
 OBJECTS := $(OBJECTS:%.S=%.o)
-ARCHNAME = mon
+ARCHNAME = monitor
 
-SUBDIRS = 
+SUBDIRS =
 
 all:
 	make objects
@@ -22,7 +22,7 @@ clean:
 		$(MAKE) -C $$dir -f Makefile $@; \
 	done
 
-objects: 
+objects:
 	for file in $(SOURCES); do \
 		$(CC) $(CCFLAGS) -c $$file; \
-	done 
+	done

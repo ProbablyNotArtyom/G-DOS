@@ -1,5 +1,6 @@
 
 BAREMETAL = TRUE
+ARCH = m68k
 CPU = 68000
 PREFIX = m68k-unknown-elf-
 
@@ -10,5 +11,5 @@ AR = $(PREFIX)ar
 CPY = $(PREFIX)objcopy
 
 CCFLAGS = -Wall -mcpu=$(CPU) -msoft-float -nostdlib -static -I ${PWD}/src/include -O3
-LDFLAGS = -Bstatic -T $(PWD)/src/arch/BSVC/link.ld
+LDFLAGS = -Bstatic 
 LDLIBS := `$(CC) -print-libgcc-file-name`

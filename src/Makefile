@@ -4,8 +4,9 @@ SOURCES += $(shell find . -maxdepth 1 -name '*.S')
 OBJECTS := $(SOURCES:%.c=%.o)
 OBJECTS := $(OBJECTS:%.S=%.o)
 ARCHNAME := main
-SUBDIRS = arch drv monitor fs
-ifeq ($(BAREMETAL), TRUE) 
+SUBDIRS = shell platform drv monitor fs cpu
+
+ifeq ($(BAREMETAL), TRUE)
 	SUBDIRS += lib
 endif
 
@@ -24,7 +25,7 @@ clean:
 		$(MAKE) -C $$dir -f Makefile $@; \
 	done
 
-objects: 
+objects:
 	for file in $(SOURCES); do \
 		$(CC) $(CCFLAGS) -c $$file; \
-	done 
+	done

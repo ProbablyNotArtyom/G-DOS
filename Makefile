@@ -1,10 +1,10 @@
 export
 
-include ${PWD}/src/arch/${PLATFORM}/config.mk
+include ${PWD}/src/platform/${PLATFORM}/config.mk
 BINDIR := $(PWD)/bin
-CCFLAGS := $(CCFLAGS) -include $(PWD)/src/arch/${PLATFORM}/hwdeps.h
+CCFLAGS := $(CCFLAGS) -include $(PWD)/src/platform/${PLATFORM}/hwdeps.h
 SUBDIRS = src
-
+LDFLAGS := -T $(PWD)/src/platform/${PLATFORM}/link.ld
 all: clean
 	for dir in $(SUBDIRS); do \
 		$(MAKE) -C $$dir -f Makefile $@; \
@@ -22,9 +22,6 @@ clean:
 	done
 
 link:
-	cd ./bin && for lib in `find . -name '*.a'` ; do \
-		$(AR) -x $$lib; \
-	done
-	cd ./bin && $(LD) *.o $(LDLIBS) $(LDFLAGS) -o Impact
+	cd ./bin && $(LD) --whole-archive *.a --no-whole-archive $(LDLIBS) $(LDFLAGS) -o Impact
 
--include ${PWD}/src/arch/${PLATFORM}/post.mk
+-include ${PWD}/src/platform/${PLATFORM}/post.mk

@@ -7,11 +7,10 @@
 //---------------------------------------------------
 // G'DOS header and general config
 
-	const void (*shFunctions[])();
-	const char* const shFuncNames[];
+#ifndef _HEADER_GDOS
+#define _HEADER_GDOS
 
-	static void shellBegin(void);
 
 //---------------------------------------------------
 
-	#define SHBUFFLEN		256
+#endif
