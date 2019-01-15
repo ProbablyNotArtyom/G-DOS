@@ -18,4 +18,5 @@ result_t shfunc_mkdir(char *argv[], int argc){
 	#ifdef debug
 		puts("shFunc_call: mkdir");
 	#endif
+	return RET_OK;
 }

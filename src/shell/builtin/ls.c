@@ -18,4 +18,5 @@ result_t shfunc_ls(char *argv[], int argc){
 	#ifdef debug
 		puts("shFunc_call: ls");
 	#endif
+	return RET_OK;
 }

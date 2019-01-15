@@ -24,11 +24,12 @@
 	result_t shfunc_mv(char *argv[], int argc);
 	result_t shfunc_mkdir(char *argv[], int argc);
 	result_t shfunc_mon(char *argv[], int argc);
+	result_t shfunc_mount(char *argv[], int argc);
 
 //---------------------------------------------------
 
 	#define SHBUFFLEN	256
-	#define MAXARGS		40		
+	#define MAXARGS		40
 
 //---------------------------------------------------
 

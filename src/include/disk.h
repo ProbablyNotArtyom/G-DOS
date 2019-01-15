@@ -60,4 +60,6 @@ struct dev_disk {
 	diskResult (*ioctl)(uint8_t drive, uint8_t cmd, void *buff);
 };
 
+void diskRegister(struct dev_disk *disk);
+
 #endif

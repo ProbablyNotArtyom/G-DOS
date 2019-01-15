@@ -129,6 +129,7 @@ const result_t (*shFunctions[])() = {
 	shfunc_mv,
 	shfunc_mkdir,
 	shfunc_mon,
+	shfunc_mount,
 	NULL
 };
 
@@ -142,6 +143,7 @@ const char* const shFuncNames[] = {
 	"mv ",
 	"mkdir ",
 	"mon ",
+	"mount ",
 	NULL
 };
 
@@ -155,6 +157,7 @@ const uint8_t const shFuncLen[] = {
 	2,
 	5,
 	3,
+	5,
 	NULL
 };
 

@@ -1,5 +1,5 @@
 // BUILTIN
-// CP
+// MOUNT
 //---------------------------------------------------
 
 	#include <stddef.h>
@@ -14,9 +14,6 @@
 
 //---------------------------------------------------
 
-result_t shfunc_cp(char *argv[], int argc){
-	#ifdef debug
-		puts("shFunc_call: cp");
-	#endif
+result_t shfunc_mount(char *argv[], int argc){
 	return RET_OK;
 }

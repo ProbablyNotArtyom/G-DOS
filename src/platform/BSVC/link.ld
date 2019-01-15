@@ -42,17 +42,25 @@ SECTIONS
 
 
  .text : {
- 	__start_initsec = .;
- 	*(initsec);
- 	__stop_initsec = .;
-
-	__start_fsinitsec = .;
- 	*(fsinitsec);
- 	__stop_fsinitsec = .;
-
-	__start_diskinitsec = .;
- 	*(diskinitsec);
- 	__stop_diskinitsec = .;
+ 	__initcall_start = .;
+		*(.initcallearly.init)
+		 __initcall0_start = .;
+		 *(.initcall0.init)
+		 __initcall1_start = .;
+		 *(.initcall1.init)
+		 __initcall2_start = .;
+		 *(.initcall2.init)
+		 __initcall3_start = .;
+		 *(.initcall3.init)
+		 __initcall4_start = .;
+		 *(.initcall4.init)
+		 __initcall5_start = .;
+		 *(.initcall5.init)
+		 __initcall6_start = .;
+		 *(.initcall6.init)
+		 __initcall7_start = .;
+		 *(.initcall7.init)
+	__initcall_end = .;
 
  	__text_start = .;
   	*(.text .text.*)

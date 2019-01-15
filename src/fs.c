@@ -39,12 +39,16 @@ void fsInit(void){
 
 f_error fs_seek(f_file *file, size_t bytes){
 
-	return RES_OK;
+	f_error err = f_lseek(&file, bytes);
+	fs_putsError(err);
+	return err;
 }
 
 f_error fs_read(f_file *file, void *buff, size_t byte, size_t *numReads){
 
-	return RES_OK;
+	f_error err = f_read(&file, *(uint8_t*)buff, byte, *numReads);
+	fs_putsError(err);
+	return err;
 }
 
 f_error fs_write(f_file *file, const void *buff, size_t bytes, size_t *numRead){
@@ -52,9 +56,11 @@ f_error fs_write(f_file *file, const void *buff, size_t bytes, size_t *numRead){
 	return RES_OK;
 }
 
-f_error fs_open(f_file *file, const char *path){
+f_error fs_open(f_file *file, const char *path, f_mode mode){
 
-	return RES_OK;
+	f_error err = f_open (&file, *path, mode);
+	fs_putsError(err);
+	return err;
 }
 
 f_error fs_close(f_file *file){
@@ -90,6 +96,20 @@ f_error fs_getLabel(const uint8_t disknum, char *label){
 f_error fs_chdir(const char* path){
 
 	return RES_OK;
+}
+
+f_error fs_mount(FATFS* fs, const TCHAR* path, uint8_t opt){
+
+	f_error err = f_mount(&fs, &path, opt);
+	fs_putsError(err);
+	return err;
+}
+
+f_error fs_mkfs(const char* path, uint8_t opt, uint32_t au, void* work, uint32_t len){
+
+	f_error err = f_mkfs(*path, opt, au, *(uint8_t*)work, len);
+	fs_putsError(err);
+	return err;
 }
 
 void fs_putsError(f_error error){

@@ -147,3 +147,19 @@ void *malloc(size_t bytes){
 	nextMem += bytes;
 	return memory;
 }
+
+void setFG(color_t clr){
+	printf("\e[%dm", clr);
+}
+
+void setBG(color_t clr){
+	printf("\e[%dm", clr + 10);
+}
+
+void setFG256(uint8_t clr){
+	printf("\e[38;5;%dm", clr);
+}
+
+void setBG256(uint8_t clr){
+	printf("\e[48;5;%dm", clr);
+}

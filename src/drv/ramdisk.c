@@ -12,6 +12,7 @@
  	#include <std.h>
 	#include <fs.h>
 	#include <disk.h>
+	#include <mod/init.h>
 	#include "ramdisk.h"
 
 	#define RAMDISK_SIZE		131072
@@ -20,16 +21,18 @@
 	static uint8_t	*currentIndex;
 	static uint32_t currentSec;
 
+	static struct dev_disk disk;
+
 //--------------------Functions----------------------
 
-void ramdisk_dev_register(struct dev_disk *disk){
-	fputs("RAMdisk driver initializing....");
-	disk->init = &ramdisk_init;
-	disk->status = &ramdisk_status;
-	disk->write = &ramdisk_write;
-	disk->read = &ramdisk_read;
-	disk->ioctl = &ramdisk_ioctl;
-	puts(" OK");
+void ramdisk_dev_register(){
+	puts("\n\rRAMdisk driver initializing....");
+	disk.init = &ramdisk_init;
+	disk.status = &ramdisk_status;
+	disk.write = &ramdisk_write;
+	disk.read = &ramdisk_read;
+	disk.ioctl = &ramdisk_ioctl;
+	diskRegister(&disk);
 	return;
 }
 
@@ -83,6 +86,6 @@ diskResult ramdisk_ioctl(uint8_t drive, uint8_t cmd, void *buff){
 	}
 }
 
-setDiskInit(ramdisk_dev_register);
+device_initcall(ramdisk_dev_register);
 
 #endif

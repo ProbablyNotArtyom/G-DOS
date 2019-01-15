@@ -24,19 +24,32 @@ typedef int32_t ssize_t;
 
 //---------------------------------------------------
 
-typedef void (*initcall_t)(void);
-extern initcall_t __start_initsec, __stop_initsec;
-typedef void (*fsinitcall_t)(struct f_handler *fs);
-extern fsinitcall_t __start_fsinitsec, __stop_fsinitsec;
-typedef void (*diskinitcall_t)(struct dev_disk *disk);
-extern diskinitcall_t __start_diskinitsec, __stop_diskinitsec;
+/* GCC is awesome. */
+#define ARRAY_SIZE(arr) \
+    (sizeof(arr) / sizeof((arr)[0]) \
+     + sizeof(typeof(int[1 - 2 * \
+           !!__builtin_types_compatible_p(typeof(arr), \
+                 typeof(&arr[0]))])) * 0)
 
-#define data_attr         __attribute__ ((section ("initsec")))
-#define setInit(fn)  	initcall_t _##fn data_attr = fn
-#define fs_data_attr      __attribute__ ((section ("fsinitsec")))
-#define setFSInit(fn)  	fsinitcall_t _##fn fs_data_attr = fn
-#define disk_data_attr      __attribute__ ((section ("diskinitsec")))
-#define setDiskInit(fn)  	diskinitcall_t _##fn disk_data_attr = fn
+
+typedef enum {
+	C_BLACK = 30,
+	C_RED,
+	C_GREEN,
+	C_YELLOW,
+	C_BLUE,
+	C_PINK,
+	C_CYAN,
+	C_LIGHTGREY,
+	C_DARKGREY = 90,
+	C_LIGHTRED,
+	C_LIGHTGREEN,
+	C_LIGHTYELLOW,
+	C_LIGHTBLUE,
+	C_LIGHTPINK,
+	C_LIGHTCYAN,
+	C_WHITE
+} color_t;
 
 //---------------------------------------------------
 
@@ -70,6 +83,11 @@ int isAlpha(int val);
 int isDigit(int val);
 int toUpper(int val);
 int toLower(int val);
+
+void setFG(color_t clr);
+void setBG(color_t clr);
+void setFG256(uint8_t clr);
+void setBG256(uint8_t clr);
 
 //---------------------------------------------------
 #endif

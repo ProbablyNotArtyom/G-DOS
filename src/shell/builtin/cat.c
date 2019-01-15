@@ -18,4 +18,5 @@ result_t shfunc_cat(char *argv[], int argc){
 	#ifdef debug
 		puts("shFunc_call: cat");
 	#endif
+	return RET_OK;
 }

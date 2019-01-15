@@ -18,4 +18,5 @@ result_t shfunc_cd(char *argv[], int argc){
 	#ifdef debug
 		puts("shFunc_call: cd");
 	#endif
+	return RET_OK;
 }

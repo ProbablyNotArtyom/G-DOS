@@ -18,4 +18,5 @@ result_t shfunc_rm(char *argv[], int argc){
 	#ifdef debug
 		puts("shFunc_call: rm");
 	#endif
+	return RET_OK;
 }

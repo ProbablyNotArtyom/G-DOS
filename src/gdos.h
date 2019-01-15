@@ -10,6 +10,7 @@
 #ifndef _HEADER_GDOS
 #define _HEADER_GDOS
 
+void gdos(void);
 
 //---------------------------------------------------
 

@@ -3,12 +3,8 @@ SOURCES := $(shell find . -maxdepth 1 -name '*.c')
 SOURCES += $(shell find . -maxdepth 1 -name '*.S')
 OBJECTS := $(SOURCES:%.c=%.o)
 OBJECTS := $(OBJECTS:%.S=%.o)
-ARCHNAME := root
-SUBDIRS = shell platform drv monitor fs cpu init
-
-ifeq ($(BAREMETAL), TRUE)
-	SUBDIRS += lib
-endif
+ARCHNAME := gdos
+SUBDIRS =
 
 all: clean
 	make objects

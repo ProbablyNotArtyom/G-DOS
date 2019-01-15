@@ -10,6 +10,7 @@
  	#include <std.h>
 	#include <fs.h>
 	#include <disk.h>
+	#include <mod/init.h>
 	#include "ide.h"
 
 	static uint8_t *currentIndex;
@@ -17,14 +18,15 @@
 
 //--------------------Functions----------------------
 
-void ide_dev_register(struct dev_disk *disk){
-	fputs("IDE driver initializing....");
-	disk->init = &ide_init;
-	disk->status = &ide_status;
-	disk->write = &ide_write;
-	disk->read = &ide_read;
-	disk->ioctl = &ide_ioctl;
-	puts(" OK");
+void ide_dev_register(){
+	struct dev_disk disk;
+	puts("\n\rIDE driver initializing....");
+	disk.init = &ide_init;
+	disk.status = &ide_status;
+	disk.write = &ide_write;
+	disk.read = &ide_read;
+	disk.ioctl = &ide_ioctl;
+	diskRegister(&disk);
 	return;
 }
 
@@ -63,4 +65,4 @@ diskResult ide_ioctl(uint8_t drive, uint8_t cmd, void *buff){
 	return RES_NOTRDY;
 }
 
-//setDiskInit(ide_dev_register);
+//device_initcall(ide_dev_register);

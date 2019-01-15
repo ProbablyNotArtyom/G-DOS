@@ -24,6 +24,16 @@ typedef enum {
 	RES_PARERR		/* 4: Invalid Parameter */
 } diskResult;
 
+typedef enum {
+	fm_read = 0x01,
+	fm_write = 0x02,
+	fm_existing = 0x00,
+	fm_new = 0x04,
+	fm_new_always = 0x08,
+	fm_open_always = 0x10,
+	fm_open_append = 0x30
+} f_mode;
+
 typedef DSTATUS diskStatus;
 typedef FRESULT f_error;
 typedef FIL f_file;
@@ -61,7 +71,7 @@ void fsInit(void);
 f_error fs_seek(f_file *file, size_t bytes);
 f_error fs_read(f_file *file, void *buff, size_t bytes, size_t *numRead);
 f_error fs_write(f_file *file, const void *buff, size_t bytes, size_t *numRead);
-f_error fs_open(f_file *file, const char *path);
+f_error fs_open(f_file *file, const char *path, f_mode mode);
 f_error fs_close(f_file *file);
 f_error fs_openDir(f_dir *dir, const char *path);
 f_error fs_closeDir(f_dir *dir, const char *path);
@@ -69,6 +79,8 @@ f_error fs_readDir(f_dir *dir, f_info *info);
 f_error fs_getCWD(char *buff, uint16_t len);
 f_error fs_getLabel(const uint8_t disknum, char *label);
 f_error fs_chdir(const char* path);
+f_error fs_mount(FATFS* fs, const TCHAR* path, uint8_t opt);
+f_error fs_mkfs(const char* path, uint8_t opt, uint32_t au, void* work, uint32_t len);
 
 void fs_putsError(f_error error);
 

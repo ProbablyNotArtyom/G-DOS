@@ -10,6 +10,7 @@
  	#include <std.h>
 	#include <fs.h>
 	#include <disk.h>
+	#include <mod/init.h>
 	#include "romfat.h"
 
 	extern size_t _binary_fatROM_bin_start;
@@ -19,16 +20,18 @@
 	static uint8_t *currentIndex;
 	static uint16_t currentSec;
 
+	static struct dev_disk disk;
+
 //--------------------Functions----------------------
 
-void fatRom_dev_register(struct dev_disk *disk){
-	fputs("rom-FAT driver initializing....");
-	disk->init = &fatRom_init;
-	disk->status = &fatRom_status;
-	disk->write = &fatRom_write;
-	disk->read = &fatRom_read;
-	disk->ioctl = &fatRom_ioctl;
-	puts(" OK");
+void fatRom_dev_register(){
+	puts("\n\rrom-FAT driver initializing....");
+	disk.init = &fatRom_init;
+	disk.status = &fatRom_status;
+	disk.write = &fatRom_write;
+	disk.read = &fatRom_read;
+	disk.ioctl = &fatRom_ioctl;
+	diskRegister(&disk);
 	return;
 }
 
@@ -39,7 +42,6 @@ diskStatus fatRom_init(uint8_t drive){
 	currentIndex = &_binary_fatROM_bin_start;
 	currentSec = 0;
 
-	puts(" OK");
 	return;
 }
 
@@ -79,4 +81,4 @@ diskResult fatRom_ioctl(uint8_t drive, uint8_t cmd, void *buff){
 	}
 }
 
-setDiskInit(fatRom_dev_register);
+device_initcall(fatRom_dev_register);

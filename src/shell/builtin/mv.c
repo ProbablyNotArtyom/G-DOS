@@ -18,4 +18,5 @@ result_t shfunc_mv(char *argv[], int argc){
 	#ifdef debug
 		puts("shFunc_call: mv");
 	#endif
+	return RET_OK;
 }

@@ -1,6 +1,7 @@
 
 	#include <std.h>
 	#include <stdbool.h>
+	#include <mod/init.h>
 
 	extern char __bss_start;
 	extern char _end;
@@ -37,6 +38,8 @@ int init(void){
 
 	return 1;
 }
+
+early_initcall(init);
 
 //----------------------Rescue-----------------------
 
