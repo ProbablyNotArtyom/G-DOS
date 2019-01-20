@@ -19,7 +19,7 @@
 
 //-----------------Variable Protos-------------------
 
-	const result_t (*shFunctions[])();
+	const result_t const (* const shFunctions[])();
 	const char* const shFuncNames[];
 	const char* const shErrors[];
 	const uint8_t const shFuncLen[];
@@ -119,7 +119,7 @@ static void runCMD(shFunc_t func, char *buffer){
 
 //----------------------Tables-----------------------
 
-const result_t (*shFunctions[])() = {
+const result_t const (* const shFunctions[])() = {
 	shfunc_ls,
 	shfunc_cd,
 	shfunc_echo,

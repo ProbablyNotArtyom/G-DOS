@@ -13,7 +13,7 @@
  * they apply.
  */
 
-#include "asm.h"
+#include <asm.h>
 
 	.text
 	.align	4

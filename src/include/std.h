@@ -13,6 +13,7 @@
 	#include <stddef.h>
 	#include <limits.h>
 	#include <stdint.h>
+	#include <char.h>
 
 //---------------------------------------------------
 
@@ -70,9 +71,8 @@ int strcmp(const char *s1, const char *s2);
 int strcmpl(const char *s1, const char *s2, int len);
 
 /* ser.c */
-void putc(char out);
+charResult putc(char out);
 char read(void);
-char query(void);
 
 unsigned long int strtoul(const char *nptr, char **endptr, int base);
 long int strtol(const char *nptr, char **endptr, int base);

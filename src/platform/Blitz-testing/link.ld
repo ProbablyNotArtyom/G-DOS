@@ -61,7 +61,7 @@ SECTIONS
      __initcall7_start = .;
      *(.initcall7.init)
   __initcall_end = .;
-
+  
   __text_start = .;
     *(.text .text.*)
   . = ALIGN(0x4);

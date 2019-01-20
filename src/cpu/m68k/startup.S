@@ -60,16 +60,18 @@ SYM (_start):
 
 	or.w    #0x2700, sr 			/* disable interrupts */
 	movel	#(__STACK), a0
+
+
 	cmpl	#(0), a0
 	jbeq    1f
 	movel	a0, sp
 
-#ifdef CONFIG_BLITZ
-	clrl   	d2                 		/* set Vector Base Register */
-	movecl 	d2, vbr
-	movel  	#BOARD_CACR0, d2    	/* enable data & instruction caches */
-	movecl 	d2, cacr
-#endif
+//#ifdef CONFIG_BLITZ
+//	clrl   	d2                 		/* set Vector Base Register */
+//	movecl 	d2, vbr
+//	movel  	#BOARD_CACR0, d2    	/* enable data & instruction caches */
+//	movecl 	d2, cacr
+//#endif
 1:
 	/* set up initial stack frame */
 	link	a6, #(-8)
@@ -94,13 +96,6 @@ SYM (_start):
 	move.b  (a2)+, (a1)+
 5:
 	dbra    d0, 4b
-
-	move.l	#0x00EFFC01, a1
-	move.b	#0b00010000, 0x00EFFC05
-	move.b	#0b00100011, 0x00EFFC01
-	move.b	#0b00010111, 0x00EFFC01
-	move.b	#0b11001011, 0x00EFFC03
-	move.b	#0b00000101, 0x00EFFC05
 
         pea     0
 	PICPEA	SYM (environ),a0

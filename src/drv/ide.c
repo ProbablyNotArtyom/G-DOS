@@ -7,6 +7,8 @@
 //---------------------------------------------------
 // IDE Driver
 
+#ifdef CONFIG_DEV_IDE
+
  	#include <std.h>
 	#include <fs.h>
 	#include <disk.h>
@@ -65,4 +67,6 @@ diskResult ide_ioctl(uint8_t drive, uint8_t cmd, void *buff){
 	return RES_NOTRDY;
 }
 
-//device_initcall(ide_dev_register);
+device_initcall(ide_dev_register);
+
+#endif

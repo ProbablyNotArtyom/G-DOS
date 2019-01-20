@@ -2,8 +2,12 @@
 #ifndef _HEADER_IRQ
 #define _HEADER_IRQ
 
+//---------------------------------------------------
+
 void init_IRQ(void);
 void init_traps(void);
+
+//---------------------------------------------------
 
 struct irq_chip {
 	const char		*name;
@@ -26,5 +30,5 @@ struct irq_chip {
 	unsigned long	flags;
 };
 
-
+//---------------------------------------------------
 #endif

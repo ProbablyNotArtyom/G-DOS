@@ -2,7 +2,7 @@ export
 
 include ${PWD}/src/platform/${PLATFORM}/config.mk
 BINDIR := $(PWD)/bin
-CCFLAGS := $(CCFLAGS) -include $(PWD)/src/platform/${PLATFORM}/hwdeps.h
+CCFLAGS := $(CCFLAGS) -include $(PWD)/src/platform/${PLATFORM}/hwdeps.h -B $(PWD)/src/cpu/$(ARCH)/include
 SUBDIRS = src
 LDFLAGS := -T $(PWD)/src/platform/${PLATFORM}/link.ld
 all: clean

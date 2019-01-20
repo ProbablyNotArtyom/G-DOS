@@ -6,7 +6,7 @@
 //
 //---------------------------------------------------
 // RAMdisk driver
-#define CONFIG_DEV_RAMDISK
+
 #ifdef CONFIG_DEV_RAMDISK
 
  	#include <std.h>

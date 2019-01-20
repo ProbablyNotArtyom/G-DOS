@@ -68,7 +68,7 @@ static void do_initcalls(void){
 }
 
 int main(void){
-
+	tty_init();
 	do_initcalls();
 	gdos();
 }

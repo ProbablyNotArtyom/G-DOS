@@ -7,6 +7,8 @@
 //---------------------------------------------------
 // IDE Driver
 
+#ifdef CONFIG_DEV_ROMFAT
+
  	#include <std.h>
 	#include <fs.h>
 	#include <disk.h>
@@ -82,3 +84,5 @@ diskResult fatRom_ioctl(uint8_t drive, uint8_t cmd, void *buff){
 }
 
 device_initcall(fatRom_dev_register);
+
+#endif

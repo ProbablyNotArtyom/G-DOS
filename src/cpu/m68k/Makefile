@@ -4,7 +4,7 @@ SOURCES += $(shell find . -maxdepth 1 -name '*.S')
 OBJECTS := $(SOURCES:%.c=%.o)
 OBJECTS := $(OBJECTS:%.S=%.o)
 ARCHNAME := cpu
-SUBDIRS =
+SUBDIRS = lib
 
 all: clean
 	make objects

@@ -185,7 +185,7 @@ static enum errList sirpinski(){
 
 //----------------------Tables-----------------------
 
-const enum errList const (*funcTable[])() = {
+const enum errList const (* const funcTable[])() = {
 	exit,
 	deposit,
 	view,

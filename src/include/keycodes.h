@@ -1,0 +1,113 @@
+//---------------------------------------------------
+//
+//	GBoot v0.0
+//	NotArtyom
+//	02/11/18
+//
+//---------------------------------------------------
+// G'DOS Shell header
+
+#ifndef _HEADER_KEYCODES
+#define _HEADER_KEYCODES
+
+//---------------------------------------------------
+
+#define KBRSP_ERR_DETECTION		0x00
+#define KBRSP_SELFTEST_PASS		0xAA
+#define KBRSP_ECHO				0xEE
+#define KBRSP_ACK				0xFA
+#define KBRSP_SELFTEST_FAIL		0xFC
+#define KBRSP_SELFTEST_ERR		0xFD
+#define KBRSP_RESEND			0xFE
+#define KBRSP_ERR_OVERFLOW		0xFF
+
+#define KBCMD_SET_LEDS			0xED
+#define KBCMD_ECHO				0xEE
+#define KBCMD_GET_KEYSET		0xF0
+#define KBCMD_IDENTIFY			0xF2
+#define KBCMD_SET_TYPEMATIC		0xF3
+#define KBCMD_ENABLE_SCANNING	0xF4
+#define KBCMD_DISABLE_SCANNING	0xF5
+#define KBCMD_RESET				0xFF
+
+//---------------------------------------------------
+
+typedef enum keycode_t {
+		KB_INVALID = 0x00,
+		KB_Q_PRESSED = 0x10,
+		KB_Q_RELEASED = 0x90,
+		KB_W_PRESSED = 0x11,
+		KB_W_RELEASED = 0x91,
+		KB_E_PRESSED = 0x12,
+		KB_E_RELEASED = 0x92,
+		KB_R_PRESSED = 0x13,
+		KB_R_RELEASED = 0x93,
+		KB_T_PRESSED = 0x14,
+		KB_T_RELEASED = 0x94,
+		KB_Z_PRESSED = 0x15,
+		KB_Z_RELEASED = 0x95,
+		KB_U_PRESSED = 0x16,
+		KB_U_RELEASED = 0x96,
+		KB_I_PRESSED = 0x17,
+		KB_I_RELEASED = 0x97,
+		KB_O_PRESSED = 0x18,
+		KB_O_RELEASED = 0x98,
+		KB_P_PRESSED = 0x19,
+		KB_P_RELEASED = 0x99,
+		KB_A_PRESSED = 0x1E,
+		KB_A_RELEASED = 0x9E,
+		KB_S_PRESSED = 0x1F,
+		KB_S_RELEASED = 0x9F,
+		KB_D_PRESSED = 0x20,
+		KB_D_RELEASED = 0xA0,
+		KB_F_PRESSED = 0x21,
+		KB_F_RELEASED = 0xA1,
+		KB_G_PRESSED = 0x22,
+		KB_G_RELEASED = 0xA2,
+		KB_H_PRESSED = 0x23,
+		KB_H_RELEASED = 0xA3,
+		KB_J_PRESSED = 0x24,
+		KB_J_RELEASED = 0xA4,
+		KB_K_PRESSED = 0x25,
+		KB_K_RELEASED = 0xA5,
+		KB_L_PRESSED = 0x26,
+		KB_L_RELEASED = 0xA6,
+		KB_Y_PRESSED = 0x2C,
+		KB_Y_RELEASED = 0xAC,
+		KB_X_PRESSED = 0x2D,
+		KB_X_RELEASED = 0xAD,
+		KB_C_PRESSED = 0x2E,
+		KB_C_RELEASED = 0xAE,
+		KB_V_PRESSED = 0x2F,
+		KB_V_RELEASED = 0xAF,
+		KB_B_PRESSED = 0x30,
+		KB_B_RELEASED = 0xB0,
+		KB_N_PRESSED = 0x31,
+		KB_N_RELEASED = 0xB1,
+		KB_M_PRESSED = 0x32,
+		KB_M_RELEASED = 0xB2,
+
+		KB_0_PRESSED = 0x29,
+		KB_1_PRESSED = 0x2,
+		KB_9_PRESSED = 0xA,
+
+		KB_PERIOD_PRESSED = 0x34,
+		KB_PERIOD_RELEASED = 0xB4,
+
+		KB_SLASH_PRESSED = 0x35,
+		KB_SLASH_RELEASED = 0xB5,
+		KB_BACKSLASH_PRESSED = 0x2B,
+		KB_BACKSLASH_RELEASED = 0xAB,
+
+		KB_BACKSPACE_PRESSED = 0xE,
+		KB_BACKSPACE_RELEASED = 0x8E,
+		KB_SPACE_PRESSED = 0x39,
+		KB_SPACE_RELEASED = 0xB9,
+		KB_ENTER_PRESSED = 0x1C,
+		KB_ENTER_RELEASED = 0x9C
+
+};
+
+//---------------------------------------------------
+
+#endif

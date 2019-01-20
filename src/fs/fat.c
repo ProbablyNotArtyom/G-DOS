@@ -23,6 +23,9 @@
 #include <fs.h>
 #include <disk.h>
 
+#include <std.h>
+#include <string.h>
+
 /*--------------------------------------------------------------------------
 
    Module Private Definitions
