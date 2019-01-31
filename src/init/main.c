@@ -6,6 +6,8 @@
 
 	#include <mod/init.h>
 
+//---------------------------------------------------
+
 extern void gdos(void);
 
 extern void init_IRQ(void);
@@ -21,6 +23,12 @@ extern initcall_t __initcall5_start[];
 extern initcall_t __initcall6_start[];
 extern initcall_t __initcall7_start[];
 extern initcall_t __initcall_end[];
+
+extern size_t _end;
+
+#ifdef CUSTOM_SPLASH
+	extern char CUSTOM_SPLASH[];
+#endif
 
 static const initcall_t *initcall_levels[] = {
 	__initcall_start,
@@ -47,6 +55,11 @@ static const char const *initcall_level_names[] = {
 	"late",
 };
 
+const char const b_logo[];
+const char const b_opts[];
+
+//---------------------------------------------------
+
 static int do_one_initcall(initcall_t fn){
 	return fn();
 }
@@ -70,5 +83,49 @@ static void do_initcalls(void){
 int main(void){
 	tty_init();
 	do_initcalls();
-	gdos();
+	puts(b_logo);
+	#ifdef CUSTOM_SPLASH
+	puts(CUSTOM_SPLASH);
+	#endif
+	fputs(b_opts);
+	register char tmp;
+	while(true){
+		do {
+			tmp = read();
+		} while (tmp == NULL);
+		switch (tmp){
+			case '0':
+				puts("");
+				do_memtest(&_end, RAMEND);
+			case '1':
+				puts("");
+				gdos();
+			case '2':
+			case '\r':
+			case '\n':
+				puts("");
+				monBegin();
+			case '3':
+				while (1);
+				break;
+		}
+	}
 }
+
+//---------------------------------------------------
+
+const char const b_logo[] =
+	"\r\n   ___   _   ___   ___  ___ \r\n"
+	"  / __| ( ) |   \\ / _ \\/ __|\r\n"
+	" | (_ | |/  | |) | (_) \\__ \\\r\n"
+	"  \\___|     |___/ \\___/|___/\r\n\r\n";
+
+const char const b_opts[] =
+	" G'DOS Booter Menu\r\n"
+	"=============================================\r\n"
+	"  0)  RAM Test\r\n"
+	"  1)  Shell\r\n"
+	"  2)  G'mon  (default)\r\n"
+	"  3)  Exit\r\n"
+	"=============================================\r\n"
+	"> ";

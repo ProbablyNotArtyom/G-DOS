@@ -17,8 +17,29 @@
 
 extern bool doExit;
 extern char* parse;
+extern char *current_addr;
+extern char *end_addr;
 
 //---------------------------------------------------
+
+bool isRange(){
+	char *tmpParse = parse;
+	while (*tmpParse != '.' && *tmpParse != ',' && *tmpParse != '\0') tmpParse++;
+	if (*tmpParse != '.' && *tmpParse != ',') return false;
+	return true;
+}
+
+void setCurrents(){
+	if (isAddr()){
+		current_addr = strToHEX();
+		skipBlank();
+		if (!(*parse == '.' || *parse == ',')) end_addr = NULL;
+	}
+	if ((*parse == '.' || *parse == ',')){
+		getRange(current_addr, end_addr);
+		skipBlank();
+	}
+}
 
 char* skipBlank(){
 	while (*parse == ' ') parse++;
@@ -39,12 +60,19 @@ char* skipHex(){
 	}
 }
 
+bool isAddr(){
+	uint8_t i;
+	for (i = 0; *parse != hexTable[i] && hexTable[i] != '\0'; i++);
+	return (hexTable[i] != '\0');
+}
+
 bool funcCmp(const char *s1, const char *s2){
 	while (*s1 == *s2){
-		if (*s1++ == ' ') return true;
+		if (*s1 == ' ' || *s1 == '.') return true;
+		s1++;
 		*s2++;
 	}
-	if (*s1 == '\0' && *s2 == ' ') return true;
+	if (*s1 == '\0' && (*s2 == ' ' || *s2 == '.')) return true;
 	return false;
 }
 
@@ -60,10 +88,15 @@ ADDRSIZE strToHEX(){
 	return val;
 }
 
-void throw(enum errList index){
+enum errList throw(enum errList index){
 	if (index == errNONE) {
-		puts("");
-		return;
-	}
+		return errNONE;
+	} else if (index == errDOEXIT) return errDOEXIT;
 	puts(errors[index]);
+	return errNONE;
+}
+
+void evalScript(){
+
+
 }

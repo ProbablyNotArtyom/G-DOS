@@ -4,6 +4,7 @@
 #ifndef CONFIG_BSVC
 #define	CONFIG_BSVC
 
+#define		RAMSTART		0x00000000
 #define		RAMEND			0x00400000		// End of usable RAM
 #define		__STACK			0x00800000		// Stack position in memory
 

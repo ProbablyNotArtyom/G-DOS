@@ -11,6 +11,7 @@
  #define CONFIG_DEV_BSVCSERIAL
 
 	#include <std.h>
+	#include <stdbool.h>
 	#include <char.h>
 	#include "BSVC.h"
 
@@ -23,7 +24,6 @@ char bsvc_dev_read(){
 		"beq.s	%=b\n\t"
 		"move.b 0x00EFFC07, %[x]"
 		:[x] "=r" (read));
-
 	return read;
 }
 
@@ -45,7 +45,5 @@ charResult bsvc_dev_init(){
 		"move.b	#0b00000101, 0x00EFFC05"
 	);
 }
-
-device_initcall(bsvc_dev_init);
 
  #endif

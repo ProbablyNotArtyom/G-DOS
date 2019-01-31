@@ -12,6 +12,10 @@
 
 //---------------------------------------------------
 
+# define __force __attribute__((force))
+
+#define VT8242_BUFFER_SIZE			16
+
 #define VT8242_CMD_READCMDBYTE		0x20
 #define VT8242_CMD_WRITECMDBYTE		0x60
 #define VT8242_CMD_GETVERSION		0xA1
@@ -47,6 +51,18 @@
 #define VT8242_CMDBYTE_DISABLE_MOUSE	0b00100000
 #define VT8242_CMDBYTE_ENABLE_TRANSLATE	0b01000000
 
+
+#define SCAN_MODE_BREAK			0x01
+#define SCAN_MODE_MODIFIER		0x02
+#define SCAN_MODE_SHIFT_L		0x04
+#define SCAN_MODE_SHIFT_R		0x08
+#define SCAN_MODE_ALTGR 		0x10
+
+#define KEY_MODE_SCROLLLOCK		0x01
+#define KEY_MODE_NUMLOCK		0x02
+#define KEY_MODE_CAPSLOCK		0x04
+
+
 //---------------------------------------------------
 
 struct vt8242_regs {
@@ -56,16 +72,20 @@ struct vt8242_regs {
 
 //---------------------------------------------------
 
-#define VT8242_CMD_WRITE(dev, byte)		(dev->cmd = (byte))
-#define VT8242_CMD_READ(dev)			(dev->cmd)
-#define VT8242_DATA_WRITE(dev, byte)	(dev->data = (byte))
-#define VT8242_DATA_READ(dev)			(dev->data)
+#define VT8242_CMD_WRITE(dev, byte)		((*(__force volatile uint8_t *) (dev+1)) = (byte))
+#define VT8242_CMD_READ(dev)			({ uint8_t __v = (*(__force volatile uint8_t *) (dev+1)); __v; })
+#define VT8242_DATA_WRITE(dev, byte)	((*(__force volatile uint8_t *) (dev)) = (byte))
+#define VT8242_DATA_READ(dev)			({ uint8_t __v = (*(__force volatile uint8_t *) (dev)); __v; })
 
 //-----------------Function Protos-------------------
 
 char vt8242_dev_read();
-charResult vt8242_dev_write(char out);
 charResult vt8242_dev_init();
-char scancode_to_ascii(uint8_t code);
+void vt8242_dev_flush();
+void vt8242_dev_wait_out();
+void vt8242_dev_wait_in();
+uint8_t vt8242_dev_cmd_ret(uint8_t cmd);
+uint8_t vt8242_dev_kbdcmd_ret(uint8_t cmd);
+void vt8242_dev_set_leds(uint8_t leds);
 
 #endif

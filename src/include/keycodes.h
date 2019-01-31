@@ -32,80 +32,75 @@
 
 //---------------------------------------------------
 
-typedef enum keycode_t {
-		KB_INVALID = 0x00,
-		KB_Q_PRESSED = 0x10,
-		KB_Q_RELEASED = 0x90,
-		KB_W_PRESSED = 0x11,
-		KB_W_RELEASED = 0x91,
-		KB_E_PRESSED = 0x12,
-		KB_E_RELEASED = 0x92,
-		KB_R_PRESSED = 0x13,
-		KB_R_RELEASED = 0x93,
-		KB_T_PRESSED = 0x14,
-		KB_T_RELEASED = 0x94,
-		KB_Z_PRESSED = 0x15,
-		KB_Z_RELEASED = 0x95,
-		KB_U_PRESSED = 0x16,
-		KB_U_RELEASED = 0x96,
-		KB_I_PRESSED = 0x17,
-		KB_I_RELEASED = 0x97,
-		KB_O_PRESSED = 0x18,
-		KB_O_RELEASED = 0x98,
-		KB_P_PRESSED = 0x19,
-		KB_P_RELEASED = 0x99,
-		KB_A_PRESSED = 0x1E,
-		KB_A_RELEASED = 0x9E,
-		KB_S_PRESSED = 0x1F,
-		KB_S_RELEASED = 0x9F,
-		KB_D_PRESSED = 0x20,
-		KB_D_RELEASED = 0xA0,
-		KB_F_PRESSED = 0x21,
-		KB_F_RELEASED = 0xA1,
-		KB_G_PRESSED = 0x22,
-		KB_G_RELEASED = 0xA2,
-		KB_H_PRESSED = 0x23,
-		KB_H_RELEASED = 0xA3,
-		KB_J_PRESSED = 0x24,
-		KB_J_RELEASED = 0xA4,
-		KB_K_PRESSED = 0x25,
-		KB_K_RELEASED = 0xA5,
-		KB_L_PRESSED = 0x26,
-		KB_L_RELEASED = 0xA6,
-		KB_Y_PRESSED = 0x2C,
-		KB_Y_RELEASED = 0xAC,
-		KB_X_PRESSED = 0x2D,
-		KB_X_RELEASED = 0xAD,
-		KB_C_PRESSED = 0x2E,
-		KB_C_RELEASED = 0xAE,
-		KB_V_PRESSED = 0x2F,
-		KB_V_RELEASED = 0xAF,
-		KB_B_PRESSED = 0x30,
-		KB_B_RELEASED = 0xB0,
-		KB_N_PRESSED = 0x31,
-		KB_N_RELEASED = 0xB1,
-		KB_M_PRESSED = 0x32,
-		KB_M_RELEASED = 0xB2,
+#define PS2_TAB				0x09
+#define PS2_ENTER			'\r'
+#define PS2_BACKSPACE		0x7F
+#define PS2_ESC				0x1B
+#define PS2_INSERT			0x00
+#define PS2_DELETE			0x7F
+#define PS2_HOME			0x00
+#define PS2_END				0x00
+#define PS2_PAGEUP			0x00
+#define PS2_PAGEDOWN		0x00
+#define PS2_UPARROW			0x00
+#define PS2_LEFTARROW		0x00
+#define PS2_DOWNARROW		0x00
+#define PS2_RIGHTARROW		0x00
+#define PS2_F1				0x00
+#define PS2_F2				0x00
+#define PS2_F3				0x00
+#define PS2_F4				0x00
+#define PS2_F5				0x00
+#define PS2_F6				0x00
+#define PS2_F7				0x00
+#define PS2_F8				0x00
+#define PS2_F9				0x00
+#define PS2_F10				0x00
+#define PS2_F11				0x00
+#define PS2_F12				0x00
+#define PS2_SCROLL			0x00
 
-		KB_0_PRESSED = 0x29,
-		KB_1_PRESSED = 0x2,
-		KB_9_PRESSED = 0xA,
 
-		KB_PERIOD_PRESSED = 0x34,
-		KB_PERIOD_RELEASED = 0xB4,
+#define PS2_KEYMAP_SIZE 136
 
-		KB_SLASH_PRESSED = 0x35,
-		KB_SLASH_RELEASED = 0xB5,
-		KB_BACKSLASH_PRESSED = 0x2B,
-		KB_BACKSLASH_RELEASED = 0xAB,
+static const uint8_t const ps2_keymap[] = {
+	0, PS2_F9, 0, PS2_F5, PS2_F3, PS2_F1, PS2_F2, PS2_F12,
+	0, PS2_F10, PS2_F8, PS2_F6, PS2_F4, PS2_TAB, '`', 0,
+	0, 0 /*Lalt*/, 0 /*Lshift*/, 0, 0 /*Lctrl*/, 'q', '1', 0,
+	0, 0, 'z', 's', 'a', 'w', '2', 0,
+	0, 'c', 'x', 'd', 'e', '4', '3', 0,
+	0, ' ', 'v', 'f', 't', 'r', '5', 0,
+	0, 'n', 'b', 'h', 'g', 'y', '6', 0,
+	0, 0, 'm', 'j', 'u', '7', '8', 0,
+	0, ',', 'k', 'i', 'o', '0', '9', 0,
+	0, '.', '/', 'l', ';', 'p', '-', 0,
+	0, 0, '\'', 0, '[', '=', 0, 0,
+	0 /*CapsLock*/, 0 /*Rshift*/, PS2_ENTER /*Enter*/, ']', 0, '\\', 0, 0,
+	0, 0, 0, 0, 0, 0, PS2_BACKSPACE, 0,
+	0, '1', 0, '4', '7', 0, 0, 0,
+	'0', '.', '2', '5', '6', '8', PS2_ESC, 0 /*NumLock*/,
+	PS2_F11, '+', '3', '-', '*', '9', PS2_SCROLL, 0,
+	0, 0, 0, PS2_F7
+};
 
-		KB_BACKSPACE_PRESSED = 0xE,
-		KB_BACKSPACE_RELEASED = 0x8E,
-		KB_SPACE_PRESSED = 0x39,
-		KB_SPACE_RELEASED = 0xB9,
-		KB_ENTER_PRESSED = 0x1C,
-		KB_ENTER_RELEASED = 0x9C
-
+static const uint8_t const ps2_keymap_shift[] = {
+	0, PS2_F9, 0, PS2_F5, PS2_F3, PS2_F1, PS2_F2, PS2_F12,
+	0, PS2_F10, PS2_F8, PS2_F6, PS2_F4, PS2_TAB, '~', 0,
+	0, 0 /*Lalt*/, 0 /*Lshift*/, 0, 0 /*Lctrl*/, 'Q', '!', 0,
+	0, 0, 'Z', 'S', 'A', 'W', '@', 0,
+	0, 'C', 'X', 'D', 'E', '$', '#', 0,
+	0, ' ', 'V', 'F', 'T', 'R', '%', 0,
+	0, 'N', 'B', 'H', 'G', 'Y', '^', 0,
+	0, 0, 'M', 'J', 'U', '&', '*', 0,
+	0, '<', 'K', 'I', 'O', ')', '(', 0,
+	0, '>', '?', 'L', ':', 'P', '_', 0,
+	0, 0, '"', 0, '{', '+', 0, 0,
+	0 /*CapsLock*/, 0 /*Rshift*/, PS2_ENTER /*Enter*/, '}', 0, '|', 0, 0,
+	0, 0, 0, 0, 0, 0, PS2_BACKSPACE, 0,
+	0, '1', 0, '4', '7', 0, 0, 0,
+	'0', '.', '2', '5', '6', '8', PS2_ESC, 0 /*NumLock*/,
+	PS2_F11, '+', '3', '-', '*', '9', PS2_SCROLL, 0,
+	0, 0, 0, PS2_F7
 };
 
 //---------------------------------------------------

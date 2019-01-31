@@ -4,7 +4,7 @@ SOURCES += $(shell find . -maxdepth 1 -name '*.S')
 OBJECTS := $(SOURCES:%.c=%.o)
 OBJECTS := $(OBJECTS:%.S=%.o)
 ARCHNAME := drv
-SUBDIRS = platform char
+SUBDIRS = char isa
 
 all: clean
 	make objects

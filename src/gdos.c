@@ -19,6 +19,28 @@
 
 //-----------------------Main------------------------
 
+void keyboardTest(){
+	char lastChar;
+	puts("**KEYBOARD TEST**");
+	fputs("> ");
+	register char s;
+	lastChar = NULL;
+	while(true){
+		while(true){
+			s = read();
+			if (s != NULL && s != lastChar) break;
+		}
+		lastChar = s;
+		if (s == 0x7F){
+			fputs("\b \b");
+		} else {
+			putc(s);
+			if (s == '\r') break;
+		}
+	}
+	return;
+}
+
 void gdos(void){
 
 	shellBegin();

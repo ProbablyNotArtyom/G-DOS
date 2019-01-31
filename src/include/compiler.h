@@ -2,15 +2,7 @@
 #ifndef _HEADER_COMPILER
 #define _HEADER_COMPILER
 
-
-/* Optimization barrier */
-#ifndef barrier
-# define barrier() __memory_barrier()
-#endif
-
-#ifndef barrier_data
-# define barrier_data(ptr) barrier()
-#endif
+# define __force __attribute__((force))
 
 /* Unreachable code */
 #ifndef unreachable

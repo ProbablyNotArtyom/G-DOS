@@ -12,9 +12,11 @@
 #define 	MEMTEST 		false
 #define 	ALLOW_UNALIGNED	true			// Set true for anything above 68020
 
+#define CUSTOM_SPLASH	blitz_splash
+
 #define CONFIG_DEV_AVRPTOS
 #define CONFIG_DEV_VT8242
-#define DEV_VT8242_BASE 0x00400000
+#define DEV_VT8242_BASE 0x00300000
 
 #define read vt8242_dev_read
 #define putc avrptos_dev_write

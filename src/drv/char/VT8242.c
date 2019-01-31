@@ -11,87 +11,184 @@
  #define CONFIG_DEV_VT8242
 
 	#include <std.h>
+	#include <stdbool.h>
 	#include <char.h>
 	#include <keycodes.h>
 	#include "VT8242.h"
 
 //---------------------------------------------------
 
-uint8_t	lastKey;
-uint8_t	keyBuff;
-
-static char* _qwertzuiop = "qwertzuiop";
-static char* _asdfghjkl = "asdfghjkl";
-static char* _yxcvbnm = "yxcvbnm";
-static char* _nums = "123456789";
-
-struct vt8242_regs *vt8242_device;
+uint8_t key_mode;
 
 //--------------------Functions----------------------
 
-charResult vt8242_dev_write(char out){
-	return CH_NOTRDY;
-}
-
 char vt8242_dev_read(){
-	keyBuff = VT8242_DATA_READ(vt8242_device);
-	while (keyBuff == lastKey){
-		keyBuff = VT8242_DATA_READ(vt8242_device);
+	uint8_t register chr;
+	uint8_t register state = 0;
+	uint8_t register tmp;
+	while (true){
+		vt8242_dev_wait_out();
+		tmp = VT8242_DATA_READ(DEV_VT8242_BASE);
+
+		if (tmp == 0xF0)
+			state |= SCAN_MODE_BREAK;
+		else if (tmp == 0xE0)
+			state |= SCAN_MODE_MODIFIER;
+		else {
+			if (state & SCAN_MODE_BREAK){
+				if (tmp == 0x12)
+					state &= ~SCAN_MODE_SHIFT_L;
+				else if (tmp == 0x59)
+					state &= ~SCAN_MODE_SHIFT_R;
+				else if (tmp == 0x11 && (state & SCAN_MODE_MODIFIER))
+					state &= ~SCAN_MODE_ALTGR;
+				state &= ~(SCAN_MODE_BREAK | SCAN_MODE_MODIFIER);
+				continue;
+			}
+			if (tmp == 0x12) {
+				state |= SCAN_MODE_SHIFT_L;
+				continue;
+			} else if (tmp == 0x59) {
+				state |= SCAN_MODE_SHIFT_R;
+				continue;
+			} else if (tmp == 0x11 && (state & SCAN_MODE_MODIFIER)) {
+				state |= SCAN_MODE_ALTGR;
+			}
+
+			if (tmp == 0x58) {
+				key_mode ^= KEY_MODE_CAPSLOCK;
+				vt8242_dev_set_leds(0x04);
+			} else if (tmp == 0x77) {
+				key_mode ^= KEY_MODE_NUMLOCK;
+				vt8242_dev_set_leds(0x02);
+			} else if (tmp == 0x7E) {
+				key_mode ^= KEY_MODE_SCROLLLOCK;
+				vt8242_dev_set_leds(0x01);
+			}
+
+			chr = 0;
+			if (state & SCAN_MODE_MODIFIER){
+				switch (tmp){
+					case 0x70: chr = PS2_INSERT;      	break;
+					case 0x6C: chr = PS2_HOME;        	break;
+					case 0x7D: chr = PS2_PAGEUP;      	break;
+					case 0x71: chr = PS2_DELETE;      	break;
+					case 0x69: chr = PS2_END;         	break;
+					case 0x7A: chr = PS2_PAGEDOWN;    	break;
+					case 0x75: chr = PS2_UPARROW;     	break;
+					case 0x6B: chr = PS2_LEFTARROW;   	break;
+					case 0x72: chr = PS2_DOWNARROW;   	break;
+					case 0x74: chr = PS2_RIGHTARROW;  	break;
+					case 0x4A: chr = '/';             	break;
+					case 0x5A: chr = PS2_ENTER; 		break;
+					default: break;
+				}
+
+			} else if (state & (SCAN_MODE_SHIFT_L | SCAN_MODE_SHIFT_R)){
+				if (tmp < PS2_KEYMAP_SIZE) chr = ps2_keymap_shift[tmp];
+			} else {
+				if (tmp < PS2_KEYMAP_SIZE) chr = ps2_keymap[tmp];
+			}
+
+			state &= ~(SCAN_MODE_BREAK | SCAN_MODE_MODIFIER);
+			if (chr != 0) {
+				return chr;
+			}
+		}
 	}
-	lastKey = keyBuff;
-	return scancode_to_ascii(keyBuff);
+
+	/*
+	if (tmp == 0xE0) valid = false;
+	else if (tmp == 0xF0) {
+		vt8242_dev_flush();
+		return NULL;
+	}
+	else if (valid == true) return scancode_to_ascii(tmp);
+
+	return NULL;
+	*/
 }
 
 charResult vt8242_dev_init(){
-	vt8242_device = DEV_VT8242_BASE;
+	uint8_t register keyBuff;
+	puts("\r\nVT8242 Keyboard driver / NotArtyom / 29-1-19");
+	delay(0x4FFFF);
+	vt8242_dev_flush();
+	vt8242_dev_wait_in();
 
-	VT8242_CMD_READ(vt8242_device);
-	VT8242_DATA_READ(vt8242_device);
-	VT8242_CMD_WRITE(vt8242_device, VT8242_CMD_WRITECMDBYTE);
-	VT8242_CMD_WRITE(vt8242_device, VT8242_CMDBYTE_DISABLE_INHIBIT);
-
-	VT8242_CMD_WRITE(vt8242_device, VT8242_CMD_SELFTEST);
-	if (VT8242_DATA_READ(vt8242_device) != 0x55){
-		puts("[!] Controller failed self test");
-		return;
+	keyBuff = vt8242_dev_cmd_ret(VT8242_CMD_SELFTEST);
+	if (keyBuff != 0x55){
+		fputs("[!] Controller failed self test with value: 0x");
+		printByte(keyBuff);
+		puts("");
 	}
-	VT8242_CMD_WRITE(vt8242_device, VT8242_CMD_KEYBOARDTEST);
-	if (VT8242_DATA_READ(vt8242_device) != 0x00){
-		puts("[?] Keyboard not found");
-		return CH_OK;
-	}
-	puts("Keyboard detected.");
 
-	VT8242_CMD_WRITE(vt8242_device, VT8242_CMD_ENABLEMOUSE);
-	VT8242_CMD_WRITE(vt8242_device, VT8242_CMD_KEYBOARDTEST);
-	if (VT8242_DATA_READ(vt8242_device) != 0x00){
-		puts("[?] Mouse not found");
+	keyBuff = vt8242_dev_cmd_ret(VT8242_CMD_KEYBOARDTEST);
+	if (keyBuff != 0x00){
+		fputs("[?] Keyboard not found: 0x");
+		printByte(keyBuff);
+		puts("");
 	} else {
-		puts("Mouse detected.");
+		puts("Keyboard detected.");
 	}
 
-	VT8242_CMD_WRITE(vt8242_device, VT8242_CMD_ENABLEKBD);
-	VT8242_CMD_WRITE(vt8242_device, VT8242_CMD_ENABLEMOUSE);
+	VT8242_CMD_WRITE(DEV_VT8242_BASE, VT8242_CMD_WRITECMDBYTE);
+	vt8242_dev_wait_in();
+	VT8242_DATA_WRITE(DEV_VT8242_BASE, 0b00101000);
+	vt8242_dev_wait_in();
+
+	keyBuff = vt8242_dev_kbdcmd_ret(KBCMD_ENABLE_SCANNING);
+	if (keyBuff != KBRSP_ACK){
+		fputs("Keyboard enable failed: 0x");
+		printByte(keyBuff);
+		puts("");
+	}
+
+	vt8242_dev_flush();
+	key_mode = 0x00;
 	return CH_OK;
 }
 
-char scancode_to_ascii(uint8_t code){
-	if (code == KB_ENTER_PRESSED) return '\n';
-	if (code == KB_SPACE_PRESSED) return ' ';
-	if (code == KB_BACKSPACE_PRESSED) return 0x7F;
-	if (code == KB_PERIOD_PRESSED) return '.';
-	if (code == KB_SLASH_PRESSED) return '/';
-	if (code == KB_BACKSLASH_PRESSED) return '\\';
-	if (code == KB_0_PRESSED) return '0';
-	if (code >= KB_1_PRESSED && code <= KB_9_PRESSED)
-		return _nums[code - KB_1_PRESSED];
-	if (code >= 0x10 && code <= 0x1C)
-		return _qwertzuiop[code - 0x10];
-	else if (code >= 0x1E && code <= 0x26)
-		return _asdfghjkl[code - 0x1E];
-	else if (code >= 0x2C && code <= 0x32)
-		return _yxcvbnm[code - 0x2C];
-	return NULL;
+void vt8242_dev_flush(){
+	uint8_t tmp;
+	for (uint8_t i = 0; i < VT8242_BUFFER_SIZE; i++){
+		tmp = VT8242_DATA_READ(DEV_VT8242_BASE);
+	}
+}
+
+void vt8242_dev_wait_out(){
+	uint8_t tmp;
+	do {
+		tmp = VT8242_CMD_READ(DEV_VT8242_BASE) & VT8242_STATUS_OUTBUFF_FULL;
+	} while (tmp == 0x00);
+}
+
+void vt8242_dev_wait_in(){
+	uint8_t tmp;
+	do {
+		tmp = VT8242_CMD_READ(DEV_VT8242_BASE) & VT8242_STATUS_INBUFF_FULL;
+	} while (tmp != 0x00);
+}
+
+uint8_t vt8242_dev_cmd_ret(uint8_t cmd){
+	VT8242_CMD_WRITE(DEV_VT8242_BASE, cmd);
+	vt8242_dev_wait_out();
+	return VT8242_DATA_READ(DEV_VT8242_BASE);
+}
+
+uint8_t vt8242_dev_kbdcmd_ret(uint8_t cmd){
+	VT8242_DATA_WRITE(DEV_VT8242_BASE, cmd);
+	vt8242_dev_wait_out();
+	return VT8242_DATA_READ(DEV_VT8242_BASE);
+}
+
+void vt8242_dev_set_leds(uint8_t leds){
+	VT8242_DATA_WRITE(DEV_VT8242_BASE, KBCMD_SET_LEDS);
+	vt8242_dev_wait_out();
+	if (VT8242_DATA_READ(DEV_VT8242_BASE) != KBRSP_ACK) return;
+	VT8242_DATA_WRITE(DEV_VT8242_BASE, leds);
+	vt8242_dev_wait_out();
+	if (VT8242_DATA_READ(DEV_VT8242_BASE) != KBRSP_ACK) return;
 }
 
 //device_initcall(vt8242_dev_init);

@@ -19,16 +19,16 @@
 charResult avrptos_dev_write(char out){
 	asm volatile ("move.b 	#0x00, 0x00000400\n\t"
 		"move.l		#0x0000000F, %%d4\n\t"
-		"A:\n\t"
+		"A%=:\n\t"
 		"subi.l  	#0x00000001, %%d4\n\t"
 		"cmpi.l		#0x00000000, %%d4\n\t"
-		"bne		A\n\t"
+		"bne		A%=\n\t"
 		"move.b 	%[x], 0x00000400\n\t"
 		"move.l		#0x0000000F, %%d4\n\t"
-		"B:\n\t"
+		"B%=:\n\t"
 		"subi.l  	#0x00000001, %%d4\n\t"
 		"cmpi.l		#0x00000000, %%d4\n\t"
-		"bne		B"
+		"bne		B%="
 		:
 		:[x] "r" (out)
 		: "d4" );
@@ -41,6 +41,7 @@ char avrptos_dev_read(void){
 }
 
 charResult avrptos_dev_init(){
+	avrptos_dev_write('\n');
 	return CH_OK;		// Dummy
 }
 

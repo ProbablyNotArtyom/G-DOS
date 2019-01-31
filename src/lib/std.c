@@ -46,19 +46,21 @@ void puts(char *str){
 }
 
 char *gets(char *buff, int len){
+	uint8_t chBuff;
 	register char *s = buff;
 	register int index = len;
 	while(index >= 2){
-		*s = read();
-		if (*s == 0x7F && index == len);
-		else if (*s == 0x7F){
+		chBuff = read();
+		*s = chBuff;
+		if (chBuff == 0x7F && index == len);
+		else if (chBuff == 0x7F){
 			fputs("\b \b");
 			*s = NULL;
 			index++;
 			s--;
 		} else {
-			putc(*s);
-			if (*s == '\r') break;
+			putc(chBuff);
+			if (chBuff == '\r') break;
 			s++;
 			index--;
 		}
@@ -138,14 +140,6 @@ int strcmpl(const char *s1, const char *s2, int len){
 		len--;
 	}
 	return (*(unsigned char *)s1 - *(unsigned char *)--s2);
-}
-
-static uint8_t *nextMem = &_end;
-void *malloc(size_t bytes){
-
-	uint8_t *memory = nextMem;
-	nextMem += bytes;
-	return memory;
 }
 
 void setFG(color_t clr){
