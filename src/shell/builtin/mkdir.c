@@ -15,8 +15,10 @@
 //---------------------------------------------------
 
 result_t shfunc_mkdir(char *argv[], int argc){
-	#ifdef debug
-		puts("shFunc_call: mkdir");
-	#endif
+	if (argc == 0) return RET_ARGS;
+	f_error res;
+	res = f_mkdir(argv[0]);
+	fs_putsError(res);
+
 	return RET_OK;
 }

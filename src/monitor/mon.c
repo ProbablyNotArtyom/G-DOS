@@ -28,7 +28,7 @@ static enum errList execute();
 static enum errList sirpinski();
 static enum errList memmod();
 static enum errList echo();
-static enum errList prmem();
+static enum errList echo_fmt();
 
 //----------------------Tables-----------------------
 
@@ -44,7 +44,7 @@ enum errList const (* const funcTable[])() = {
 	sirpinski,
 	memmod,
 	echo,
-	prmem,
+	echo_fmt,
 	NULL
 };
 
@@ -60,7 +60,7 @@ const char* const funcNames[] = {
 	"demo ",
 	"@.",
 	"echo ",
-	"#.",
+	"printf ",
 	"\0"
 };
 
@@ -369,51 +369,26 @@ static enum errList echo(){
 	return errNONE;
 }
 
-static void prval(char size, char *ptr){
-	switch(size){
-		case 'b':
-			printByte(*(uint8_t *)ptr);
-			putc(' ');
-			break;
-		case 'l':
-			printByte(*(uint8_t *)ptr++);
-			printByte(*(uint8_t *)ptr++);
-			printByte(*(uint8_t *)ptr++);
-			printByte(*(uint8_t *)ptr);
-			putc(' ');
-			break;
-		case 'w':
-			printByte(*(uint8_t *)ptr++);
-			printByte(*(uint8_t *)ptr);
-			putc(' ');
-			break;
-		default:
-			break;
-	}
-}
-
-static enum errList prmem(){
-	char *ptr;
-	char size;
+static enum errList echo_fmt(){
+	char *ptr = parse;
+	char *end;
+	uint32_t *val;
 	puts("");
-	parse--;
-	if (*parse == 'l') size = 'l';
-	else if (*parse == 'w') size = 'w';
-	else size = 'b';
-	parse++;
-	skipBlank();
+	while (*ptr != '\0' && *ptr != '\"') ptr++;
+	if (*ptr == '\0') return errSYNTAX;
+	ptr++;
+	end = ptr;
+	while (*end != '\0' && *end != '\"') end++;
+	if (*end == '\0') return errSYNTAX;
+	*end = '\0';
 
-	if (!isEOI()){
-		while(*parse != '\0'){
-			if (isAddr()){
-				getArg(ptr);
-				prval(size, ptr);
-			}
-		}
-	} else {
-		ptr = current_addr;
-		prval(size, ptr);
-	}
+	parse = (end+1);
+
+	if (isEOI()) return errSYNTAX;
+
+	getArg(val);
+	printf(ptr, *val);
+	*end = '\"';
 	return errNONE;
 }
 

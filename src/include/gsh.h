@@ -10,7 +10,9 @@
 #ifndef _HEADER_GSHELL
 #define _HEADER_GSHELL
 
-	#define debug
+	extern FATFS *fsMounts[];
+	extern uint8_t numMounts;
+	extern uint8_t currentDisk;
 
 	void shellBegin(void);
 	void shThrow(result_t err);
@@ -25,6 +27,7 @@
 	result_t shfunc_mkdir(char *argv[], int argc);
 	result_t shfunc_mon(char *argv[], int argc);
 	result_t shfunc_mount(char *argv[], int argc);
+	result_t shfunc_fputs(char *argv[], int argc);
 
 //---------------------------------------------------
 

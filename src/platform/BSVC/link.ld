@@ -10,7 +10,15 @@ MEMORY
   ram (rwx) : ORIGIN = 0x00100000, LENGTH = 0x00200000
 }
 
+STACK_SIZE = 0x1000;
 
+_ram_start = ORIGIN(ram);
+_ram_end = ORIGIN(ram) + LENGTH(ram);
+
+_stack_start = _ram_end - STACK_SIZE;
+_stack_end = _ram_end - 1;
+
+HEAP_SIZE = 0x10000;
 
 /*
  * allocate the stack
@@ -38,8 +46,6 @@ SECTIONS
  	*vectors.o
  	. = ALIGN(0x4);
  } > vectors
-
-
 
  .text : {
  	__initcall_start = .;
@@ -90,5 +96,12 @@ SECTIONS
   	_end = .;
  } > ram
 
+ .heap (NOLOAD): {
+ 	. = ALIGN(8);
+	__heap_start = .;
+	. = . + HEAP_SIZE;
+	. = ALIGN(8);
+	__heap_end = .;
+ } > ram
 
 }

@@ -19,17 +19,24 @@
 
 //-----------------Variable Protos-------------------
 
+	static bool funcCmp(const char *s1, const char *s2);
+	static void runCMD(shFunc_t func, char *buffer);
+
 	const result_t const (* const shFunctions[])();
 	const char* const shFuncNames[];
 	const char* const shErrors[];
 	const uint8_t const shFuncLen[];
 
-	static bool funcCmp(const char *s1, const char *s2);
-	static void runCMD(shFunc_t func, char *buffer);
+
+	FATFS *fsMounts[4];
+	uint8_t numMounts;
+	uint8_t currentDisk;
 
 //-----------------------Main------------------------
 
 void shellBegin(void){
+	numMounts = 0;
+	currentDisk = 0;
 	static char shellBuff[SHBUFFLEN];
 	char *shParse;
 	puts("NotArtyom 02/11/18");
@@ -130,6 +137,7 @@ const result_t const (* const shFunctions[])() = {
 	shfunc_mkdir,
 	shfunc_mon,
 	shfunc_mount,
+	shfunc_fputs,
 	NULL
 };
 
@@ -144,6 +152,7 @@ const char* const shFuncNames[] = {
 	"mkdir ",
 	"mon ",
 	"mount ",
+	"fputs ",
 	NULL
 };
 
@@ -157,6 +166,7 @@ const uint8_t const shFuncLen[] = {
 	2,
 	5,
 	3,
+	5,
 	5,
 	NULL
 };

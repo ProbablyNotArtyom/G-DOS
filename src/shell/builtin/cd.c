@@ -15,8 +15,11 @@
 //---------------------------------------------------
 
 result_t shfunc_cd(char *argv[], int argc){
-	#ifdef debug
-		puts("shFunc_call: cd");
-	#endif
+	if (argc == 0) return RET_ARGS;
+
+	f_error res;
+	res = f_chdir(argv[0]);
+	fs_putsError(res);
+
 	return RET_OK;
 }

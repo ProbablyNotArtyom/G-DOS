@@ -88,6 +88,7 @@ int main(void){
 	puts(CUSTOM_SPLASH);
 	#endif
 	fputs(b_opts);
+
 	register char tmp;
 	while(true){
 		do {

@@ -43,6 +43,8 @@ void keyboardTest(){
 
 void gdos(void){
 
+	
+
 	shellBegin();
 
 	puts("End.");
