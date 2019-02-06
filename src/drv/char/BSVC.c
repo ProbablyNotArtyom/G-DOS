@@ -13,6 +13,7 @@
 	#include <std.h>
 	#include <stdbool.h>
 	#include <char.h>
+	#include <mod/init.h>
 	#include "BSVC.h"
 
 //--------------------Functions----------------------
@@ -45,5 +46,7 @@ charResult bsvc_dev_init(){
 		"move.b	#0b00000101, 0x00EFFC05"
 	);
 }
+
+early_initcall(bsvc_dev_init);
 
  #endif

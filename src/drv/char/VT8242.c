@@ -14,17 +14,18 @@
 	#include <stdbool.h>
 	#include <char.h>
 	#include <keycodes.h>
+	#include <mod/init.h>
 	#include "VT8242.h"
 
 //---------------------------------------------------
 
 uint8_t key_mode;
+uint8_t state;
 
 //--------------------Functions----------------------
 
 char vt8242_dev_read(){
 	uint8_t register chr;
-	uint8_t register state = 0;
 	uint8_t register tmp;
 	while (true){
 		vt8242_dev_wait_out();
@@ -57,13 +58,13 @@ char vt8242_dev_read(){
 
 			if (tmp == 0x58) {
 				key_mode ^= KEY_MODE_CAPSLOCK;
-				vt8242_dev_set_leds(0x04);
+				vt8242_dev_set_leds(key_mode);
 			} else if (tmp == 0x77) {
 				key_mode ^= KEY_MODE_NUMLOCK;
-				vt8242_dev_set_leds(0x02);
+				vt8242_dev_set_leds(key_mode);
 			} else if (tmp == 0x7E) {
 				key_mode ^= KEY_MODE_SCROLLLOCK;
-				vt8242_dev_set_leds(0x01);
+				vt8242_dev_set_leds(key_mode);
 			}
 
 			chr = 0;
@@ -89,6 +90,8 @@ char vt8242_dev_read(){
 			} else {
 				if (tmp < PS2_KEYMAP_SIZE) chr = ps2_keymap[tmp];
 			}
+
+			if (key_mode & KEY_MODE_CAPSLOCK) chr = (char)toUpper(chr);
 
 			state &= ~(SCAN_MODE_BREAK | SCAN_MODE_MODIFIER);
 			if (chr != 0) {
@@ -146,6 +149,7 @@ charResult vt8242_dev_init(){
 
 	vt8242_dev_flush();
 	key_mode = 0x00;
+	state = 0x00;
 	return CH_OK;
 }
 
@@ -191,6 +195,6 @@ void vt8242_dev_set_leds(uint8_t leds){
 	if (VT8242_DATA_READ(DEV_VT8242_BASE) != KBRSP_ACK) return;
 }
 
-//device_initcall(vt8242_dev_init);
+device_initcall(vt8242_dev_init);
 
  #endif

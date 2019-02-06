@@ -74,14 +74,14 @@ static void do_initcall_level(int level){
 static void do_initcalls(void){
 	int level;
 
-	for (level = 0; level <  ARRAY_SIZE(initcall_levels) - 1; level++){
+	for (level = 1; level <  ARRAY_SIZE(initcall_levels) - 1; level++){
 		printf("Running initcall level: %s\n\r", initcall_level_names[level]);
 		do_initcall_level(level);
 	}
 }
 
 int main(void){
-	tty_init();
+	do_initcall_level(0);
 	do_initcalls();
 	puts(b_logo);
 	#ifdef CUSTOM_SPLASH

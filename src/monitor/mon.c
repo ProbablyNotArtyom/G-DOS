@@ -10,6 +10,7 @@
 	#include <stdarg.h>
 	#include <stdbool.h>
 	#include <std.h>
+	#include <io.h>
 
 	#include "mon.h"
 
@@ -168,7 +169,7 @@ static enum errList deposit(){
 	char *ptr = current_addr;
 	skipBlank();
 	while (*parse != '\0'){								// Keep reading in arguments until we hit the end of input
-		*ptr++ = strToHEX();							// Take those arguments and store them to memory in succesion
+		outb(strToHEX(), ptr++);						// Take those arguments and store them to memory in succesion
 		skipBlank();
 	}
 	return errNONE;										// Return error free
@@ -181,13 +182,13 @@ static void read_range(char *ptr,char *end){
 		while (ptr <= end){								// Continue until we've reached the end of the range
 			int i;
 			if (ptr <= end){
-				fputs("\r\n   ");							// Then set up a new line
+				fputs("\r\n ");							// Then set up a new line
 				column = 0;									// And print out the location header
 				printLong(ptr);
 				fputs(" | ");
 			}
 			while (column < 16 && ptr <= end){
-				printByte(*ptr++);							// Print data byte at this address
+				printByte(inb(ptr++));							// Print data byte at this address
 				putc(' ');									// Space between bytes
 				column++;									// Increase our column number
 			}
@@ -195,7 +196,7 @@ static void read_range(char *ptr,char *end){
 			fputs("| ");
 			addrBuff = ptr - column;
 			for (i = 0; i < column; addrBuff++){
-				if (*addrBuff >= 0x20) putc(*addrBuff);
+				if (*addrBuff >= 0x20 && *addrBuff < 0x7F) putc(*addrBuff);
 				else putc('.');
 				i++;
 			}
@@ -204,7 +205,7 @@ static void read_range(char *ptr,char *end){
 		fputs("\r\n   ");									// Then set up a new line
 		printLong(ptr);
 		fputs(" | ");
-		printByte(*ptr);
+		printByte(inb(ptr));
 	}
 }
 
@@ -236,10 +237,10 @@ static enum errList copy(){
 	getArg(dest);
 
 	if (dest <= ptr) {									// If the destination is below the source in memory,
-		while (ptr <= end) *dest++ = *ptr++;			// then copy it starting at the beginning
+		while (ptr <= end) outb(*ptr++, dest++);		// then copy it starting at the beginning
 	} else {
 		dest += end - ptr;								// If the destination is above the start of the source,
-		while (end >= ptr) *dest-- = *end--;			// then copy starting at the end of the source
+		while (end >= ptr) outb(*end--, dest--);		// then copy starting at the end of the source
 	}													// This is done to avoid overwriting the source before we can copy it
 
 	return errNONE;										// Return error free
@@ -259,14 +260,14 @@ static enum errList move(){
 
 	if (dest <= ptr) {									// If the destination is below the source in memory,
 		while (ptr <= end){
-			*dest++ = *ptr;								// then copy it starting at the beginning
-			*ptr++ = NULL;
+			outb(*ptr, dest++);						// then copy it starting at the beginning
+			outb(NULL, ptr++);
 		}
 	} else {
 		dest += end - ptr;								// If the destination is above the start of the source,
 		while (end >= ptr){
-			*dest-- = *end;								// then copy starting at the end of the source
-			*end-- = NULL;
+			outb(*end, dest--);						// then copy starting at the end of the source
+			outb(NULL, end--);
 		}
 	}													// This is done to avoid overwriting the source before we can copy it
 
@@ -286,7 +287,7 @@ static enum errList fill(){
 	}
 	getArg(val);
 
-	while (ptr <= end) *ptr++ = val;					// Set every byte from *ptr to *end to the pattern in val
+	while (ptr <= end) outb(val, ptr++);				// Set every byte from *ptr to *end to the pattern in val
 	return errNONE;										// Return error free
 }
 

@@ -41,6 +41,7 @@ char avrptos_dev_read(void){
 }
 
 charResult avrptos_dev_init(){
+	avrptos_dev_write('\r');
 	avrptos_dev_write('\n');
 	return CH_OK;		// Dummy
 }
