@@ -13,9 +13,6 @@
 
 //---------------------------------------------------
 
-#define CONFIG_DEV_VT8242
-#define DEV_VT8242_BASE 0x00300060
-
 #define CONFIG_DEV_RAMDISK
 #define CONFIG_DEV_BSVCSERIAL
 

@@ -1,6 +1,5 @@
-
-SOURCES := $(shell find . -maxdepth 1 -name '*.c')
-SOURCES += $(shell find . -maxdepth 1 -name '*.S')
+SOURCES := $(shell find `pwd` -maxdepth 1 -iname '*.c')
+SOURCES += $(shell find `pwd` -maxdepth 1 -iname '*.S')
 OBJECTS := $(SOURCES:%.c=%.o)
 OBJECTS := $(OBJECTS:%.S=%.o)
 ARCHNAME := drv
@@ -8,7 +7,7 @@ SUBDIRS = char isa
 
 all: clean
 	make objects
-	$(AR) Prvs $(ARCHNAME).a $(OBJECTS) fatROM
+	$(AR) Prvs $(ARCHNAME).a $(OBJECTS)
 	cp $(ARCHNAME).a $(BINDIR)
 	for dir in $(SUBDIRS); do \
 		$(MAKE) -C $$dir -f Makefile $@; \

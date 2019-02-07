@@ -1,11 +1,10 @@
-
-SOURCES := $(shell find . -maxdepth 1 -name '*.c')
-SOURCES += $(shell find . -maxdepth 1 -name '*.S')
+SOURCES := $(shell find `pwd` -maxdepth 1 -iname '*.c')
+SOURCES += $(shell find `pwd` -maxdepth 1 -iname '*.S')
 OBJECTS := $(SOURCES:%.c=%.o)
 OBJECTS := $(OBJECTS:%.S=%.o)
 ARCHNAME = lib
 
-SUBDIRS = 
+SUBDIRS =
 
 all:
 	make objects
@@ -22,7 +21,7 @@ clean:
 		$(MAKE) -C $$dir -f Makefile $@; \
 	done
 
-objects: 
+objects:
 	for file in $(SOURCES); do \
 		$(CC) $(CCFLAGS) -c $$file; \
-	done 
+	done

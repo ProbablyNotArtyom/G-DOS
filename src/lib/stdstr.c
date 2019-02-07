@@ -93,14 +93,14 @@ int isDigit(int val){
 
 int toUpper(int val){
 	if ((val >= 'a') && (val <= 'z')){
-		return (val + 0x20);
+		return (val - 0x20);
 	}
 	return val;
 }
 
 int toLower(int val){
 	if ((val >= 'A') && (val <= 'Z')){
-		return (val - 0x20);
+		return (val + 0x20);
 	}
 	return val;
 }

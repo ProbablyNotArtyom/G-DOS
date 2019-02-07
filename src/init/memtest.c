@@ -13,7 +13,9 @@ void do_memtest(size_t low, size_t high){
 		fputs("\r\nAddress: 0x");
 		printLong(scan);
 		fputs("      Wrote: 0x00");
-		for (uint8_t i = 0; i < 0xFF; i++){
+		uint8_t i = 0xFF;
+		do {
+			i++;
 			outb(i, scan);
 			tmp = inb(scan);
 			if (tmp != i){
@@ -30,7 +32,7 @@ void do_memtest(size_t low, size_t high){
 				fputs("\b\b");
 				printByte(i);
 			}
-		}
+		} while (i < 0xFF);
 		scan++;
 	}
 }

@@ -84,7 +84,7 @@ charResult isa_cga_dev_init(){
 
 	isa_io_outb(0x00, CGA_REG_MODE_CTL);
 
-	/* init CGA card registers to PC BIOS defaults for 40x25 text mode*/
+	/* init CGA card registers to PC BIOS defaults for 80x25 text mode*/
 	isa_io_outb(CGA_INDEX_HORIZ_TOTAL, CGA_REG_INDEX);
 	isa_io_outb(0x71, CGA_REG_DATA);
 	isa_io_outb(CGA_INDEX_HORIZ_DISP, CGA_REG_INDEX);

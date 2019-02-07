@@ -99,17 +99,6 @@ char vt8242_dev_read(){
 			}
 		}
 	}
-
-	/*
-	if (tmp == 0xE0) valid = false;
-	else if (tmp == 0xF0) {
-		vt8242_dev_flush();
-		return NULL;
-	}
-	else if (valid == true) return scancode_to_ascii(tmp);
-
-	return NULL;
-	*/
 }
 
 charResult vt8242_dev_init(){
@@ -148,7 +137,10 @@ charResult vt8242_dev_init(){
 	}
 
 	vt8242_dev_flush();
+
 	key_mode = 0x00;
+	vt8242_dev_set_leds(key_mode);
+
 	state = 0x00;
 	return CH_OK;
 }
