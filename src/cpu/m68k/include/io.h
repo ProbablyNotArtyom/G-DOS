@@ -20,8 +20,8 @@
 #define outl(val, addr)		((*(__force volatile uint32_t *) (addr)) = (val))
 
 #define inb(addr)			({ uint8_t __v = (*(__force volatile uint8_t *) (addr)); __v; })
-#define inw(addr)			({ uint8_t __v = (*(__force volatile uint16_t *) (addr)); __v; })
-#define inl(addr)			({ uint8_t __v = (*(__force volatile uint32_t *) (addr)); __v; })
+#define inw(addr)			({ uint16_t __v = (*(__force volatile uint16_t *) (addr)); __v; })
+#define inl(addr)			({ uint32_t __v = (*(__force volatile uint32_t *) (addr)); __v; })
 
 //---------------------------------------------------
 

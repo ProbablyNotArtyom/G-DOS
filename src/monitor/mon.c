@@ -30,6 +30,8 @@ static enum errList sirpinski();
 static enum errList memmod();
 static enum errList echo();
 static enum errList echo_fmt();
+static enum errList delay_arb();
+static enum errList brot();
 
 //----------------------Tables-----------------------
 
@@ -46,6 +48,8 @@ enum errList const (* const funcTable[])() = {
 	memmod,
 	echo,
 	echo_fmt,
+	delay_arb,
+	brot,
 	NULL
 };
 
@@ -62,6 +66,8 @@ const char* const funcNames[] = {
 	"@.",
 	"echo ",
 	"printf ",
+	"delay ",
+	"brot ",
 	"\0"
 };
 
@@ -109,7 +115,6 @@ void monBegin(){
 		parse = inBuffer;							// Set the parse pointer to the beginning of the buffer
 		gets(inBuffer, BUFFLEN);					// Get user input
 		skipBlank();								// Skip and leading spaces
-		setCurrents();
 		if (!isEOI()){
 			puts("");
 			numLoops = 1;
@@ -146,8 +151,10 @@ bool gmon_do_cmd(uint8_t num){
 		skipBlank();
 		for (i = 0; funcCmp(parse, funcNames[i]) == false && i < ARRAY_SIZE(funcNames)-1; i++);	// Identify what function it is
 		if (i == ARRAY_SIZE(funcNames)-1) {
-			throw(errUNDEF);			// If none matches, complain
-			return false;
+			if (setCurrents() == false){
+				throw(errUNDEF);			// If none matches, complain
+				return false;
+			}
 		} else {
 			skipToken();							// Skip over the function name itself
 			if (throw((*funcTable[i])()) != errNONE) return false;
@@ -168,14 +175,18 @@ static enum errList exit(){
 static enum errList deposit(){
 	char *ptr = current_addr;
 	skipBlank();
-	while (*parse != '\0'){								// Keep reading in arguments until we hit the end of input
-		outb(strToHEX(), ptr++);						// Take those arguments and store them to memory in succesion
-		skipBlank();
+	if (isCurrentVar){
+		outl(strToHEX(), ptr);
+	} else {
+		while (*parse != '\0'){							// Keep reading in arguments until we hit the end of input
+			outb(strToHEX(), ptr++);					// Take those arguments and store them to memory in succesion
+			skipBlank();
+		}
 	}
 	return errNONE;										// Return error free
 }
 
-static void read_range(char *ptr,char *end){
+static void read_range(char *ptr,char *end, char size){
 	if (end != NULL){									// If we hit a range identifier...
 		uint8_t column;									// Create something to track how many columns have been printed so far
 		char *addrBuff;
@@ -183,7 +194,7 @@ static void read_range(char *ptr,char *end){
 			int i;
 			if (ptr <= end){
 				fputs("\r\n ");							// Then set up a new line
-				column = 0;									// And print out the location header
+				column = 0;								// And print out the location header
 				printLong(ptr);
 				fputs(" | ");
 			}
@@ -205,7 +216,8 @@ static void read_range(char *ptr,char *end){
 		fputs("\r\n   ");									// Then set up a new line
 		printLong(ptr);
 		fputs(" | ");
-		printByte(inb(ptr));
+		if (size == 'l') printLong(inl(ptr));
+		else printByte(inb(ptr));
 	}
 }
 
@@ -214,11 +226,18 @@ static enum errList view(){
 	char *ptr, *end;									// Create start and end pointers
 	if (!isEOI()){
 		while(*parse != '\0'){
-			getRange(ptr, end);
-			read_range(ptr, end);
+			skipBlank();
+			if (isVar()){
+				read_range(getMonVar(*parse), 0x00000000, 'l');
+				parse++;
+			} else {
+				if (!getRange(&ptr, &end)) return errSYNTAX;
+				read_range(ptr, end, 'b');
+			}
 		}
 	} else {
-		read_range(current_addr, end_addr);
+		if (isCurrentVar) read_range(current_addr, end_addr, 'l');
+		else read_range(current_addr, end_addr, 'b');
 	}
 
 	return errNONE;										// Return error free
@@ -229,7 +248,7 @@ static enum errList copy(){
 	char *ptr, *end, *dest;								// Create pointers for start, end, and destination of block
 
 	if (isRange()){
-		getRange(ptr, end);
+		if (!getRange(&ptr, &end)) return errSYNTAX;
 	} else {
 		ptr = current_addr;
 		end = end_addr;
@@ -251,7 +270,7 @@ static enum errList move(){
 	char *ptr, *end, *dest;								// Create pointers for start, end, and destination of block
 
 	if (isRange()){
-		getRange(ptr, end);
+		if (!getRange(&ptr, &end)) return errSYNTAX;
 	} else {
 		ptr = current_addr;
 		end = end_addr;
@@ -280,7 +299,7 @@ static enum errList fill(){
 	uint8_t val;										// The fill pattern itself
 
 	if (isRange()){
-		getRange(ptr, end);
+		if (!getRange(&ptr, &end)) return errSYNTAX;
 	} else {
 		ptr = current_addr;
 		end = end_addr;
@@ -295,7 +314,7 @@ static enum errList fill(){
 static enum errList execute(){
 	void (*ptr)(void);
 	if (!isEOI()){
-		ptr = strToHEX();
+		getArg(ptr);
 	} else {
 		ptr = current_addr;
 	}
@@ -313,7 +332,7 @@ static enum errList memmod(){
 	parse++;
 	skipBlank();
 
-	if (isAddr()){
+	if (isArg()){
 		getArg(ptr);
 	} else {
 		ptr = current_addr;
@@ -427,5 +446,24 @@ static enum errList sirpinski(){
 
 static enum errList help(){
 	puts(helpText);
+	return errNONE;
+}
+
+static enum errList delay_arb(){
+	uint32_t arg;
+	if (isEOI()){
+		arg = 0xFFFF;
+	} else {
+		getArg(arg);
+	}
+	delay(arg);
+	return errNONE;
+}
+
+static enum errList brot(){
+	int n = 0;
+	float r,i,R,I,b;
+	for(i=-1;i<1;i+=.06,puts(""))for(r=-2;I=i,(R=r)<1;
+	r+=.040,putc(n+31))for(n=0;b=I*I,26>n++&&R*R+b<4;I=2*R*I+i,R=R*R-b+r);
 	return errNONE;
 }

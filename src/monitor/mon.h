@@ -29,29 +29,8 @@
 	#define getArg(var)						\
 				if (*skipBlank() == '\0')	\
 					return errNOARGS;		\
-				var = (void*)strToHEX();
-
-	#define getRange(lower, upper)			\
-				(*skipBlank() == '\0');		\
-				if (isAddr()) lower = strToHEX(); \
-				else if (*parse == '.' || *parse == ',') lower = current_addr; \
-				else return errSYNTAX;		\
-				if (*parse == '.'){			\
-					parse++;				\
-					skipBlank();			\
-					ifEOI(errNOARGS);		\
-					if (!isAddr()) return errSYNTAX; \
-					upper = strToHEX();		\
-				}							\
-				else if (*parse == ','){			\
-					parse++;				\
-					skipBlank();			\
-					ifEOI(errNOARGS);		\
-					if (!isAddr()) return errSYNTAX; \
-					upper = (strToHEX() + (uint32_t)lower);		\
-				} else {										\
-					upper = NULL;								\
-				}
+				if (isVar()) var = (void*)getMonVar(*parse++); \
+				else var = (void*)strToHEX();
 
 static enum errList {
 		errNONE,
@@ -70,8 +49,10 @@ extern const char* const errors[];
 extern const char const hexTable[];
 extern const char const helpText[];
 
+extern bool isCurrentVar;
+
 void evalScript();
-void setCurrents();
+bool setCurrents();
 bool isAddr();
 bool isRange();
 char* skipBlank();
@@ -80,6 +61,9 @@ char* skipHex();
 bool funcCmp(const char *s1, const char *s2);
 ADDRSIZE strToHEX();
 enum errList throw(enum errList index);
+uint32_t *getMonVar(char var);
+void setMonVar(char var, uint32_t val);
+bool getRange(void **lower, void **upper);
 
 //---------------------------------------------------
 

@@ -15,6 +15,7 @@
 #define CUSTOM_SPLASH	blitz_splash
 
 #define CONFIG_DEV_ISA_CGA
+#define CONFIG_DEV_ISA_ADLIB
 #define DEV_ISA_MEM_START	0x00100000
 #define DEV_ISA_IO_START	0x00300000
 

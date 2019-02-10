@@ -20,6 +20,11 @@ extern char* parse;
 extern char *current_addr;
 extern char *end_addr;
 
+extern uint32_t mon_vars[];
+
+uint32_t mon_vars[6];
+bool isCurrentVar;
+
 //---------------------------------------------------
 
 bool isRange(){
@@ -29,16 +34,21 @@ bool isRange(){
 	return true;
 }
 
-void setCurrents(){
-	if (isAddr()){
-		current_addr = strToHEX();
-		skipBlank();
-		if (!(*parse == '.' || *parse == ',')) end_addr = NULL;
-	}
-	if ((*parse == '.' || *parse == ',')){
-		getRange(current_addr, end_addr);
-		skipBlank();
-	}
+bool isVar(){
+	if (isLower(*parse) && (*(parse+1) == ' ' || !isAlnum(*(parse+1)))) return true;
+	return false;
+}
+
+bool isArg(){
+	return (isVar() || isAddr());
+}
+
+bool setCurrents(){
+	skipBlank();
+	if (isVar()) isCurrentVar = true;
+	else if (isAddr()) isCurrentVar = false;
+
+	return getRange(&current_addr, &end_addr);
 }
 
 char* skipBlank(){
@@ -99,4 +109,50 @@ enum errList throw(enum errList index){
 void evalScript(){
 
 
+}
+
+uint32_t *getMonVar(char var){
+	if (isLower(var)){
+		return &mon_vars[ (var - 0x60) ];
+	} else {
+		return 0x00000000;
+	}
+}
+
+void setMonVar(char var, uint32_t val){
+	if (isAscii(var) && isLower(var)){
+		mon_vars[ var & 0x00011111 ] = val;
+	} else {
+		return;
+	}
+}
+
+bool getRange(void **lower, void **upper){
+	skipBlank();
+	if (isAddr()){
+		*lower = strToHEX();
+	} else if (isVar()){
+		*lower = getMonVar(*parse);
+	} else if (*parse == '.' || *parse == ','){
+		*lower = current_addr;
+	} else {
+		return false;
+	}
+	if (isCurrentVar == false && (*parse == '.' || *parse == ',')){
+		char tmp = *parse;
+		parse++;
+		skipBlank();
+		ifEOI(errNOARGS);
+		if (!isAddr()) return errSYNTAX;
+		if (tmp == '.')
+			*upper = strToHEX();
+		else
+			*upper = (strToHEX() + (uint32_t)*lower);
+	} else {
+		if (*parse != ' ' || *parse != '\0'){
+			skipToken();
+		}
+		*upper = NULL;
+	}
+	return true;
 }
