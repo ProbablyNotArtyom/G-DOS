@@ -98,7 +98,7 @@ static void memtest_start(){
 		test_end = strtoul(chBuff, NULL, 16);
 
 	fputs("\r\n[?] Intense (y/n) : ");
-	do_memtest(test_start, test_end, read());
+	do_memtest(test_end, test_start, read());
 }
 
 int main(void){
