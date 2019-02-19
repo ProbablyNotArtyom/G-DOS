@@ -67,6 +67,7 @@ void printWord(uint16_t num);
 void printLong(uint32_t num);
 void *memset(void *s, int c, size_t n);
 void *malloc(size_t size);
+void *pmalloc(size_t size);
 int strcmp(const char *s1, const char *s2);
 int strcmpl(const char *s1, const char *s2, int len);
 size_t strlen (const char *str);

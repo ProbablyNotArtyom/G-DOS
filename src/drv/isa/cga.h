@@ -12,14 +12,6 @@
 
 //---------------------------------------------------
 
-#define cga_mem_vtor(addr)		DEV_ISA_MEM_START + addr
-#define cga_io_vtor(addr)		DEV_ISA_IO_START + addr
-
-#define isa_io_outb(val, addr)		outb(val, cga_io_vtor(addr))
-#define isa_io_inb(addr)			inb( cga_io_vtor(addr))
-#define isa_mem_outb(val, addr)		outb(val, cga_mem_vtor(addr))
-#define isa_mem_inb(addr)			inb( cga_mem_vtor(addr))
-
 #define CGA_REG_INDEX			0x03D4
 #define CGA_REG_DATA			0x03D5
 #define CGA_REG_MODE_CTL		0x03D8

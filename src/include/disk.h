@@ -55,8 +55,8 @@
 struct dev_disk {
 	diskStatus (*init)(uint8_t drive);
 	diskStatus (*status)(uint8_t drive);
-	diskResult (*write)(uint8_t drive, const uint8_t *buff, uint32_t sector, int len);
-	diskResult (*read)(uint8_t drive, uint8_t *buff, uint32_t sector, int len);
+	diskResult (*write)(uint8_t drive, const uint8_t *buff, uint32_t sector, uint8_t len);
+	diskResult (*read)(uint8_t drive, uint8_t *buff, uint32_t sector, uint8_t len);
 	diskResult (*ioctl)(uint8_t drive, uint8_t cmd, void *buff);
 };
 

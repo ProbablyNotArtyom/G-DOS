@@ -1,5 +1,5 @@
 // BUILTIN
-// LS
+// PICO editor
 //---------------------------------------------------
 
 	#include <stddef.h>
@@ -14,7 +14,7 @@
 
 //---------------------------------------------------
 
-result_t shfunc_ls(char *argv[], int argc){
+result_t shfunc_pico(char *argv[], int argc){
 
 	f_error res;
     f_dir dir;

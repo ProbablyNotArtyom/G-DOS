@@ -12,6 +12,7 @@
 	#include <std.h>
 	#include <io.h>
 
+	#include <keycodes.h>
 	#include "mon.h"
 
 //---------------------------------------------------
@@ -78,7 +79,8 @@ const char* const errors[] = {
 	"\n\r?Unexpected arguments",
 	"\n\r!Unexpected end of input",
 	"\n\r!Invalid hex",
-	"\n\r?Invalid range"
+	"\n\r?Invalid range",
+	"\n\r!Break"
 };
 
 const char const hexTable[] = "0123456789ABCDEF";
@@ -130,8 +132,13 @@ void monBegin(){
 			for (char *tmp = parse; *tmp != '\0'; tmp++) if (*tmp == ';') numCMDs += 1;
 			while (numLoops > 0){
 				gmon_do_cmd(numCMDs);
-				numLoops--;
-				parse = cmdStart;
+				if (peek() == PS2_ESC) {
+					throw(errBREAK);
+					numLoops = 0;
+				} else {
+					numLoops--;
+					parse = cmdStart;
+				}
 			}
 		} else {
 			puts("");
@@ -202,6 +209,7 @@ static void read_range(char *ptr,char *end, char size){
 				printByte(inb(ptr++));							// Print data byte at this address
 				putc(' ');									// Space between bytes
 				column++;									// Increase our column number
+				queryBreak();
 			}
 			for (i = column; i < 16; i++) fputs("   ");
 			fputs("| ");

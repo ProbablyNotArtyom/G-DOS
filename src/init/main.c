@@ -80,6 +80,27 @@ static void do_initcalls(void){
 	}
 }
 
+static void memtest_start(){
+	size_t test_start, test_end;
+	char chBuff[9];					// Buffer for ascii input
+	fputs("\r\n[?] Start address : 0x");
+	gets(chBuff, 9);
+	if (chBuff[0] == '\r')
+		test_start = &_end;
+	else
+		test_start = strtoul(chBuff, NULL, 16);
+
+	fputs("\r\n[?] End address : 0x");
+	gets(chBuff, 9);
+	if (chBuff[0] == '\r')
+		test_end = RAMEND;
+	else
+		test_end = strtoul(chBuff, NULL, 16);
+
+	fputs("\r\n[?] Intense (y/n) : ");
+	do_memtest(test_start, test_end, read());
+}
+
 int main(void){
 	do_initcall_level(0);
 	do_initcalls();
@@ -87,27 +108,28 @@ int main(void){
 	#ifdef CUSTOM_SPLASH
 	puts(CUSTOM_SPLASH);
 	#endif
-	fputs(b_opts);
 
 	register char tmp;
 	while(true){
+		fputs(b_opts);
 		do {
 			tmp = read();
 		} while (tmp == NULL);
 		switch (tmp){
 			case '0':
 				puts("");
-				do_memtest(&_end, RAMEND);
+				memtest_start();
+				break;
 			case '1':
+			default:
 				puts("");
 				gdos();
+				break;
 			case '2':
-			case '\r':
-			case '\n':
 				puts("");
 				monBegin();
+				break;
 			case '3':
-				while (1);
 				break;
 		}
 	}
@@ -125,8 +147,8 @@ const char const b_opts[] =
 	" G'DOS Booter Menu\r\n"
 	"=============================================\r\n"
 	"  0)  RAM Test\r\n"
-	"  1)  Shell\r\n"
-	"  2)  G'mon  (default)\r\n"
+	"  1)  Shell  (default)\r\n"
+	"  2)  G'mon\r\n"
 	"  3)  Exit\r\n"
 	"=============================================\r\n"
 	"> ";

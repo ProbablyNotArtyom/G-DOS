@@ -15,6 +15,8 @@
 	#include <char.h>
 	#include <io.h>
 	#include <mod/init.h>
+
+	#include "isa.h"
 	#include "cga.h"
 
 //---------------------------------------------------

@@ -79,7 +79,9 @@ struct vt8242_regs {
 
 //-----------------Function Protos-------------------
 
+char vt8242_dev_peek();
 char vt8242_dev_read();
+char vt8242_dev_getKey();
 charResult vt8242_dev_init();
 void vt8242_dev_flush();
 void vt8242_dev_wait_out();

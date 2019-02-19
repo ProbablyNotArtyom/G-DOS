@@ -46,7 +46,7 @@
 /* This option switches fast seek function. (0:Disable or 1:Enable) */
 
 
-#define FF_USE_EXPAND	0
+#define FF_USE_EXPAND	1
 /* This option switches f_expand function. (0:Disable or 1:Enable) */
 
 
@@ -167,8 +167,10 @@
 /* Number of volumes (logical drives) to be used. (1-10) */
 
 
-#define FF_STR_VOLUME_ID	1
-#define FF_VOLUME_STRS		"C", "D", "E", "F"
+#define FF_STR_VOLUME_ID	2
+#ifndef FF_VOLUME_STRS
+#define FF_VOLUME_STRS		"hd0", "hd1", "fd0", "fd1"
+#endif
 /* FF_STR_VOLUME_ID switches support for volume ID in arbitrary strings.
 /  When FF_STR_VOLUME_ID is set to 1 or 2, arbitrary strings can be used as drive
 /  number in the path name. FF_VOLUME_STRS defines the volume ID strings for each

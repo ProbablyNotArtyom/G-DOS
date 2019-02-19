@@ -5,8 +5,8 @@ PROVIDE (memEnd = 0);
 
 MEMORY
 {
-  vectors (rx) : ORIGIN = 0x0000, LENGTH = 0x4213
-  rom (rx) : ORIGIN = 0x4214, LENGTH = 0x80000-0x4214
+  vectors (rx) : ORIGIN = 0x0000, LENGTH = 0x1FF
+  rom (rx) : ORIGIN = 0x200, LENGTH = 0x80000-0x200
   ram (rwx) : ORIGIN = 0x04000000, LENGTH = 0x00100000
 }
 

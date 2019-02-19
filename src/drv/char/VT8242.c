@@ -24,7 +24,15 @@ uint8_t state;
 
 //--------------------Functions----------------------
 
+char vt8242_dev_peek(){
+	return NULL;
+}
+
 char vt8242_dev_read(){
+	return vt8242_dev_getKey();
+}
+
+char vt8242_dev_getKey(){
 	uint8_t register chr;
 	uint8_t register tmp;
 	while (true){
@@ -140,7 +148,7 @@ charResult vt8242_dev_init(){
 
 	key_mode = 0x00;
 	vt8242_dev_set_leds(key_mode);
-
+	vt8242_dev_flush();
 	state = 0x00;
 	return CH_OK;
 }

@@ -47,7 +47,7 @@ void mm_init(){
 	num_allocs = 0;
 }
 
-void* malloc(size_t bytes) {
+void* malloc(size_t bytes){
 	unsigned int index = 0;
 	while (index < MAX_ALLOCS){
 		if (allocs[index].used == false && allocs[index].length >= bytes){
@@ -73,7 +73,14 @@ void* malloc(size_t bytes) {
 
 }
 
-void free(void *ptr) {
+void* pmalloc(size_t bytes){
+	if (mm_heap_begin + bytes >= mm_heap_end)
+		return NULL;
+	mm_heap_begin += bytes;
+	return mm_heap_begin - bytes;
+}
+
+void free(void *ptr){
 	unsigned int index = 0;
 	while (index < MAX_ALLOCS){
 		if (allocs[index].address == ptr) {

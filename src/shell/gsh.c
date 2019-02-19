@@ -21,6 +21,7 @@
 
 	static bool funcCmp(const char *s1, const char *s2);
 	static void runCMD(shFunc_t func, char *buffer);
+	static void putsPrompt();
 
 	const result_t const (* const shFunctions[])();
 	const char* const shFuncNames[];
@@ -31,18 +32,33 @@
 	FATFS *fsMounts[4];
 	uint8_t numMounts;
 	uint8_t currentDisk;
+	bool sh_doExit;
 
 //-----------------------Main------------------------
 
 void shellBegin(void){
+	sh_doExit = false;
 	numMounts = 0;
 	currentDisk = 0;
 	static char shellBuff[SHBUFFLEN];
 	char *shParse;
 	puts("NotArtyom 02/11/18");
 	puts("G'DOS Shell\n\r");
-	while (true){
-		fputs("# ");					// very very temp
+
+#ifdef DISK_AUTOMOUNT
+	/* attempt to mount the default disk */
+	fsMounts[0] = malloc(sizeof(FATFS));
+	f_error res;
+	res = f_mount(fsMounts[0], DISK_AUTOMOUNT, 1);
+	if (res != FR_OK){
+		fs_putsError(res);
+		puts("[!] Default disk could not be mounted");
+	} else {
+		numMounts++;
+	}
+#endif
+	while (sh_doExit == false){
+		putsPrompt();
 		shParse = shellBuff;
 		gets(shellBuff, SHBUFFLEN);
 		while (isSpace(*shParse)) shParse++;
@@ -53,7 +69,7 @@ void shellBegin(void){
 			shParse += shFuncLen[i];
 			runCMD(*shFunctions[i], shParse);
 		} else {
-			runCMD(*shFunctions[i], shParse);
+			runCMD(NULL, shParse);
 		}
 	}
 }
@@ -73,6 +89,17 @@ static bool funcCmp(const char *s1, const char *s2){
 	}
 	if (*s1 == '\0' && *s2 == ' ') return true;
 	return false;
+}
+
+static void putsPrompt(){
+	f_error res;
+	char promptBuff[256];
+
+	fputs("(");
+	res = f_getcwd(promptBuff, sizeof(promptBuff));
+	if ((res == FR_OK) && (numMounts != 0))
+		fputs(promptBuff);
+	fputs("):> ");
 }
 
 static void runCMD(shFunc_t func, char *buffer){
@@ -119,9 +146,20 @@ static void runCMD(shFunc_t func, char *buffer){
 	if (func != NULL){
 		shThrow(func(arg, numArgs));
 	} else {
-		puts("Unimplemented function call.");
+		f_error res;
+		f_file file;
+
+		res = f_open(&file, arg[0], FA_READ);
+		fs_putsError(res);
+		if (res != FR_OK) return;
+		loadELF(arg, numArgs, &file);
 	}
 	return;
+}
+
+result_t shfunc_exit(char *argv[], int argc){
+	sh_doExit = true;
+	return RET_OK;
 }
 
 //----------------------Tables-----------------------
@@ -138,6 +176,9 @@ const result_t const (* const shFunctions[])() = {
 	shfunc_mon,
 	shfunc_mount,
 	shfunc_fputs,
+	shfunc_exit,
+	shfunc_mkfs,
+	shfunc_pico,
 	NULL
 };
 
@@ -153,6 +194,9 @@ const char* const shFuncNames[] = {
 	"mon ",
 	"mount ",
 	"fputs ",
+	"exit ",
+	"mkfs ",
+	"pico ",
 	NULL
 };
 
@@ -168,6 +212,9 @@ const uint8_t const shFuncLen[] = {
 	3,
 	5,
 	5,
+	4,
+	4,
+	4,
 	NULL
 };
 

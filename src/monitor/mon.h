@@ -32,6 +32,10 @@
 				if (isVar()) var = (void*)getMonVar(*parse++); \
 				else var = (void*)strToHEX();
 
+	#define queryBreak()					\
+				if (peek() == PS2_ESC)		\
+					return errBREAK;
+
 static enum errList {
 		errNONE,
 		errSYNTAX,
@@ -40,6 +44,7 @@ static enum errList {
 		errEND,
 		errHEX,
 		errBADRANGE,
+		errBREAK,
 		errDOEXIT
 };
 

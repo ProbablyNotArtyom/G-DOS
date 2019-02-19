@@ -12,15 +12,6 @@
 
 //---------------------------------------------------
 
-#define opl3_mem_vtor(addr)		DEV_ISA_MEM_START + addr
-#define opl3_io_vtor(addr)		DEV_ISA_IO_START + addr
-
-#define opl3_io_outb(val, addr)		outb(val, opl3_io_vtor(addr))
-#define opl3_io_inb(addr)			inb( opl3_io_vtor(addr))
-#define opl3_mem_outb(val, addr)		outb(val, opl3_mem_vtor(addr))
-#define opl3_mem_inb(addr)			inb( opl3_mem_vtor(addr))
-
-
 #define OPL3_REG_INDEX			0x388
 #define OPL3_REG_DATA			0x389
 #define OPL3_REG_SUB_INDEX		0x38A

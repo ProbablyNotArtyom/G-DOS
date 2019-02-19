@@ -10,7 +10,22 @@
 #ifndef _DEV_ISA_PATA_HEADER
 #define _DEV_ISA_PATA_HEADER
 
+#define PATA_TIMEOUT	0x2FFFFF
+#define	PATA_BASE		0x300
+
 //---------------------------------------------------
+
+#define pata_inb(addr)			inb( isa_io_vtor(addr))
+#define pata_outb(val, addr)	outb(val, isa_io_vtor(addr))
+#define pata_inw(addr)			inw( isa_io_vtor(addr))
+#define pata_outw(val, addr)	outw(val, isa_io_vtor(addr))
+
+#define pata_reg_outb(val, reg)	pata_outb(val, PATA_BASE+reg)
+#define pata_reg_inb(reg)		pata_inb(PATA_BASE+reg)
+#define pata_reg_outw(val, reg)	pata_outb((val >> 8), PATA_BASE+1); \
+								pata_outb((val & 0xFF), PATA_BASE)
+
+#define pata_reg_inw(reg)		(pata_inb(PATA_BASE) | (pata_inb(PATA_BASE+1) << 8))
 
 #define ATA_SR_BSY     0x80    // Busy
 #define ATA_SR_DRDY    0x40    // Drive ready
@@ -61,7 +76,7 @@
 
 #define ATA_MASTER     0x00
 #define ATA_SLAVE      0x01
-
+/*
 #define ATA_REG_DATA       0x00
 #define ATA_REG_ERROR      0x01
 #define ATA_REG_FEATURES   0x01
@@ -72,20 +87,44 @@
 #define ATA_REG_HDDEVSEL   0x06
 #define ATA_REG_COMMAND    0x07
 #define ATA_REG_STATUS     0x07
-#define ATA_REG_SECCOUNT1  0x08
-#define ATA_REG_LBA3       0x09
-#define ATA_REG_LBA4       0x0A
-#define ATA_REG_LBA5       0x0B
-#define ATA_REG_CONTROL    0x0C
-#define ATA_REG_ALTSTATUS  0x0C
-#define ATA_REG_DEVADDRESS 0x0D
+*/
+#define ATA_REG_DATA       0x00
+#define ATA_REG_ERROR      0x08
+#define ATA_REG_FEATURES   0x08
+#define ATA_REG_SECCOUNT0  0x02
+#define ATA_REG_LBA0       0x0A
+#define ATA_REG_LBA1       0x04
+#define ATA_REG_LBA2       0x0C
+#define ATA_REG_HDDEVSEL   0x06
+#define ATA_REG_COMMAND    0x0E
+#define ATA_REG_STATUS     0x0E
+
+#define FLAG_ATA_IS_EXIST	0x01
+#define FLAG_ATA_IS_INIT	0x02
+
+//---------------------------------------------------
+
+typedef struct {
+	uint8_t		exists;
+	uint8_t		dNum;
+	uint16_t	signature;
+	uint16_t	cylinders;
+	uint16_t	heads;
+	uint16_t	numSecsInTrack;
+	uint32_t	size;				// size in sectors
+} pata_dev;
 
 //-----------------Function Protos-------------------
 
 diskStatus pata_init(uint8_t drive);
 diskStatus pata_status(uint8_t drive);
-diskResult pata_write(uint8_t drive, const uint8_t *buff, uint32_t sector, int len);
-diskResult pata_read(uint8_t drive, uint8_t *buff, uint32_t sector, int len);
+diskResult pata_write(uint8_t drive, const uint8_t *buff, uint32_t sector, uint8_t len);
+diskResult pata_read(uint8_t drive, uint8_t *buff, uint32_t sector, uint8_t len);
 diskResult pata_ioctl(uint8_t drive, uint8_t cmd, void *buff);
+static bool pata_wait_bsy();
+static bool pata_wait_drq();
+static bool pata_wait_chk(uint8_t flag);
+static void pata_read_blk(uint16_t *buff);
+static void pata_write_blk(uint16_t *buff);
 
 #endif

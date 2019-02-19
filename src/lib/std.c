@@ -10,6 +10,7 @@
 	#include <std.h>
 	#include <stddef.h>
 	#include <stdarg.h>
+	#include <stdbool.h>
 
 //-----------------Variable Protos-------------------
 
@@ -46,33 +47,36 @@ void puts(char *str){
 }
 
 char *gets(char *buff, int len){
-	uint8_t chBuff;
 	register char *s = buff;
 	register int index = len;
-	while(index >= 2){
-		chBuff = read();
-		*s = chBuff;
-		if (chBuff == 0x7F && index == len);
-		else if (chBuff == 0x7F){
+	while (true){
+		*s = read();
+		if (*s == 0x7F && index == len);
+		else if (*s == 0x7F){
 			fputs("\b \b");
 			*s = NULL;
 			index++;
 			s--;
 		} else {
-			putc(chBuff);
-			if (chBuff == '\r') break;
-			s++;
-			index--;
+			if (index >= 2){
+				putc(*s);
+				if (*s == '\r') break;
+				s++;
+				index--;
+			} else if (*s == '\r') {
+				putc(*s);
+				break;
+			}
 		}
 	}
 	*s = NULL;
-	return buff;
+	return *buff;
 }
 
 char *sgets(char *buff, int len){
 	register char *s = buff;
 	register int index = len;
-	while(index >= 2){
+	while (index >= 2){
 		*s = read();
 		if (*s == 0x7F && index == len);
 		else if (*s == 0x7F){

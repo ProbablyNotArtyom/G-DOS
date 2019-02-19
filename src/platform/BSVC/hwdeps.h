@@ -16,6 +16,7 @@
 #define CONFIG_DEV_RAMDISK
 #define CONFIG_DEV_BSVCSERIAL
 
+#define peek bsvc_dev_peek
 #define putc bsvc_dev_write
 #define read bsvc_dev_read
 #define tty_init bsvc_dev_init

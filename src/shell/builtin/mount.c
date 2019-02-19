@@ -32,16 +32,9 @@ result_t shfunc_mount(char *argv[], int argc){
 		return RET_SYS;
 	}
 
-	f_file fil;            /* File object */
-    f_error res;        /* API result code */
-	uint8_t work[512];
-	res = f_mkfs("", FM_ANY | FM_FAT, 0, work, sizeof(work));
+    f_error res;
+	res = f_mount(fsMounts[numMounts], "", 1);
 	fs_putsError(res);
-
-	if (f_mount(fsMounts[numMounts], "", 1) != FR_OK){
-		puts("[!] Disk failed to mount; probably an invalid FAT filesystem");
-		return;
-	}
 
 	numMounts++;
 	puts("Disk mounted");

@@ -18,6 +18,16 @@
 
 //--------------------Functions----------------------
 
+char bsvc_dev_peek(){
+	char read = '\0';
+	asm("btst	#0x00, 0x00EFFC03\n\t"
+		"beq.s	%=f\n\t"
+		"move.b 0x00EFFC07, %[x]\n\t"
+		"%=:"
+		:[x] "=r" (read));
+	return read;
+}
+
 char bsvc_dev_read(){
 	char read;
 	asm("%=:\n\t"

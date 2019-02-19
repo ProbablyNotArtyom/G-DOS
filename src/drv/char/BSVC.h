@@ -12,6 +12,7 @@
 
 //-----------------Function Protos-------------------
 
+char bsvc_dev_peek();
 char bsvc_dev_read();
 charResult bsvc_dev_write(char out);
 charResult bsvc_dev_init();

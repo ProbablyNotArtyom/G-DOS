@@ -47,12 +47,12 @@ diskStatus disk_status(uint8_t drive){
 	return diskList[drive]->status(0);
 }
 
-diskResult disk_read(uint8_t drive, uint8_t* buff, uint32_t sector, uint32_t count){
+diskResult disk_read(uint8_t drive, uint8_t* buff, uint32_t sector, uint8_t count){
 	if (drive > numDisk) return RES_NOTRDY;
 	return diskList[drive]->read(0, buff, sector, count);
 }
 
-diskResult disk_write(uint8_t drive, const uint8_t* buff, uint32_t sector, uint32_t count){
+diskResult disk_write(uint8_t drive, const uint8_t* buff, uint32_t sector, uint8_t count){
 	if (drive > numDisk) return RES_NOTRDY;
 	return diskList[drive]->write(0, buff, sector, count);
 }
