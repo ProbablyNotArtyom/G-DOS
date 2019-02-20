@@ -26,6 +26,10 @@
 										// This routine is fast, but clobbers the entire VRAM as a result
 										// This should generally be enabled
 
+extern size_t _binary_img_dat_start;
+extern size_t _binary_img_dat_end;
+extern size_t _binary_img_dat_size;
+
 //---------------------------------------------------
 
 #define getCursor()			((vram_cursor_y * 80) + vram_cursor_x)
@@ -97,11 +101,11 @@ charResult isa_cga_dev_init(){
 	isa_io_outb(0x0A, CGA_REG_DATA);
 	isa_io_outb(CGA_INDEX_VERT_TOTAL, CGA_REG_INDEX);
 	isa_io_outb(0x1F, CGA_REG_DATA);
-	isa_io_outb(CGA_INDEX_VERT_DISP, CGA_REG_INDEX);
+	isa_io_outb(CGA_INDEX_VERT_TOTAL_ADJ, CGA_REG_INDEX);
 	isa_io_outb(0x06, CGA_REG_DATA);
-	isa_io_outb(CGA_INDEX_VERT_SYNC_POS, CGA_REG_INDEX);
+	isa_io_outb(CGA_INDEX_VERT_DISP, CGA_REG_INDEX);
 	isa_io_outb(0x19, CGA_REG_DATA);
-	isa_io_outb(CGA_INDEX_VERT_SYNC_WIDTH, CGA_REG_INDEX);
+	isa_io_outb(CGA_INDEX_VERT_SYNC_POS, CGA_REG_INDEX);
 	isa_io_outb(0x1C, CGA_REG_DATA);
 	isa_io_outb(CGA_INDEX_INTERLACE_MODE, CGA_REG_INDEX);
 	isa_io_outb(0x02, CGA_REG_DATA);
@@ -199,6 +203,33 @@ static void write_frame(uint8_t byte, uint16_t offset){
 		isa_mem_outb(byte, 0xB8000 + vram_current+offset);
 }
 #endif
+
+void cga_display_img(){
+
+	for (int i = 0; i < CGA_MEMSIZE; i+=4){							// Setup actual CGA memory
+		isa_mem_outb(0x55, 0xB8000+i);
+		isa_mem_outb(0xD4, 0xB8000+i+1);
+		isa_mem_outb(0x55, 0xB8000+i+2);
+		isa_mem_outb(0xB9, 0xB8000+i+3);
+	}
+	isa_io_outb(0x06, CGA_REG_COLOR_CTL);
+	delay(0x9FFFF);
+
+	isa_io_outb(0x05, CGA_REG_MODE_CTL);
+
+	isa_io_outb(CGA_INDEX_MAX_SCAN_ADDR, CGA_REG_INDEX);
+	isa_io_outb(0x01, CGA_REG_DATA);
+	isa_io_outb(CGA_INDEX_HORIZ_SYNC_WIDTH, CGA_REG_INDEX);
+	isa_io_outb(0x00, CGA_REG_DATA);
+	isa_io_outb(CGA_INDEX_START_ADDR_H, CGA_REG_INDEX);
+	isa_io_outb(0x00, CGA_REG_DATA);
+	isa_io_outb(CGA_INDEX_START_ADDR_L, CGA_REG_INDEX);
+	isa_io_outb(0x00, CGA_REG_DATA);
+
+	isa_io_outb(0x01, CGA_REG_MODE_CTL);
+	isa_io_outb(0x09, CGA_REG_MODE_CTL);
+
+}
 
 //--------------------Functions----------------------
 

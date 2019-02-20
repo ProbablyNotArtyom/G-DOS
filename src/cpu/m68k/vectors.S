@@ -11,3 +11,32 @@ _vectors:
 	.long	_start
 	.long	_BError
 	.long	_AError
+	.long	_BError
+	.long	_BError
+	.long	_BError
+	.long	_BError
+	.long	_BError
+	.long	_BError
+	.long	_BError
+	.long	_BError
+	.long	_BError
+	.long	_BError
+	.long	_BError
+	.long	_BError
+	.long	_BError
+	.long	_BError
+	.long	_BError
+	.long	_BError
+	.long	_BError
+	.long	_BError
+	.long	_BError
+	.long	_BError
+	.long	_BError
+	.long	_BError
+	.long	_BError
+	.long	_BError
+	.long	_BError
+	.long	_BError
+	.long	_BError
+	.long	_BError
+	.long	_BError

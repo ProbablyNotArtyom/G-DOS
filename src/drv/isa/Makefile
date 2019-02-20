@@ -7,7 +7,7 @@ SUBDIRS =
 
 all: clean
 	make objects
-	$(AR) Prvs $(ARCHNAME).a $(OBJECTS)
+	$(AR) Prvs $(ARCHNAME).a $(OBJECTS) img
 	cp $(ARCHNAME).a $(BINDIR)
 	for dir in $(SUBDIRS); do \
 		$(MAKE) -C $$dir -f Makefile $@; \

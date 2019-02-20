@@ -130,6 +130,8 @@ int main(void){
 				monBegin();
 				break;
 			case '3':
+				cga_display_img();
+				while(1);
 				break;
 		}
 	}
