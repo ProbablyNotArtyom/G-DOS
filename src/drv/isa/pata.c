@@ -19,72 +19,77 @@
 	#include "isa.h"
 	#include "pata.h"
 
-pata_dev ide_disk;
-static struct dev_disk disk;
+pata_dev *ide_disk[2];
+struct dev_disk *pata_disk[2];
 
 //--------------------Functions----------------------
 
 void pata_dev_register(){
 
-	ide_disk.exists = 0x00;
 	puts("PATA Disk Driver / NotArtyom / 12-2-19");
 	puts("Waiting for disks...");
 
-	pata_wait_bsy();
-	pata_reg_outb(0xA0, ATA_REG_HDDEVSEL);				// Set master drive, CSH addressing
-	pata_wait_bsy();
-	pata_reg_outb(0x00, ATA_REG_SECCOUNT0);
-	pata_reg_outb(0x00, ATA_REG_LBA0);
-	pata_reg_outb(0x00, ATA_REG_LBA1);
-	pata_reg_outb(0x00, ATA_REG_LBA2);
+	for (int i = 0; i < 2; i++){
+		pata_wait_bsy();
+		if (i == 0)
+			pata_reg_outb(0xE0, ATA_REG_HDDEVSEL);
+		else
+			pata_reg_outb(0xF0, ATA_REG_HDDEVSEL);
+		pata_wait_bsy();
+		pata_reg_outb(0x00, ATA_REG_SECCOUNT0);
+		pata_reg_outb(0x00, ATA_REG_LBA0);
+		pata_reg_outb(0x00, ATA_REG_LBA1);
+		pata_reg_outb(0x00, ATA_REG_LBA2);
 
-	pata_reg_outb(ATA_CMD_IDENTIFY, ATA_REG_COMMAND);	// Send identify command
-	delay(0xFFFF);
+		pata_reg_outb(ATA_CMD_IDENTIFY, ATA_REG_COMMAND);	// Send identify command
+		delay(0xFFFF);
 
-	if (pata_reg_inb(ATA_REG_STATUS) == 0){
-		puts("[?] No IDE devices detected.");
-		delay(0x4FFFF);
-	} else {
-		puts("IDE disk 0 detected.");
-		/* read in the identify buffer */
-		uint16_t idBuff[256];
-		if (!pata_wait_chk(ATA_SR_DRQ)) return RES_ERROR;
-		pata_read_blk(&idBuff);
+		if (pata_reg_inb(ATA_REG_STATUS) == 0){
+			nprintf("[?] IDE disk %d not detected.", i);
+		} else {
+			nprintf("IDE disk %d detected.", i);
+			ide_disk[i] = (pata_dev *)pmalloc(sizeof(pata_dev));
+			pata_disk[i] = (struct dev_disk *)pmalloc(sizeof(struct dev_disk));
+			ide_disk[i]->exists == 0x00;
+			/* read in the identify buffer */
+			uint16_t idBuff[256];
+			if (!pata_wait_chk(ATA_SR_DRQ)) return RES_ERROR;
+			pata_read_blk_le(&idBuff);
 
-		ide_disk.exists = FLAG_ATA_IS_EXIST;
-		ide_disk.dNum = 0;
-		ide_disk.signature = idBuff[0];
-		ide_disk.cylinders = idBuff[1];
-		ide_disk.heads = idBuff[3];
-		ide_disk.numSecsInTrack = idBuff[6];
-		ide_disk.size = ide_disk.cylinders * ide_disk.heads * ide_disk.numSecsInTrack;
+			ide_disk[i]->exists = FLAG_ATA_IS_EXIST;
+			ide_disk[i]->dNum = 0;
+			ide_disk[i]->signature = idBuff[0];
+			ide_disk[i]->cylinders = idBuff[1];
+			ide_disk[i]->heads = idBuff[3];
+			ide_disk[i]->numSecsInTrack = idBuff[6];
+			ide_disk[i]->size = ide_disk[i]->cylinders * ide_disk[i]->heads * ide_disk[i]->numSecsInTrack;
 
-		fputs("model: ");
-		putsl((&idBuff[27]), 20);
-		putnl();
-		nprintf("sig:        0x%X", ide_disk.signature);
-		nprintf("cylinders:  %d", ide_disk.cylinders);
-		nprintf("heads:      %d", ide_disk.heads);
-		nprintf("sectors:    %d", ide_disk.size);
-		nprintf("size:       %dMB", ide_disk.size / 2048);
-		delay(0x8FFFF);
+			fputs("model: ");
+			putsl((&idBuff[27]), 20);
+			putnl();
+			nprintf("sig:        0x%X", ide_disk[i]->signature);
+			nprintf("cylinders:  %d", ide_disk[i]->cylinders);
+			nprintf("heads:      %d", ide_disk[i]->heads);
+			nprintf("sectors:    %d", ide_disk[i]->size);
+			nprintf("size:       %dMB", ide_disk[i]->size / 2048);
+			delay(0x8FFFF);
 
-		disk.init = &pata_init;
-		disk.status = &pata_status;
-		disk.write = &pata_write;
-		disk.read = &pata_read;
-		disk.ioctl = &pata_ioctl;
-		diskRegister(&disk);
+			pata_disk[i]->init = &pata_init;
+			pata_disk[i]->status = &pata_status;
+			pata_disk[i]->write = &pata_write;
+			pata_disk[i]->read = &pata_read;
+			pata_disk[i]->ioctl = &pata_ioctl;
+			diskRegister(pata_disk[i]);
+		}
 	}
-
 	return;
 }
 
 diskStatus pata_init(uint8_t drive){
-	if (ide_disk.exists & FLAG_ATA_IS_INIT) return STA_OK;
-	if (ide_disk.exists == FLAG_ATA_IS_EXIST){
-
-		ide_disk.exists = ide_disk.exists | FLAG_ATA_IS_INIT;
+	if (ide_disk[drive]->exists & FLAG_ATA_IS_INIT) return STA_OK;
+	if (ide_disk[drive]->exists == FLAG_ATA_IS_EXIST){
+		pata_reg_outb((0xE0 | (drive << 4)), ATA_REG_HDDEVSEL);
+		ide_disk[drive]->exists = ide_disk[drive]->exists | FLAG_ATA_IS_INIT;
 		return STA_OK;
 	} else {
 		return (STA_NOINIT | STA_NODISK);
@@ -92,21 +97,23 @@ diskStatus pata_init(uint8_t drive){
 }
 
 diskStatus pata_status(uint8_t drive){
-	if (ide_disk.exists == FLAG_ATA_IS_EXIST)
+	if (ide_disk[drive]->exists == FLAG_ATA_IS_EXIST)
 		return STA_NOINIT;
-	else if (ide_disk.exists == (FLAG_ATA_IS_EXIST | FLAG_ATA_IS_INIT))
+	else if (ide_disk[drive]->exists == (FLAG_ATA_IS_EXIST | FLAG_ATA_IS_INIT))
 		return STA_OK;
 	else
 		return STA_NODISK;
 }
 
 diskResult pata_write(uint8_t drive, const uint8_t *buff, uint32_t sector, uint8_t len){
+	pata_reg_outb((0xE0 | (drive << 4)), ATA_REG_HDDEVSEL);
+	pata_wait_bsy();
 	//nprintf("[DEBUG] pata_write, sector: 0x%X, len: %d", sector, len);
 	if (len == 0 || sector > 0xFFFFFFF) return RES_PARERR;
-	if (ide_disk.exists != (FLAG_ATA_IS_EXIST | FLAG_ATA_IS_INIT)) return RES_NOTRDY;
+	if (ide_disk[drive]->exists != (FLAG_ATA_IS_EXIST | FLAG_ATA_IS_INIT)) return RES_NOTRDY;
 
 	if (!pata_wait_chk(ATA_SR_DRDY)) return RES_ERROR;
-	pata_reg_outb(((uint8_t)(sector >> 24) & 0x0F) | 0xE0, ATA_REG_HDDEVSEL);
+	pata_reg_outb(((uint8_t)(sector >> 24) & 0x0F) | (0xE0 | (drive << 4)), ATA_REG_HDDEVSEL);
 	if (!pata_wait_chk(ATA_SR_DRDY)) return RES_ERROR;
 	pata_reg_outb((uint8_t)(sector >> 16), ATA_REG_LBA2);
 	pata_reg_outb((uint8_t)(sector >> 8), ATA_REG_LBA1);
@@ -126,12 +133,14 @@ diskResult pata_write(uint8_t drive, const uint8_t *buff, uint32_t sector, uint8
 }
 
 diskResult pata_read(uint8_t drive, uint8_t *buff, uint32_t sector, uint8_t len){
+	pata_reg_outb((0xE0 | (drive << 4)), ATA_REG_HDDEVSEL);
+	pata_wait_bsy();
 	//nprintf("[DEBUG] pata_read, sector: 0x%X, len: %d", sector, len);
 	if (len == 0 || sector > 0xFFFFFFF) return RES_PARERR;
-	if (ide_disk.exists != (FLAG_ATA_IS_EXIST | FLAG_ATA_IS_INIT)) return RES_NOTRDY;
+	if (ide_disk[drive]->exists != (FLAG_ATA_IS_EXIST | FLAG_ATA_IS_INIT)) return RES_NOTRDY;
 
 	if (!pata_wait_chk(ATA_SR_DRDY)) return RES_ERROR;
-	pata_reg_outb(((uint8_t)(sector >> 24) & 0x0F) | 0xE0, ATA_REG_HDDEVSEL);
+	pata_reg_outb(((uint8_t)(sector >> 24) & 0x0F) | (0xE0 | (drive << 4)), ATA_REG_HDDEVSEL);
 	if (!pata_wait_chk(ATA_SR_DRDY)) return RES_ERROR;
 	pata_reg_outb((uint8_t)(sector >> 16), ATA_REG_LBA2);
 	pata_reg_outb((uint8_t)(sector >> 8), ATA_REG_LBA1);
@@ -156,7 +165,7 @@ diskResult pata_ioctl(uint8_t drive, uint8_t cmd, void *buff){
 		case CTRL_SYNC:
 			return RES_OK;
 		case GET_SECTOR_COUNT:
-			*(uint32_t*)buff = 256;
+			*(uint32_t*)buff = ide_disk[drive]->size;
 			return RES_OK;
 		case GET_SECTOR_SIZE:
 			*(uint16_t*)buff = 512;
@@ -203,6 +212,12 @@ static bool pata_wait_chk(uint8_t flag){
 static void pata_read_blk(uint16_t *buff){
 	for (int i = 0; i < 256; i++){
 		*buff++ = pata_reg_inw(ATA_REG_DATA);
+	}
+}
+
+static void pata_read_blk_le(uint16_t *buff){
+	for (int i = 0; i < 256; i++){
+		*buff++ = pata_reg_inw_le(ATA_REG_DATA);
 	}
 }
 

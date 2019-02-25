@@ -42,9 +42,9 @@ SECTIONS
 {
 
  .startup : {
- 	. = 0x0000;
- 	*vectors.o
- 	. = ALIGN(0x4);
+  . = 0x0000;
+  *(.vectors)
+  . = ALIGN(0x4);
  } > vectors
 
  .text : {

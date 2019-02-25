@@ -166,6 +166,9 @@ int loadELF(char* args[], uint8_t argCount, FIL *file){
 
 		/* -=-=-=-=-=-=-=-=-=- */
 	}
+
+	int (*entrypoint)(char**, int) = header.entry;
+	return (*entrypoint)(args, argCount);
 }
 
 

@@ -33,6 +33,7 @@ static enum errList echo();
 static enum errList echo_fmt();
 static enum errList delay_arb();
 static enum errList brot();
+static enum errList dasm();
 
 //----------------------Tables-----------------------
 
@@ -51,6 +52,7 @@ enum errList const (* const funcTable[])() = {
 	echo_fmt,
 	delay_arb,
 	brot,
+	dasm,
 	NULL
 };
 
@@ -69,6 +71,7 @@ const char* const funcNames[] = {
 	"printf ",
 	"delay ",
 	"brot ",
+	"dasm ",
 	"\0"
 };
 
@@ -473,5 +476,25 @@ static enum errList brot(){
 	float r,i,R,I,b;
 	for(i=-1;i<1;i+=.06,puts(""))for(r=-2;I=i,(R=r)<1;
 	r+=.040,putc(n+31))for(n=0;b=I*I,26>n++&&R*R+b<4;I=2*R*I+i,R=R*R-b+r);
+	return errNONE;
+}
+
+static enum errList dasm(){
+	char buff[80];
+	uint8_t *ptr, *end;
+	if (!isEOI()){
+		getRange(&ptr, &end);
+	} else {
+		ptr = current_addr;
+		end = end_addr;
+	}
+	if (ptr > end) return errSYNTAX;
+	while (ptr < end){
+		ptr = sys_disassemble(ptr, ptr, &buff);
+		for (int i = 0; i < 75; i++){
+			putc(buff[i]);
+		}
+		puts("");
+	}
 	return errNONE;
 }

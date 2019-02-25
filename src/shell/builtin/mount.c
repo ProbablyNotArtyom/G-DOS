@@ -33,7 +33,7 @@ result_t shfunc_mount(char *argv[], int argc){
 	}
 
     f_error res;
-	res = f_mount(fsMounts[numMounts], "", 1);
+	res = f_mount(fsMounts[numMounts], argv[0], 1);
 	fs_putsError(res);
 
 	numMounts++;

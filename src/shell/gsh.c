@@ -148,11 +148,11 @@ static void runCMD(shFunc_t func, char *buffer){
 	} else {
 		f_error res;
 		f_file file;
-
 		res = f_open(&file, arg[0], FA_READ);
 		fs_putsError(res);
 		if (res != FR_OK) return;
-		loadELF(arg, numArgs, &file);
+
+		loadELF(arg+1, numArgs-1, &file);
 	}
 	return;
 }
@@ -179,6 +179,7 @@ const result_t const (* const shFunctions[])() = {
 	shfunc_exit,
 	shfunc_mkfs,
 	shfunc_pico,
+	shfunc_flash,
 	NULL
 };
 
@@ -197,6 +198,7 @@ const char* const shFuncNames[] = {
 	"exit ",
 	"mkfs ",
 	"pico ",
+	"flash ",
 	NULL
 };
 
@@ -215,6 +217,7 @@ const uint8_t const shFuncLen[] = {
 	4,
 	4,
 	4,
+	5,
 	NULL
 };
 

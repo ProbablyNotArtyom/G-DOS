@@ -60,6 +60,7 @@ charResult isa_cga_dev_write(char out){
 	if (out == '\r'){
 		vram_cursor_x = 0;
 	} else if (out == '\n'){
+		vram_cursor_x = 0;
 		cReturn();
 	} else if (out == 0x7F){
 #ifndef FAST_SCROLLING

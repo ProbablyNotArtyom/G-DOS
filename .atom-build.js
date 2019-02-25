@@ -34,7 +34,7 @@ module.exports = {
 		    }
 	  },
 	  Blitz: {
-		  	cmd: "cd `git rev-parse --show-toplevel` && make PLATFORM=Blitz-testing",
+		  	cmd: "cd `git rev-parse --show-toplevel` && make PLATFORM=Blitz",
 			sh: true,
 		    functionMatch: function (output) {
 		      const enterDir = /^make\[\d+\]: Entering directory '([^']+)'$/;

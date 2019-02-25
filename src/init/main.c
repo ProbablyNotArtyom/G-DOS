@@ -3,6 +3,7 @@
 	#include <stdarg.h>
 	#include <stdbool.h>
 	#include <std.h>
+	#include <linkage.h>
 
 	#include <mod/init.h>
 
@@ -130,7 +131,7 @@ int main(void){
 				monBegin();
 				break;
 			case '3':
-				cga_display_img();
+				asm("trap  &2");
 				while(1);
 				break;
 		}

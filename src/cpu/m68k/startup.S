@@ -45,6 +45,14 @@ BOARD_CACR0	= (CACR_CI + CACR_EI + CACR_CD + CACR_ED)
 	.extern __bss_start
 	.extern _end
 
+	.global SYM (sys_flash_program)
+	.weak SYM (sys_flash_program)
+	.set SYM (sys_flash_program),SYM(__program_flash)
+
+	.global SYM (sys_disassemble)
+	.weak SYM (sys_disassemble)
+	.set SYM (sys_disassemble),SYM(__disassemble)
+	.extern SYM (DCODE68K)
 /*
  * Set things up so the application will run. For historical reasons
  * this is called 'start'.  We set things up to provide '_start'
@@ -105,4 +113,140 @@ SYM (_start):
 	PICCALL	SYM (main) /* Here the main(..) function is called */
 	addq.l	#4,sp
 	unlk	a6
+	rts
+
+
+SYM (__program_flash):
+	move.l	sp@(4), a0		// file pointer
+	move.l	sp@(8), d0		// number of bytes
+	move.l	sp@(12), a1		// pointer to block of allocated memory
+	move.l	sp@(16), a4		// pointer to block of spare ram
+
+	lea.l	__flash_prg_begin, a2
+	lea.l	__flash_prg_end, a3
+	move.l	a3, d1
+	move.l	a1, a3
+
+0:	move.b	(a2)+, (a1)+
+	cmpa.l	d1, a2
+	blt		0b
+
+	jmp		(a3)
+
+__flash_prg_begin:
+	movea.l a0, a5
+	movea.l	a4, a0
+	movea.l a5, a4
+	movea.l #0x00000000, a2
+	adda.l	d0, a5
+	movea.l	a5, a1
+	bsr		FLASH_PROGRAM
+	bra		DIE
+
+FLASH_GET_MANUFACTURER_ID:
+	MOVE.B #0xAA,0x555
+	MOVE.B #0x55,0x2AA
+   	MOVE.B #0x90,0x555
+   	MOVE.B 0x0, d0
+   	BSR FLASH_RESET
+   	RTS
+
+FLASH_GET_DEVICE_ID:
+	MOVE.B #0xAA,0x555
+	MOVE.B #0x55,0x2AA
+   	MOVE.B #0x90,0x555
+   	MOVE.B 0x001,d0
+   	BSR FLASH_RESET
+   	RTS
+
+FLASH_RESET:
+	MOVE.B #0xF0,0x00000000
+	RTS
+
+FLASH_ERASE_CHIP:
+	MOVE.B #0xAA,0x555
+	MOVE.B #0x55,0x2AA
+   	MOVE.B #0x80,0x555
+	MOVE.B #0xAA,0x555
+	MOVE.B #0x55,0x2AA
+	MOVE.B #0x10,0x555
+	MOVE.L #0x00000000,a4
+	BRA FLASH_ERASE_WAIT
+
+FLASH_ERASE_WAIT:
+	BTST.B #7,(a4)
+	BEQ FLASH_ERASE_WAIT
+	RTS
+
+FLASH_PROGRAM:
+	MOVE.B #'.',d3
+FLASH_PROGRAM_NEXT_BYTE:
+	MOVE.B #0xAA,0x555
+	MOVE.B #0x55,0x2AA
+   	MOVE.B #0xA0,0x555
+   	MOVE.B (a0)+,(a2)+
+FLASH_PROGRAM_WAIT:
+	// while programming is in progress, successive reads to the same address will see DQ6 toggle
+	MOVE.B 0x00000000,d0
+	CMP.B  0x00000000,d0
+	BNE FLASH_PROGRAM_WAIT
+	// ack every 256 bytes
+	ADDQ.B #1,d4
+	BEQ ACK
+NO_ACK:
+	// finished?
+   	CMP.L  a0,a1
+   	BNE FLASH_PROGRAM_NEXT_BYTE
+	RTS
+
+ACK:
+	BRA NO_ACK
+
+DIE:
+	lea.l	_start, a0
+	jmp		(a0)
+
+__flash_prg_end:
+
+	.align 2
+
+sys_disassemble:
+	movea.l	sp@(8), a0
+	movea.l	sp@(12), a1
+	move.l	d2, -(sp)
+	move.l	d3, -(sp)
+	move.l	d4, -(sp)
+	move.l	d5, -(sp)
+	move.l	d6, -(sp)
+	move.l	d7, -(sp)
+	move.l	a2, -(sp)
+	move.l	a3, -(sp)
+	move.l	a4, -(sp)
+	move.l	a5, -(sp)
+	move.l	a6, -(sp)
+
+
+	movea.l	a0, a4
+	movea.l a1, a5
+	movea.l	a4, a3
+	move.l	(a3)+, d0
+	move.l	(a3)+, d1
+	move.l	(a3)+, d2
+
+	bsr		disassemble
+
+	move.l	a4, d0
+
+	movea.l	(sp)+, a6
+	movea.l	(sp)+, a5
+	movea.l	(sp)+, a4
+	movea.l	(sp)+, a3
+	movea.l	(sp)+, a2
+	move.l	(sp)+, d7
+	move.l	(sp)+, d6
+	move.l	(sp)+, d5
+	move.l	(sp)+, d4
+	move.l	(sp)+, d3
+	move.l	(sp)+, d2
+
 	rts

@@ -22,10 +22,12 @@
 
 #define pata_reg_outb(val, reg)	pata_outb(val, PATA_BASE+reg)
 #define pata_reg_inb(reg)		pata_inb(PATA_BASE+reg)
-#define pata_reg_outw(val, reg)	pata_outb((val >> 8), PATA_BASE+1); \
-								pata_outb((val & 0xFF), PATA_BASE)
+#define pata_reg_outw(val, reg)	pata_outb((val & 0xFF), PATA_BASE+1); \
+								pata_outb((val >> 8), PATA_BASE)
 
-#define pata_reg_inw(reg)		(pata_inb(PATA_BASE) | (pata_inb(PATA_BASE+1) << 8))
+#define pata_reg_inw(reg)		(pata_inb(PATA_BASE) << 8 | (pata_inb(PATA_BASE+1)))
+#define pata_reg_inw_le(reg)	(pata_inb(PATA_BASE) | (pata_inb(PATA_BASE+1) << 8))
+
 
 #define ATA_SR_BSY     0x80    // Busy
 #define ATA_SR_DRDY    0x40    // Drive ready
@@ -125,6 +127,7 @@ static bool pata_wait_bsy();
 static bool pata_wait_drq();
 static bool pata_wait_chk(uint8_t flag);
 static void pata_read_blk(uint16_t *buff);
+static void pata_read_blk_le(uint16_t *buff);
 static void pata_write_blk(uint16_t *buff);
 
 #endif
