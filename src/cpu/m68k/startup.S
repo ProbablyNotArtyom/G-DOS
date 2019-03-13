@@ -1,6 +1,7 @@
 /* Startup file for the BSVC simulator suite */
 
-#include <asm.h>
+	#include <asm.h>
+	#include <entry.h>
 
 	.title <startup.S>
 #define STACKSIZE	0x8000
@@ -23,20 +24,6 @@ SYM (environ):
 	.extern SYM (media_start)
 	.extern SYM (exit)
 	.extern SYM (atexit)
-
-CACR_EI   = 1       /* Enable Instruction Cache      */
-CACR_FI   = 1<<1    /* Freeze Instruction Cache      */
-CACR_CEI  = 1<<2    /* Clear Entry in Instr. Cache   */
-CACR_CI   = 1<<3    /* Clear Instruction Cache       */
-CACR_IBE  = 1<<4    /* Instr. Cache Burst Enable     */
-
-CACR_ED   = 1<<8    /* Enable Data Cache             */
-CACR_FD   = 1<<9    /* Freeze Data Cache             */
-CACR_CED  = 1<<10   /* Clear Entry in Data Cache     */
-CACR_CD   = 1<<11   /* Clear Data Cache              */
-CACR_DBE  = 1<<12   /* Data Cache Burst Enable       */
-CACR_WA   = 1<<13   /* Write Allocate the Data Cache */
-BOARD_CACR0	= (CACR_CI + CACR_EI + CACR_CD + CACR_ED)
 
 /*
  * These values are set in the linker script, so they must be
@@ -74,12 +61,6 @@ SYM (_start):
 	jbeq    1f
 	movel	a0, sp
 
-//#ifdef CONFIG_BLITZ
-//	clrl   	d2                 		/* set Vector Base Register */
-//	movecl 	d2, vbr
-//	movel  	#BOARD_CACR0, d2    	/* enable data & instruction caches */
-//	movecl 	d2, cacr
-//#endif
 1:
 	/* set up initial stack frame */
 	link	a6, #(-8)
@@ -114,99 +95,6 @@ SYM (_start):
 	addq.l	#4,sp
 	unlk	a6
 	rts
-
-
-SYM (__program_flash):
-	move.l	sp@(4), a0		// file pointer
-	move.l	sp@(8), d0		// number of bytes
-	move.l	sp@(12), a1		// pointer to block of allocated memory
-	move.l	sp@(16), a4		// pointer to block of spare ram
-
-	lea.l	__flash_prg_begin, a2
-	lea.l	__flash_prg_end, a3
-	move.l	a3, d1
-	move.l	a1, a3
-
-0:	move.b	(a2)+, (a1)+
-	cmpa.l	d1, a2
-	blt		0b
-
-	jmp		(a3)
-
-__flash_prg_begin:
-	movea.l a0, a5
-	movea.l	a4, a0
-	movea.l a5, a4
-	movea.l #0x00000000, a2
-	adda.l	d0, a5
-	movea.l	a5, a1
-	bsr		FLASH_PROGRAM
-	bra		DIE
-
-FLASH_GET_MANUFACTURER_ID:
-	MOVE.B #0xAA,0x555
-	MOVE.B #0x55,0x2AA
-   	MOVE.B #0x90,0x555
-   	MOVE.B 0x0, d0
-   	BSR FLASH_RESET
-   	RTS
-
-FLASH_GET_DEVICE_ID:
-	MOVE.B #0xAA,0x555
-	MOVE.B #0x55,0x2AA
-   	MOVE.B #0x90,0x555
-   	MOVE.B 0x001,d0
-   	BSR FLASH_RESET
-   	RTS
-
-FLASH_RESET:
-	MOVE.B #0xF0,0x00000000
-	RTS
-
-FLASH_ERASE_CHIP:
-	MOVE.B #0xAA,0x555
-	MOVE.B #0x55,0x2AA
-   	MOVE.B #0x80,0x555
-	MOVE.B #0xAA,0x555
-	MOVE.B #0x55,0x2AA
-	MOVE.B #0x10,0x555
-	MOVE.L #0x00000000,a4
-	BRA FLASH_ERASE_WAIT
-
-FLASH_ERASE_WAIT:
-	BTST.B #7,(a4)
-	BEQ FLASH_ERASE_WAIT
-	RTS
-
-FLASH_PROGRAM:
-	MOVE.B #'.',d3
-FLASH_PROGRAM_NEXT_BYTE:
-	MOVE.B #0xAA,0x555
-	MOVE.B #0x55,0x2AA
-   	MOVE.B #0xA0,0x555
-   	MOVE.B (a0)+,(a2)+
-FLASH_PROGRAM_WAIT:
-	// while programming is in progress, successive reads to the same address will see DQ6 toggle
-	MOVE.B 0x00000000,d0
-	CMP.B  0x00000000,d0
-	BNE FLASH_PROGRAM_WAIT
-	// ack every 256 bytes
-	ADDQ.B #1,d4
-	BEQ ACK
-NO_ACK:
-	// finished?
-   	CMP.L  a0,a1
-   	BNE FLASH_PROGRAM_NEXT_BYTE
-	RTS
-
-ACK:
-	BRA NO_ACK
-
-DIE:
-	lea.l	_start, a0
-	jmp		(a0)
-
-__flash_prg_end:
 
 	.align 2
 

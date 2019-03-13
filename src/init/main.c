@@ -4,6 +4,7 @@
 	#include <stdbool.h>
 	#include <std.h>
 	#include <linkage.h>
+	#include <syscall.h>
 
 	#include <mod/init.h>
 
@@ -131,8 +132,7 @@ int main(void){
 				monBegin();
 				break;
 			case '3':
-				asm("trap  &2");
-				while(1);
+				INTERNAL_SYSCALL(syscall_putc, 1, 'K');
 				break;
 		}
 	}

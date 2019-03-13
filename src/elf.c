@@ -20,7 +20,7 @@
 
 //---------------------------------------------------
 
-int loadELF(char* args[], uint8_t argCount, FIL *file){
+int loadELF(char* args[], int argCount, FIL *file){
 	size_t highMem = 0;
 	size_t lowMem = ~0;
 	size_t numBytes;
@@ -70,12 +70,6 @@ int loadELF(char* args[], uint8_t argCount, FIL *file){
 				puts("Dynamically linked ELFs not supported");
 				return -1;
 			case PHT_LOAD:
-				if(progHeader.physAddr < 0x100) {
-					progHeader.offset += 0x100;
-					progHeader.physAddr += 0x100;
-					progHeader.memSize -= 0x100;
-					progHeader.fileSize -= 0x100;
-				}
 				nprintf("Loading %d byte segment from offset 0x%x to address 0x%x",
 					progHeader.fileSize, progHeader.offset, progHeader.physAddr);
 				f_lseek(file, progHeader.offset);
@@ -86,7 +80,7 @@ int loadELF(char* args[], uint8_t argCount, FIL *file){
 				if(progHeader.physAddr + progHeader.fileSize > highMem)
 					highMem = progHeader.physAddr + progHeader.fileSize;
 				if(progHeader.physAddr < lowMem)
-					lowMem = progHeader.physAddr;
+					lowMem = progHeader.physAddr + progHeader.align;
 				break;
 			case PHT_INTERP:
 				puts("Interpreted ELFs are not supported");
@@ -96,6 +90,7 @@ int loadELF(char* args[], uint8_t argCount, FIL *file){
 	}
 
 	/* Check for a linux kernel */
+	nprintf("Checking for bootversion at 0x%x", lowMem);
 	bVersion = (struct bootversion *)lowMem;
 	if(bVersion->magic == BOOTINFOV_MAGIC){
 		fputs("Linux kernel found");
@@ -164,6 +159,23 @@ int loadELF(char* args[], uint8_t argCount, FIL *file){
 			}
 		}
 
+		i = strlen(kernelArgs) + 1;
+		i = (i + 3) & ~3;
+		bootInfo->size = sizeof(struct biRecord) + i;
+		bootInfo->tag = BI_CMDLINE;
+		memcpy(bootInfo->entry, kernelArgs, i);
+
+		/* Another bootinfo entry after the first one */
+		bootInfo = (struct biRecord*)(((char*)bootInfo) + bootInfo->size);
+		bootInfo->tag = BI_LAST;
+		bootInfo->size = sizeof(struct biRecord);
+
+		/* Execute Kernel */
+		nprintf("Entering kernel at 0x%x", header.entry);
+		void (*entrypoint)(void) = header.entry;
+		(*entrypoint)();
+		return;				// Hopefully wont get here...
+
 		/* -=-=-=-=-=-=-=-=-=- */
 	}
 
@@ -172,7 +184,7 @@ int loadELF(char* args[], uint8_t argCount, FIL *file){
 }
 
 
-int loadELF_flat(char* args[], uint8_t argCount, char *loadAddr){
+int loadELF_flat(char* args[], int argCount, char *loadAddr){
 	uint32_t entry, progTable, secTable, progSize, secSize;
 	uint32_t numProgs, numSecs, nameTable;
 	uint8_t type;

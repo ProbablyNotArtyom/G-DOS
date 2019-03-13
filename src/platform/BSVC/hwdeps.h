@@ -4,9 +4,10 @@
 #ifndef CONFIG_BSVC
 #define	CONFIG_BSVC
 
+#define CONFIG_CPU_68000
+
 #define		RAMSTART		0x00000000
 #define		RAMEND			0x00400000		// End of usable RAM
-#define		__STACK			0x00800000		// Stack position in memory
 
 #define 	MEMTEST 		true
 #define 	ALLOW_UNALIGNED	false			// Set true for anything above 68020

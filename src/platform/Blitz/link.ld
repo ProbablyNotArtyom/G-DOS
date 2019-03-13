@@ -6,17 +6,17 @@ PROVIDE (memEnd = 0);
 MEMORY
 {
   vectors (rx) : ORIGIN = 0x0000, LENGTH = 0x3FF
-  rom (rx) : ORIGIN = 0x400, LENGTH = 0x80000-0x400
-  ram (rwx) : ORIGIN = 0x04000000, LENGTH = 0x00200000
+  rom (rx) : ORIGIN = 0x400, LENGTH = 0x7FFFF-0x400
+  ram (rwx) : ORIGIN = 0x04000000, LENGTH = 0x00400000
 }
 
-STACK_SIZE = 0x1000;
+STACK_SIZE = 0x2000;
 
 _ram_start = ORIGIN(ram);
 _ram_end = ORIGIN(ram) + LENGTH(ram);
 
 _stack_start = _ram_end - STACK_SIZE;
-_stack_end = _ram_end - 1;
+_stack_end = _ram_end;
 
 HEAP_SIZE = 0x10000;
 
@@ -32,6 +32,7 @@ HEAP_SIZE = 0x10000;
  * We have to initialize them twice, so we cover a.out (which prepends
  * an underscore) and coff object file formats.
  */
+PROVIDE (__STACK = _stack_end);
 PROVIDE (main = 0);
 PROVIDE (_main = 0);
 

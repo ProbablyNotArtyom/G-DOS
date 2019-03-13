@@ -108,15 +108,6 @@ void show_registers(struct pt_regs *regs)
 asmlinkage void trap_c(struct frame *fp){
 	int vector = (fp->ptregs.vector >> 2) & 0xff;
 	switch (vector){
-		case VEC_TRAP1:		// PUTC
-
-			break;
-		case VEC_TRAP2:		// READ
-
-			break;
-		case VEC_TRAP3:		// SYSCALL
-
-			break;
 		default:
 			puts("[!!!] Illegal trap vector");
 			break;
