@@ -9,9 +9,6 @@ all: clean
 	make objects
 	$(AR) Prvs $(ARCHNAME).a $(OBJECTS)
 	cp $(ARCHNAME).a $(BINDIR)
-	for dir in $(SUBDIRS); do \
-		$(MAKE) -C $$dir -f Makefile $@; \
-	done
 
 clean:
 	rm -vf *.a

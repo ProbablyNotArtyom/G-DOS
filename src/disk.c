@@ -39,25 +39,25 @@ void diskRegister(struct dev_disk *disk){
 
 diskStatus disk_initialize(uint8_t drive){
 	if (drive > numDisk) return STA_NODISK;
-	return diskList[drive]->init(drive);
+	return diskList[drive]->init(diskList[drive]->local_drive_num);
 }
 
 diskStatus disk_status(uint8_t drive){
 	if (drive > numDisk) return STA_NODISK;
-	return diskList[drive]->status(drive);
+	return diskList[drive]->status(diskList[drive]->local_drive_num);
 }
 
 diskResult disk_read(uint8_t drive, uint8_t* buff, uint32_t sector, uint8_t count){
 	if (drive > numDisk) return RES_NOTRDY;
-	return diskList[drive]->read(drive, buff, sector, count);
+	return diskList[drive]->read(diskList[drive]->local_drive_num, buff, sector, count);
 }
 
 diskResult disk_write(uint8_t drive, const uint8_t* buff, uint32_t sector, uint8_t count){
 	if (drive > numDisk) return RES_NOTRDY;
-	return diskList[drive]->write(drive, buff, sector, count);
+	return diskList[drive]->write(diskList[drive]->local_drive_num, buff, sector, count);
 }
 
 diskResult disk_ioctl(uint8_t drive, uint8_t cmd, void* buff){
 	if (drive > numDisk) return RES_NOTRDY;
-	return diskList[drive]->ioctl(drive, cmd, buff);
+	return diskList[drive]->ioctl(diskList[drive]->local_drive_num, cmd, buff);
 }

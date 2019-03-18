@@ -30,6 +30,7 @@
 	result_t shfunc_fputs(char *argv[], int argc);
 	result_t shfunc_mkfs(char *argv[], int argc);
 	result_t shfunc_pico(char *argv[], int argc);
+	result_t shfunc_meminfo(char *argv[], int argc);
 
 //---------------------------------------------------
 

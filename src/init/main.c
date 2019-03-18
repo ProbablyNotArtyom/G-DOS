@@ -5,6 +5,7 @@
 	#include <std.h>
 	#include <linkage.h>
 	#include <syscall.h>
+	#include <flags.h>
 
 	#include <mod/init.h>
 
@@ -104,6 +105,8 @@ static void memtest_start(){
 }
 
 int main(void){
+	delay(0x1FFFF);
+
 	do_initcall_level(0);
 	do_initcalls();
 	puts(b_logo);
@@ -132,7 +135,10 @@ int main(void){
 				monBegin();
 				break;
 			case '3':
-				INTERNAL_SYSCALL(syscall_putc, 1, 'K');
+#ifdef CONFIG_BLITZ
+				cga_display_img();
+				while(true) asm(" ");
+#endif
 				break;
 		}
 	}

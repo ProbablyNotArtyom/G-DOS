@@ -14,6 +14,9 @@
 
 //---------------------------------------------------
 
+// ramdisk size in kilobytes
+#define DEV_RAMDISK_SIZE	256
+
 #define CONFIG_DEV_RAMDISK
 #define CONFIG_DEV_BSVCSERIAL
 

@@ -11,6 +11,7 @@
 #define _HEADER_STDTOOLS
 
 	#include <stddef.h>
+	#include <stdbool.h>
 	#include <limits.h>
 	#include <stdint.h>
 	#include <char.h>
@@ -72,7 +73,12 @@ int strcmp(const char *s1, const char *s2);
 int strcmpl(const char *s1, const char *s2, int len);
 size_t strlen (const char *str);
 
-/* ser.c */
+size_t mm_num_free();
+size_t mm_num_used();
+size_t mm_num_fresh();
+size_t mm_addr_top();
+bool mm_check();
+
 charResult putc(char out);
 char read(void);
 
@@ -90,6 +96,9 @@ void setFG(color_t clr);
 void setBG(color_t clr);
 void setFG256(uint8_t clr);
 void setBG256(uint8_t clr);
+
+bool __global_flags[];
+const char* const __global_flag_names[];
 
 //---------------------------------------------------
 #endif

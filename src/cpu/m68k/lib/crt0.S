@@ -25,17 +25,6 @@
 
 _start:
 
-1:
-	/* Clear BSS */
- 	leal   _end,%a0
- 	movel  %a0,%d2
- 	leal   __bss_start,%a1
- 	subl   %a1,%a0
- 	movel  %a0,%d0
- 	jbra   3f
-2:	clrb   (%a1)+
-3:	dbra    %d0,2b
-
         pea     0
         pea     %sp@(4)
         pea     0

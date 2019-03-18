@@ -79,6 +79,7 @@ void pata_dev_register(){
 			pata_disk[i]->write = &pata_write;
 			pata_disk[i]->read = &pata_read;
 			pata_disk[i]->ioctl = &pata_ioctl;
+			pata_disk[i]->local_drive_num = i;
 			diskRegister(pata_disk[i]);
 		}
 	}

@@ -5,13 +5,20 @@ OBJECTS := $(OBJECTS:%.S=%.o)
 ARCHNAME := cpu-lib
 SUBDIRS =
 
+
+.PHONY: clean all
 all: clean
 	make objects
-	$(AR) Prvs $(ARCHNAME).a $(OBJECTS)
-	cp $(ARCHNAME).a $(BINDIR)
+	$(AR) rcs libc.a $(OBJECTS)
+	cp libc.a $(LIBDIR)
 	for dir in $(SUBDIRS); do \
 		$(MAKE) -C $$dir -f Makefile $@; \
 	done
+
+	cp link.ld $(LIBDIR)
+	mkdir -p $(LIBDIR)/fs
+	cp ../../../fs/fat.h $(LIBDIR)/fs
+	cp ../../../fs/fatconf.h $(LIBDIR)/fs
 
 clean:
 	rm -vf *.a
@@ -22,5 +29,5 @@ clean:
 
 objects:
 	for file in $(SOURCES); do \
-		$(CC) $(CCFLAGS) -c $$file; \
+		$(CC) $(CCFLAGS_GENERIC) -c $$file; \
 	done

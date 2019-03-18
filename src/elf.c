@@ -13,6 +13,7 @@
 	#include <stdarg.h>
 	#include <stdbool.h>
 	#include <std.h>
+	#include <flags.h>
 
 	#include <elf.h>
 	#include <fs.h>
@@ -70,8 +71,9 @@ int loadELF(char* args[], int argCount, FIL *file){
 				puts("Dynamically linked ELFs not supported");
 				return -1;
 			case PHT_LOAD:
-				nprintf("Loading %d byte segment from offset 0x%x to address 0x%x",
-					progHeader.fileSize, progHeader.offset, progHeader.physAddr);
+				if (__global_flags[GLOBAL_FLAG_DEBUG] = true)
+					nprintf("Loading %d byte segment from offset 0x%x to address 0x%x",
+						progHeader.fileSize, progHeader.offset, progHeader.physAddr);
 				f_lseek(file, progHeader.offset);
 				f_read(file, progHeader.physAddr, progHeader.fileSize, &numBytes);
 				if(progHeader.fileSize < progHeader.memSize)
@@ -93,7 +95,7 @@ int loadELF(char* args[], int argCount, FIL *file){
 	nprintf("Checking for bootversion at 0x%x", lowMem);
 	bVersion = (struct bootversion *)lowMem;
 	if(bVersion->magic == BOOTINFOV_MAGIC){
-		fputs("Linux kernel found");
+		puts("Linux kernel found");
 		int i = 0;
 		while(bVersion->machversions[i].machine != MACH_BLITZ){
 			if(bVersion->machversions[i].machine == 0x0000){
@@ -107,7 +109,7 @@ int loadELF(char* args[], int argCount, FIL *file){
 			return -1;
 		}
 
-		nprintf("Creating kernel bootinfo at 0x%x", bootInfo);
+		nprintf("Creating kernel bootinfo at 0x%x", &bootInfo);
 
 		/* Machine type */
 		bootInfo = (struct biRecord*)((highMem + 0xFFF) & ~0xFFF);

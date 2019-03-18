@@ -2,7 +2,7 @@
 	#include <std.h>
 	#include <fs.h>
 	#include <lib/sysexit.h>
-	#include <io.h>
+	#include <cpu/io.h>
 
 #define FLASH_DO_ERASE	0x01
 

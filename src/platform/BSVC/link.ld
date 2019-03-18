@@ -18,7 +18,7 @@ _ram_end = ORIGIN(ram) + LENGTH(ram);
 _stack_start = _ram_end - STACK_SIZE;
 _stack_end = _ram_end;
 
-HEAP_SIZE = 0x10000;
+HEAP_SIZE = _stack_start - _ram_start - (_end - __bss_start);
 
 /*
  * allocate the stack

@@ -58,6 +58,7 @@ struct dev_disk {
 	diskResult (*write)(uint8_t drive, const uint8_t *buff, uint32_t sector, uint8_t len);
 	diskResult (*read)(uint8_t drive, uint8_t *buff, uint32_t sector, uint8_t len);
 	diskResult (*ioctl)(uint8_t drive, uint8_t cmd, void *buff);
+	uint8_t		local_drive_num;
 };
 
 void diskRegister(struct dev_disk *disk);

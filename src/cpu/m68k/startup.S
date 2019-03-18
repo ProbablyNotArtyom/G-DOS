@@ -6,10 +6,6 @@
 	.title <startup.S>
 #define STACKSIZE	0x8000
 
-#ifndef __STACK
-#define __STACK		0x300000
-#endif
-
 /*
  * Define an empty environment.
  */
@@ -55,7 +51,6 @@ SYM (_start):
 
 	or.w    #0x2700, sr 			/* disable interrupts */
 	movel	#(__STACK), a0
-
 
 	cmpl	#(0), a0
 	jbeq    1f

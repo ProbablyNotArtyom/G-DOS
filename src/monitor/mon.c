@@ -34,6 +34,9 @@ static enum errList echo_fmt();
 static enum errList delay_arb();
 static enum errList brot();
 static enum errList dasm();
+static enum errList flag();
+
+extern const size_t __num_global_flags;
 
 //----------------------Tables-----------------------
 
@@ -53,6 +56,7 @@ enum errList const (* const funcTable[])() = {
 	delay_arb,
 	brot,
 	dasm,
+	flag,
 	NULL
 };
 
@@ -72,6 +76,7 @@ const char* const funcNames[] = {
 	"delay ",
 	"brot ",
 	"dasm ",
+	"flag ",
 	"\0"
 };
 
@@ -496,5 +501,39 @@ static enum errList dasm(){
 		}
 		puts("");
 	}
+	return errNONE;
+}
+
+static enum errList flag(){
+	uint8_t *flag_name;
+	uint8_t *state;
+
+	skipBlank();
+	flag_name = parse;
+	while (*parse != '\0' && *parse != ' ') parse++;
+	if (*parse == '\0') return errSYNTAX;
+	*parse++ = '\0';
+
+	skipBlank();
+	if (*parse == '\0') return errSYNTAX;
+	state = parse;
+	while (*parse != '\0' && *parse != ' ') parse++;
+	*parse = '\0';
+
+	int i = 0;
+	while (i < __num_global_flags){
+		if (!strcmp(__global_flag_names[i], flag_name)) break;
+		i++;
+	}
+	if (i >= __num_global_flags) return errSYNTAX;
+
+	if (!strcmp(state, "true") && __global_flags[i] == false){
+	 	__global_flags[i] = true;
+		nprintf("Setting %s true (from false)", flag_name);
+	} else if (!strcmp(state, "false") && __global_flags[i] == true){
+	 	__global_flags[i] = false;
+		nprintf("Setting %s false (from true)", flag_name);
+	}
+
 	return errNONE;
 }
