@@ -71,7 +71,7 @@ int loadELF(char* args[], int argCount, FIL *file){
 				puts("Dynamically linked ELFs not supported");
 				return -1;
 			case PHT_LOAD:
-				if (__global_flags[GLOBAL_FLAG_DEBUG] = true)
+				if (__global_flags[GLOBAL_FLAG_DEBUG] == true)
 					nprintf("Loading %d byte segment from offset 0x%x to address 0x%x",
 						progHeader.fileSize, progHeader.offset, progHeader.physAddr);
 				f_lseek(file, progHeader.offset);

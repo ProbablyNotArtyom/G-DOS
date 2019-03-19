@@ -229,6 +229,16 @@ static Block *alloc_block(size_t num) {
     return NULL;
 }
 
+static size_t block_size(void *ptr) {
+	int i = 0;
+	while (i < TA_HEAP_BLOCKS){
+		if (heap->blocks[i].addr == ptr) break;
+		i++;
+	}
+	if (i >= TA_HEAP_BLOCKS) return NULL;
+	return heap->blocks[i].size;
+}
+
 void *malloc(size_t num) {
     Block *block = alloc_block(num);
     if (block != NULL) {
@@ -266,6 +276,25 @@ void *calloc(size_t num, size_t size) {
         return block->addr;
     }
     return NULL;
+}
+
+void *realloc(void *ptr, size_t num) {
+	void *newmem;
+	if (!ptr) {
+		newmem = malloc(num);
+		if (!newmem) return NULL;
+	} else {
+		if (block_size(ptr) < num) {
+			newmem = malloc(num);
+			if (!newmem) return NULL;
+
+			memcpy(newmem, ptr, block_size(num));
+			free(ptr);
+		} else {
+			newmem = ptr;
+		}
+	}
+	return newmem;
 }
 
 static size_t count_blocks(Block *ptr) {
