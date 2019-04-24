@@ -6,8 +6,8 @@
 
 #define CONFIG_CPU_68030
 
-#define		RAMSTART		0x04000000		// The start of non-code RAM in memory
-#define		RAMEND			0x04400000		// End of usable RAM
+#define		RAMSTART		0x08000000		// The start of non-code RAM in memory
+#define		RAMEND			0x08400000		// End of usable RAM
 
 #define 	MEMTEST 		false
 #define 	ALLOW_UNALIGNED	true			// Set true for anything above 68020
@@ -17,14 +17,14 @@
 #define CONFIG_DEV_ISA_CGA
 #define CONFIG_DEV_ISA_PATA
 #define CONFIG_DEV_RAMDISK
-#define DEV_ISA_MEM_START	0x00100000
-#define DEV_ISA_IO_START	0x00300000
+#define DEV_ISA_MEM_START	0x04000000
+#define DEV_ISA_IO_START	0x04200000
 
 // ramdisk size in kilobytes
 #define DEV_RAMDISK_SIZE	256
 
 #define CONFIG_DEV_VT8242
-#define DEV_VT8242_BASE 	0x00300060
+#define DEV_VT8242_BASE 	0x00180000
 
 #define peek vt8242_dev_peek
 #define read vt8242_dev_read

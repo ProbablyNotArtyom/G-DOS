@@ -7,7 +7,7 @@ MEMORY
 {
   vectors (rx) : ORIGIN = 0x0000, LENGTH = 0x3FF
   rom (rx) : ORIGIN = 0x400, LENGTH = 0x7FFFF-0x400
-  ram (rwx) : ORIGIN = 0x04000000, LENGTH = 0x00400000
+  ram (rwx) : ORIGIN = 0x08000000, LENGTH = 0x00400000
 }
 
 STACK_SIZE = 0x2000;

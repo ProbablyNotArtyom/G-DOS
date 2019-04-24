@@ -33,8 +33,6 @@ HEAP_SIZE = _stack_start - _ram_start - (_end - __bss_start);
  * an underscore) and coff object file formats.
  */
 PROVIDE (__STACK = _stack_end);
-PROVIDE (main = 0);
-PROVIDE (_main = 0);
 
 PROVIDE (software_init_hook = 0);
 PROVIDE (_software_init_hook = 0);

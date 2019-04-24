@@ -135,10 +135,7 @@ int main(void){
 				monBegin();
 				break;
 			case '3':
-#ifdef CONFIG_BLITZ
-				cga_display_img();
-				while(true) asm(" ");
-#endif
+				return;
 				break;
 		}
 	}

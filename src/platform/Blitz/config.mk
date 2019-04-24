@@ -10,6 +10,6 @@ AS = $(PREFIX)as
 AR = $(PREFIX)ar
 CPY = $(PREFIX)objcopy
 
-CCFLAGS = -Wall -mcpu=$(CPU) -m68881 -nostdlib -static 
+CCFLAGS = -Wall -mcpu=$(CPU) -m68881 -nostdlib -static
 LDFLAGS = -Bstatic
 LDLIBS := `$(CC) -print-libgcc-file-name`

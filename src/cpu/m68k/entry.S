@@ -52,7 +52,7 @@ ENTRY(syscall)
 	mulu.w	#4,%d0
 	adda.l	%d0,%a0
 	movea.l	(%a0),%a0
-	jsr		(%a0)
+	jbsr	(%a0)
 	movem.l	%sp@+,%a0/%d1-%d5
 	rte
 
