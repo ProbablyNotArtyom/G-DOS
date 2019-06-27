@@ -128,13 +128,17 @@ int main(void){
 			case '1':
 			default:
 				puts("");
-				gdos();
+				shellBegin();
 				break;
 			case '2':
 				puts("");
-				monBegin();
+				guiBegin();
 				break;
 			case '3':
+				puts("");
+				monBegin();
+				break;
+			case '4':
 				return;
 				break;
 		}
@@ -154,7 +158,8 @@ const char const b_opts[] =
 	"=============================================\r\n"
 	"  0)  RAM Test\r\n"
 	"  1)  Shell  (default)\r\n"
-	"  2)  G'mon\r\n"
-	"  3)  Exit\r\n"
+	"  2)  Shell  (TUI)\r\n"
+	"  3)  G'mon\r\n"
+	"  4)  Exit\r\n"
 	"=============================================\r\n"
 	"> ";

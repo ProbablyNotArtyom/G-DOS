@@ -5,7 +5,7 @@ OBJECTS := $(OBJECTS:%.S=%.o)
 SUBDIRS =
 
 LIBDIR = $(PWD)/../lib
-include $(LIBDIR)/config.mk
+-include $(LIBDIR)/config.mk
 
 LDFLAGS = -T $(LIBDIR)/link.ld
 CCFLAGS = -I $(LIBDIR)/include -nostdlib
@@ -16,7 +16,8 @@ all: clean
 clean:
 	rm -vf *.a
 	rm -vf *.o
-
+	find . -type f \( ! -name "*.*" ! -name "Makefile" \) -delete
+	
 objects:
 	for file in $(SOURCES); do \
 		$(CC) $(CCFLAGS) -c $$file; \

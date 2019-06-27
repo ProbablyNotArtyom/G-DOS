@@ -485,6 +485,7 @@ static enum errList brot(){
 }
 
 static enum errList dasm(){
+	/*
 	char buff[80];
 	uint8_t *ptr, *end;
 	if (!isEOI()){
@@ -501,6 +502,7 @@ static enum errList dasm(){
 		}
 		puts("");
 	}
+	*/
 	return errNONE;
 }
 

@@ -17,7 +17,6 @@ extern initcall_t __start_initsec, __stop_initsec;
 extern unsigned int reset_devices;
 
 
-
 #define __define_initcall(fn, id) \
 	static initcall_t __initcall_##fn##id __attribute__((__used__)) \
 	__attribute__((__section__(".initcall" #id ".init"))) = fn; \

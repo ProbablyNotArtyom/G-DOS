@@ -31,4 +31,8 @@ charResult dummy_dev_init(){
 	return CH_OK;
 }
 
- #endif
+char dummy_dev_peek() {
+		return NULL;
+}
+ 
+#endif

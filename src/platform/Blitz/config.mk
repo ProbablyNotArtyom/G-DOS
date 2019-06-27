@@ -2,7 +2,7 @@
 BAREMETAL = TRUE
 ARCH = m68k
 CPU = 68030
-PREFIX = m68k-unknown-elf-
+PREFIX = m68k-elf-
 
 CC = $(PREFIX)gcc
 LD = $(PREFIX)ld

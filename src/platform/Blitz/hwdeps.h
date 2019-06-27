@@ -14,17 +14,26 @@
 
 #define CUSTOM_SPLASH	blitz_splash
 
-#define CONFIG_DEV_ISA_CGA
-#define CONFIG_DEV_ISA_PATA
-#define CONFIG_DEV_RAMDISK
-#define DEV_ISA_MEM_START	0x04000000
-#define DEV_ISA_IO_START	0x04200000
+// ---------- Driver Support ----------
 
-// ramdisk size in kilobytes
-#define DEV_RAMDISK_SIZE	256
+#define CONFIG_DEV_ISA_CGA
+#define DEV_ISA_MEM_START	0x04200000
+#define DEV_ISA_IO_START	0x04000000
 
 #define CONFIG_DEV_VT8242
 #define DEV_VT8242_BASE 	0x00180000
+
+#define CONFIG_DEV_DP8440
+#define DEV_DP8440_BASE		0x0C000000
+#define DEV_DP8440_MAGIC	0x0C34FC4D
+
+// ---------- Disk Interfaces ----------
+
+#define CONFIG_DEV_BLITZ_IDE
+#define BLITZ_IDE_BASE		0x00100000
+
+#define CONFIG_DEV_RAMDISK
+#define DEV_RAMDISK_SIZE	256
 
 #define peek vt8242_dev_peek
 #define read vt8242_dev_read
