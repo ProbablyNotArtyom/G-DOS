@@ -28,7 +28,7 @@
 #endif
 /*
  * some assemblers choke on '#' as an immediate value. As gcc can also
- * use '&', use that in those cases. 
+ * use '&', use that in those cases.
  */
 #ifndef __IMMEDIATE_PREFIX__
 #define __IMMEDIATE_PREFIX__ #

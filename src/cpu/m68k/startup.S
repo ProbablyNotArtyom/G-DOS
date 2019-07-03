@@ -49,7 +49,7 @@ SYM (environ):
 	.global SYM (_start)
 SYM (_start):
 
-	or.w    #0x2700, sr 			/* disable interrupts */
+	move.w	#0x2700, sr 			/* disable interrupts */
 	movel	#(__STACK), a0
 
 	cmpl	#(0), a0
@@ -68,7 +68,9 @@ SYM (_start):
  	movel  a0, d0
  	jbra   3f
 2:	clrb   (a1)+
-3:	dbra    d0, 2b
+3:	sub.l 	#(1), d0
+	cmp.l 	#(-1), d0
+	bne   	2b
 
 	lea.l   __data_end, a0
 	lea.l   __data_start, a1    /* target in a1 */
@@ -79,14 +81,16 @@ SYM (_start):
 4:
 	move.b  (a2)+, (a1)+
 5:
-	dbra    d0, 4b
+	sub.l 	#(1), d0
+	cmp.l 	#(-1), d0
+	bne   	4b
 
-        pea     0
+    pea     0
 	PICPEA	SYM (environ),a0
-        pea     sp@(4)
-        pea     0
-	pea	(a1)
-	jsr	main
+    pea     sp@(4)
+    pea     0
+	pea		(a1)
+	jsr		main
 	addq.l	#4,sp
 	unlk	a6
 	rts

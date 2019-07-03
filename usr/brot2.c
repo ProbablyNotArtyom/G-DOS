@@ -1,5 +1,6 @@
 
 	#include <std.h>
+	#include <cpu/calling.h>
 	#include <fs.h>
 	#include <lib/sysexit.h>
 	#include <cpu/io.h>
@@ -7,19 +8,20 @@
 
 //---------------------------------------------------
 
-static const char const brot_help_txt[] = {
-	"Usage: brot [number of brots]\r\n"
+static const char const help_txt[] = {
+	"Brot renders a mandelbrot figure out to the terminal\r\n"
+	"Usage: brot \r\n"
 };
 
 result_t main(char *argv[], int argc){
 	uint8_t opts = 0x00;				// Create something to log what options are ticked
-	uint8_t fnames;						// Track the index where file names begin
+	uint8_t fnames;
 	uint32_t num;
 	for (int i = 0; i < argc; i++){
 		if (argv[i][0] == '-'){
 			switch (argv[i][1]){
 				case 'h':
-					puts(brot_help_txt);
+					puts(help_txt);
 					return RET_OK;
 				default:
 					return RET_ARGS;
@@ -29,7 +31,7 @@ result_t main(char *argv[], int argc){
 			i = argc;
 		}
 	}
-	num = strtoul(argv[fnames], NULL, 0);
+	num = strtoul(argv[fnames], NULL, 10);
 
 	while (num > 0){
 		int n = 0;

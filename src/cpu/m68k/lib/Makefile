@@ -29,5 +29,5 @@ clean:
 
 objects:
 	for file in $(SOURCES); do \
-		$(CC) $(CCFLAGS_GENERIC) -c $$file; \
+		$(CC) -I$(LIBDIR)/include -c $$file $(CCFLAGS_GENERIC); \
 	done

@@ -3,7 +3,7 @@ SOURCES += $(shell find `pwd` -maxdepth 1 -iname '*.S')
 OBJECTS := $(SOURCES:%.c=%.o)
 OBJECTS := $(OBJECTS:%.S=%.o)
 
-SUBDIRS = $(PLATFORM)
+SUBDIRS = $(ARCH)/$(PLATFORM)
 
 all:
 	for dir in $(SUBDIRS); do \

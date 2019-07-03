@@ -42,6 +42,7 @@ int loadELF(char* args[], int argCount, FIL *file){
 			puts("Malformed ELF header");
 			return -1;
 	}
+
 	if(header.h_class != 1 ||
 		header.h_abiversion != 0 ||
 		header.h_osabi != 0 ||
@@ -53,9 +54,20 @@ int loadELF(char* args[], int argCount, FIL *file){
 		puts("ELF is not m68k native");
 		return -1;
 	}
-	if(header.type != 2){
-		puts("ELF is not executable");
-		return -1;
+	switch (header.type) {
+		default:
+		case ET_NONE:
+			puts("[?] ELF has unknown file type");
+			return -1;
+		case ET_REL:
+			if (__global_flags[GLOBAL_FLAG_DEBUG] == true) puts("ELF is relocatable");
+			break;
+		case ET_EXEC:
+			if (__global_flags[GLOBAL_FLAG_DEBUG] == true) puts("ELF is executable");
+			break;
+		case ET_DYN:
+			puts("[?] ELF is a shared object file");
+			return -1;
 	}
 
 	while (progIndex < header.progNum){
@@ -92,7 +104,8 @@ int loadELF(char* args[], int argCount, FIL *file){
 	}
 
 	/* Check for a linux kernel */
-	nprintf("Checking for bootversion at 0x%x", lowMem);
+	if (__global_flags[GLOBAL_FLAG_DEBUG] == true)
+		nprintf("Checking for bootversion at 0x%x", lowMem);
 	bVersion = (struct bootversion *)lowMem;
 	if(bVersion->magic == BOOTINFOV_MAGIC){
 		puts("Linux kernel found");

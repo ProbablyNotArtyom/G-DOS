@@ -48,8 +48,9 @@ void shellBegin(void){
 #ifdef DISK_AUTOMOUNT
 	/* attempt to mount the default disk */
 	fsMounts[0] = malloc(sizeof(FATFS));
+
 	f_error res;
-	res = f_mount(fsMounts[0], DISK_AUTOMOUNT, 1);
+	res = f_mount(fsMounts[0], "0", 1);
 	if (res != FR_OK){
 		fs_putsError(res);
 		puts("[!] Default disk could not be mounted");

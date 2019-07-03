@@ -23,18 +23,7 @@ asmlinkage void addrerr_c(struct frame *fp){
 
 asmlinkage void buserr_c(struct frame *fp){
 	printf("[!!!] Bus Error, Format is %X\n", fp->ptregs.format);
-
-	switch (fp->ptregs.format) {
-		/* 68030 */
-		case 0xa:
-		case 0xb:
-			bus_error030 (fp);
-			break;
-		default:
-			nprintf("[!!!] Bad frame format, unknown error");
-			murder_kernel("Haulting execution", &fp->ptregs, 0);
-			break;
-	}
+	murder_kernel("Haulting execution", &fp->ptregs, 0);
 }
 
 void show_registers(struct pt_regs *regs)
@@ -100,7 +89,7 @@ void show_registers(struct pt_regs *regs)
 		addr += sizeof(fp->un.fmtb);
 		break;
 	default:
-		puts("\n");
+		puts("[!!!] Bad frame format, unknown error");
 	}
 
 }

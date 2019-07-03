@@ -1,4 +1,4 @@
-OUTPUT_ARCH(m68k)
+OUTPUT_ARCH(arm)
 SEARCH_DIR(.)
 ENTRY(main)
 

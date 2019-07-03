@@ -4,7 +4,7 @@ ENTRY(main)
 
 MEMORY
 {
-  ram (rwx) : ORIGIN = 0x04100000, LENGTH = 0x00100000
+  ram (rwx) : ORIGIN = 0x00400000, LENGTH = 0x00100000
 }
 
 /*

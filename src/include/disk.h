@@ -11,6 +11,7 @@
 #define _HEADER_FAT_DEVICE
 
 #include <fs.h>
+#include <mod/device.h>
 
 //---------------------Defines-----------------------
 
@@ -114,6 +115,6 @@ struct dev_disk {
 	uint8_t		local_drive_num;
 };
 
-void diskRegister(struct dev_disk *disk);
+void diskRegister(struct device_info *disk);
 
 #endif

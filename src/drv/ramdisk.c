@@ -15,6 +15,9 @@
 	#include <mod/init.h>
 	#include "ramdisk.h"
 
+	static const char drv_name[] = "ramdisk";
+	static const char drv_vendor[] = "notartyom";
+	
 	uint8_t *ramdisk_base;
 
 	static uint8_t	*currentIndex;
@@ -27,14 +30,22 @@
 
 void ramdisk_dev_register(){
 	exists = false;
-	puts("\n\rRAMdisk driver initializing....");
-	disk.init = &ramdisk_init;
-	disk.status = &ramdisk_status;
-	disk.write = &ramdisk_write;
-	disk.read = &ramdisk_read;
-	disk.ioctl = &ramdisk_ioctl;
-	disk.local_drive_num = 0;
-	diskRegister(&disk);
+	puts("\n\rramdisk driver / NotArtyom / 06-30-19");
+	
+	struct device_info *driver = (struct device_info *)malloc(sizeof(struct device_info));
+	driver->driver_disk = (struct dev_disk *)malloc(sizeof(struct dev_disk));
+	
+	driver->name = &drv_name;
+	driver->vendor = &drv_vendor;
+	driver->type = DEVTYPE_BLOCK;
+	
+	driver->driver_disk->init = &ramdisk_init;
+	driver->driver_disk->status = &ramdisk_status;
+	driver->driver_disk->write = &ramdisk_write;
+	driver->driver_disk->read = &ramdisk_read;
+	driver->driver_disk->ioctl = &ramdisk_ioctl;
+	driver->driver_disk->local_drive_num = 0;
+	diskRegister(driver);
 	return;
 }
 
