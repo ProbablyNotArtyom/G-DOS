@@ -156,3 +156,28 @@ bool getRange(void **lower, void **upper){
 	}
 	return true;
 }
+
+void printHex(char num){
+	putc(hexTable[(num & 0x0F)]);
+	return;
+}
+
+void printByte(char num){
+	putc(hexTable[(num & 0xF0) >> 4]);
+	putc(hexTable[(num & 0x0F)]);
+	return;
+}
+
+void printWord(uint16_t num){
+	putc(hexTable[(num & 0xF000) >> 12]);
+	putc(hexTable[(num & 0x0F00) >> 8]);
+	putc(hexTable[(num & 0x00F0) >> 4]);
+	putc(hexTable[(num & 0x000F)]);
+	return;
+}
+
+void printLong(uint32_t num){
+	printWord((num & 0xFFFF0000) >> 16);
+	printWord(num & 0x0000FFFF);
+	return;
+}

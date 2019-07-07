@@ -16,9 +16,9 @@
 	#include <mod/device.h>
 	#include "fatdisk.h"
 
-	extern unsigned char _binary___fatdisk_img_start;
-	extern unsigned char _binary___fatdisk_img_end;
-	extern unsigned char _binary___fatdisk_img_size;
+	extern unsigned char _binary___romdisk_img_start;
+	extern unsigned char _binary___romdisk_img_end;
+	extern unsigned char _binary___romdisk_img_size;
 
 	static const char drv_name[] = "fatdisk";
 	const char drv_vendor[] = "notartyom";
@@ -37,7 +37,7 @@ void fatdisk_dev_register(){
 
 	struct device_info *driver = (struct device_info *)malloc(sizeof(struct device_info));
 	driver->driver_disk = (struct dev_disk *)malloc(sizeof(struct dev_disk));
-	
+
 	driver->name = &drv_name;
 	driver->vendor = &drv_vendor;
 	driver->type = DEVTYPE_BLOCK;
@@ -55,7 +55,7 @@ void fatdisk_dev_register(){
 diskStatus fatdisk_init(uint8_t drive){
 	if (exists == true) return STA_OK;
 	else {
-		fatdisk_base = &_binary___fatdisk_img_start;
+		fatdisk_base = &_binary___romdisk_img_start;
 		currentIndex = fatdisk_base;
 		currentSec = 0;
 		exists = true;
@@ -69,11 +69,7 @@ diskStatus fatdisk_status(uint8_t drive){
 }
 
 diskResult fatdisk_write(uint8_t drive, const uint8_t *buff, uint32_t sector, uint8_t len){
-	//if (sector * 512 + len > FATDISK_SIZE) return RES_ERROR;
-	currentSec = sector;
-	currentIndex = (uint32_t)fatdisk_base + sector * 512;
-	memcpy(currentIndex, buff, len * 512);
-	return RES_OK;
+	return RES_WRPRT;
 }
 
 diskResult fatdisk_read(uint8_t drive, uint8_t *buff, uint32_t sector, uint8_t len){
@@ -89,7 +85,7 @@ diskResult fatdisk_ioctl(uint8_t drive, uint8_t cmd, void *buff){
 		case CTRL_SYNC:
 			return RES_OK;
 		case GET_SECTOR_COUNT:
-			*(uint32_t*)buff = _binary___fatdisk_img_size * 2;
+			*(uint32_t*)buff = _binary___romdisk_img_size * 2;
 			return RES_OK;
 		case GET_SECTOR_SIZE:
 			*(uint16_t*)buff = 512;

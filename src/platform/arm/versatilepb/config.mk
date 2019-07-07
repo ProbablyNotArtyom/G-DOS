@@ -10,6 +10,7 @@ AR = $(PREFIX)ar
 CPY = $(PREFIX)objcopy
 RANLIB=$(PREFIX)ranlib
 
-CCFLAGS = -fno-exceptions -fno-unwind-tables -Wall -mcpu=$(CPU) -nostdlib -static -mfloat-abi=soft
-LDFLAGS = -Bstatic --exclude-libs,libssp
+LDFLAGS = -Bstatic
+CCFLAGS = -fno-exceptions -fno-unwind-tables -w -mfloat-abi=soft -nostdlib -static -mcpu=$(CPU)
+CCFLAGS_GENERIC = -fno-exceptions -fno-unwind-tables -w -mfloat-abi=soft -nostdlib -static -mcpu=$(CPU)
 LDLIBS := `$(CC) -print-libgcc-file-name`

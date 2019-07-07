@@ -1,7 +1,7 @@
 // TRAP wrapper for syscalls
 
 	#include <std.h>
-	#include <syscall.h>
+	#include <cpu/syscall.h>
 	#include <char.h>
 	#include <fs.h>
 

@@ -17,7 +17,7 @@
 
 	static const char drv_name[] = "ramdisk";
 	static const char drv_vendor[] = "notartyom";
-	
+
 	uint8_t *ramdisk_base;
 
 	static uint8_t	*currentIndex;
@@ -31,14 +31,14 @@
 void ramdisk_dev_register(){
 	exists = false;
 	puts("\n\rramdisk driver / NotArtyom / 06-30-19");
-	
+
 	struct device_info *driver = (struct device_info *)malloc(sizeof(struct device_info));
 	driver->driver_disk = (struct dev_disk *)malloc(sizeof(struct dev_disk));
-	
+
 	driver->name = &drv_name;
 	driver->vendor = &drv_vendor;
 	driver->type = DEVTYPE_BLOCK;
-	
+
 	driver->driver_disk->init = &ramdisk_init;
 	driver->driver_disk->status = &ramdisk_status;
 	driver->driver_disk->write = &ramdisk_write;

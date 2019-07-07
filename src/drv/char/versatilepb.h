@@ -14,6 +14,7 @@
 
 charResult versatilepb_serial_dev_write(char out);
 char versatilepb_serial_dev_read();
+char versatilepb_serial_dev_peek();
 charResult versatilepb_serial_dev_init();
 
 //---------------------------------------------------

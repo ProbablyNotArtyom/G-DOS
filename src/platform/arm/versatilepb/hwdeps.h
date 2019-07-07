@@ -26,10 +26,10 @@
 #define CONFIG_DEV_RAMDISK
 #define DEV_RAMDISK_SIZE	256
 
-#define peek dummy_dev_peek
-#define read versatilepb_serial_dev_read
-#define putc versatilepb_serial_dev_write
-#define tty_init versatilepb_serial_dev_init
+#define peek_def 		versatilepb_serial_dev_peek
+#define read_def		versatilepb_serial_dev_read
+#define putc_def		versatilepb_serial_dev_write
+#define tty_init_def	versatilepb_serial_dev_init
 
 #define FF_DRIVER_STRS		"fatdisk", "ramdisk", NULL, NULL
 #define FF_VOLUME_STRS		"hd0", "hd1", "fd0", "fd1"

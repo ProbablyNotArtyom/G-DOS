@@ -15,24 +15,16 @@
 	#include <std.h>
 
 	#include <fs.h>
+	#include <errno.h>
 
 //---------------------------------------------------
 
-//uint8_t numFS = 0;
-//struct f_handler fsList[4];
-const char* const errStrings[];
+const int const errNumbers[];
 
 //-----------------------Main------------------------
 
 void fsInit(void){
-	/*
-	fsinitcall_t *fn = &__start_fsinitsec;
-	while (fn < &__stop_fsinitsec) {
-		(*fn)(&fsList[numFS]);
-		numFS++;
-		fn++;
-	}
-	*/
+
 
 	return;
 }
@@ -115,30 +107,30 @@ f_error fs_mkfs(const char* path, uint8_t opt, uint32_t au, void* work, uint32_t
 void fs_putsError(f_error error){
 	if (error <= 0) return;
 	error--;
-	puts(errStrings[error]);
+	puts(strerror(errNumbers[error]));
 	return;
 }
 
 //----------------------Tables-----------------------
 
-const char* const errStrings[] = {
-	"[!] Driver Error\n\r",
-	"[!] Assertation failed\n\r",
-	"[!] Drive unable to function\n\r",
-	"[?] Unable to find file\n\r",
-	"[?] Unable to follow path\n\r",
-	"[?] Path is invalid\n\r",
-	"[!] Access denied: Directory may be full\n\r",
-	"[!] Access denied\n\r",
-	"[?] Invalid file/dir object\n\r",
-	"[!] Drive is write-protected\n\r",
-	"[?] Invalid drive number\n\r",
-	"[!] Volume has no work area\n\r",
-	"[!] FAT filesystem not detected\n\r",
-	"[!] MKFS aborted\n\r",
-	"[!] Access timeout\n\r",
-	"[!] Access locked\n\r",
-	"[!] Not enough memory to allocate LFN buffer\n\r",
-	"[!] Too many open files\n\r",
-	"[?] Invalid parameter\n\r"
+const int const errNumbers[] = {
+	EPROTO,
+	EPROTO,
+	EBUSY,
+	ENOENT,
+	ENOENT,
+	ENOENT,
+	ENOMEM,
+	EACCES,
+	EFAULT,
+	EROFS,
+	ENODEV,
+	EBUSY,
+	ENOFS,
+	EBUSY,
+	ETIME,
+	EDEADLK,
+	ENOMALLOC,
+	ENFILE,
+	EINVAL
 };

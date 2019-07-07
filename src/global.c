@@ -3,6 +3,7 @@
 	#include <stdarg.h>
 	#include <stdbool.h>
 	#include <std.h>
+	#include <string.h>
 	#include <linkage.h>
 	#include <syscall.h>
 
@@ -19,5 +20,23 @@
 	};
 
 	const size_t __num_global_flags = ARRAY_SIZE(__global_flag_names);
+
+//---------------------------------------------------
+
+charResult putc(char out) {
+	return putc_def(out);
+}
+
+char read(void) {
+	return read_def();
+}
+
+char peek() {
+	return peek_def();
+}
+
+charResult tty_init() {
+	return tty_init_def();
+}
 
 //---------------------------------------------------

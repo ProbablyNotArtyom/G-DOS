@@ -18,6 +18,7 @@
 
 volatile unsigned int * const UART0DR = (unsigned int *)0x101f1000;
 volatile unsigned int * const UART0FR = (unsigned int *)0x101f1018;
+char lastVal;
 
 //--------------------Functions----------------------
 
@@ -31,6 +32,11 @@ char versatilepb_serial_dev_read(){
 		if (*UART0FR & (1<<6)) break;
 	}
 	return *UART0DR;
+}
+
+char versatilepb_serial_dev_peek(){
+	if (*UART0FR & (1<<6)) return *UART0DR;
+	else return NULL;
 }
 
 charResult versatilepb_serial_dev_init(){

@@ -1,24 +1,25 @@
 .PHONY: post
 .PHONY: run
-.PHONY: rootfs
+
 .PHONY: rescue
 post:
-	cd ./bin && $(CPY) -O binary Impact Impact.bin
+	@cd ./bin && $(CPY) -O binary $(BINARY_NAME) $(BINARY_NAME).bin
 
 run:
-	qemu-system-arm -M versatilepb -m 128M -kernel $(BINDIR)/Impact -nographic
+	@qemu-system-arm -M versatilepb -m 128M -kernel $(BINARY_NAME) -nographic
 
-rootfs:
-	dd if=/dev/zero of=$(BINDIR)/fatdisk.img bs=1024 count=512
-	mkfs.fat $(BINDIR)/fatdisk.img -F 12 -s1 -f1
-	mkdir -p $(BINDIR)/tmproot
-	sudo mount -o loop $(BINDIR)/fatdisk.img $(BINDIR)/tmproot
-	sudo cp -r ./root/* $(BINDIR)/tmproot
-	sudo umount $(BINDIR)/tmproot
-	sudo rm -r $(BINDIR)/tmproot
-	cd $(BINDIR) && $(CPY) -I binary -O elf32-littlearm -B $(ARCH) --rename-section .data=.text ./fatdisk.img ./fatdisk.o
-	rm $(BINDIR)/fatdisk.img
+$(BINDIR)/romdisk.o: $(USRLIBC)
+	@dd if=/dev/zero of=$(BINDIR)/romdisk.img bs=1024 count=1024 status=none
+	@echo "[DEP] making root filesystem"
+	@echo `mkfs.fat $(BINDIR)/romdisk.img -F 12 -s1 -f1` > /dev/null
+	@mkdir -p $(BINDIR)/tmproot
+	@sudo mount -o loop $(BINDIR)/romdisk.img $(BINDIR)/tmproot
+	@sudo cp -r ./root/* $(BINDIR)/tmproot
+	@sudo umount $(BINDIR)/tmproot
+	@sudo rm -r $(BINDIR)/tmproot
+	@cd $(BINDIR) && $(CPY) -I binary -O elf32-littlearm -B $(ARCH) --rename-section .data=.text ./romdisk.img ./romdisk.o
+	@rm $(BINDIR)/romdisk.img
 
 rescue:
-	sudo umount -fq $(BINDIR)/tmproot || /bin/true
-	rm -rf $(BINDIR)/tmproot
+	@sudo umount -fq $(BINDIR)/tmproot || /bin/true
+	@rm -rf $(BINDIR)/tmproot

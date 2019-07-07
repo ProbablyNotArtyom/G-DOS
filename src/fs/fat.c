@@ -19,7 +19,7 @@
 /----------------------------------------------------------------------------*/
 
 #include <std.h>
-#include "fat.h"			/* Declarations of FatFs API */
+#include <fat.h>			/* Declarations of FatFs API */
 #include <fs.h>
 #include <disk.h>
 

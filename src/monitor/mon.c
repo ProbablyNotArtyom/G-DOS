@@ -27,13 +27,10 @@ static enum errList copy();
 static enum errList move();
 static enum errList fill();
 static enum errList execute();
-static enum errList sirpinski();
 static enum errList memmod();
 static enum errList echo();
 static enum errList echo_fmt();
 static enum errList delay_arb();
-static enum errList brot();
-static enum errList dasm();
 static enum errList flag();
 
 extern const size_t __num_global_flags;
@@ -49,13 +46,10 @@ enum errList const (* const funcTable[])() = {
 	move,
 	fill,
 	execute,
-	sirpinski,
 	memmod,
 	echo,
 	echo_fmt,
 	delay_arb,
-	brot,
-	dasm,
 	flag,
 	NULL
 };
@@ -69,37 +63,47 @@ const char* const funcNames[] = {
 	"move ",
 	"fill ",
 	"go ",
-	"demo ",
 	"@.",
 	"echo ",
 	"printf ",
 	"delay ",
-	"brot ",
-	"dasm ",
 	"flag ",
 	"\0"
 };
 
 const char* const errors[] = {
 	"",
-	"\n\r?Syntax error",
-	"\n\r?Undefined function",
-	"\n\r?Unexpected arguments",
-	"\n\r!Unexpected end of input",
-	"\n\r!Invalid hex",
-	"\n\r?Invalid range",
-	"\n\r!Break"
+	SET_COLOR_FG(C_RED) "\n\r[?] " SET_COLOR_FG(C_YELLOW) "Syntax error" COLOR_RESET_FG,
+	SET_COLOR_FG(C_RED) "\n\r[?] " SET_COLOR_FG(C_YELLOW) "Undefined function" COLOR_RESET_FG,
+	SET_COLOR_FG(C_RED) "\n\r[?] " SET_COLOR_FG(C_YELLOW) "Unexpected arguments" COLOR_RESET_FG,
+	SET_COLOR_FG(C_RED) "\n\r[!] " SET_COLOR_FG(C_YELLOW) "Unexpected end of input" COLOR_RESET_FG,
+	SET_COLOR_FG(C_RED) "\n\r[?] " SET_COLOR_FG(C_YELLOW) "Invalid hex" COLOR_RESET_FG,
+	SET_COLOR_FG(C_RED) "\n\r[?] " SET_COLOR_FG(C_YELLOW) "Invalid range" COLOR_RESET_FG,
+	SET_COLOR_FG(C_RED) "\n\r[!] " SET_COLOR_FG(C_YELLOW) "Break" COLOR_RESET_FG
 };
 
 const char const hexTable[] = "0123456789ABCDEF";
 
 const char const helpText[] =
 	"\r\n\r\nG'Mon Version " GMON_VERSION
-	"\r\n-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-"
-	"\r\n  read [range] ...          put <byte> ..."
-	"\r\n  copy [range], <dest>      move [range], <dest>"
-	"\r\n  fill [range], <byte>      go [address] ..."
-	"\r\n  help";
+	SET_COLOR_FG(C_YELLOW) "\r\n-=-=-" SET_COLOR_FG(C_RED) " Commands " SET_COLOR_FG(C_YELLOW) "-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=" COLOR_RESET_FG
+	"\r\n" COLOR_FG(C_LIGHTBLUE, "  read ") "[range] ...        Dump the memory contents of one or more ranges."
+	"\r\n" COLOR_FG(C_LIGHTBLUE, "  copy ") "[range], <addr>    Copy a memory range to address <addr>."
+	"\r\n" COLOR_FG(C_LIGHTBLUE, "  move ") "[range], <addr>    Move a memory range to address <addr>, "
+	"\r\n" COLOR_FG(C_LIGHTBLUE, "       ") "                       deleting the original data."
+	"\r\n" COLOR_FG(C_LIGHTBLUE, "  fill ") "[range], <byte>    Fill a memory range with <byte>."
+	"\r\n" COLOR_FG(C_LIGHTBLUE, "  put  ") "<byte> ...         Write a string of bytes to the current range."
+	"\r\n" COLOR_FG(C_LIGHTBLUE, "  go   ") "[range]            Execute a subroutine at the current range."
+	"\r\n" COLOR_FG(C_LIGHTBLUE, "  @.#  ") "<addr> [op] <val>  Do a matj operation on the data at [addr]."
+	"\r\n" COLOR_FG(C_LIGHTBLUE, "       ") "                       # is the data size, [op] is the operation"
+	"\r\n" COLOR_FG(C_LIGHTBLUE, "       ") "                       # = (b | w | l)        byte, word, long"
+	"\r\n" COLOR_FG(C_LIGHTBLUE, "       ") "                       op = (+ | - | * | / )  functions"
+	"\r\n" COLOR_FG(C_LIGHTBLUE, "  echo    ") "<str>           Print a string out to the terminal."
+	"\r\n" COLOR_FG(C_LIGHTBLUE, "  printf  ") "<str>           Print a formatted string."
+	"\r\n" COLOR_FG(C_LIGHTBLUE, "  delay   ") "<val>           Hault execution for <val> ticks."
+	"\r\n" COLOR_FG(C_LIGHTBLUE, "  flag    ") "[name] = [val]  Set a global boolean flag."
+	"\r\n" COLOR_FG(C_LIGHTBLUE, "          ") "                val = (true | false)   boolean states"
+	"\r\n" COLOR_FG(C_LIGHTBLUE, "  help    ") "                Displays this help.";
 
 //-----------------------Main------------------------
 
@@ -119,9 +123,12 @@ void monBegin(){
 	current_addr = 0x00;
 	end_addr = 0x00;
 	while (doExit == false){
-		if (end_addr == 0x00) printf("\r\n(%08X)\r\n", (size_t)current_addr);	// Print the prompt
-		else printf("\r\n(%08X.%08X)\r\n", (size_t)current_addr, end_addr);	// Print the prompt
-		fputs("   ~ ");
+		printf(SET_COLOR_FG(C_LIGHTGREEN) "\r\n(" SET_COLOR_FG(C_WHITE) "%08X", (size_t)current_addr);
+		if (end_addr != 0x00)
+			printf(SET_COLOR_FG(C_RED) "." SET_COLOR_FG(C_WHITE) "%08X", end_addr);
+		puts(SET_COLOR_FG(C_LIGHTGREEN) ")");
+
+		fputs(COLOR_FG(C_RED, "   ~ "));
 		parse = inBuffer;							// Set the parse pointer to the beginning of the buffer
 		gets(inBuffer, BUFFLEN);					// Get user input
 		skipBlank();								// Skip and leading spaces
@@ -210,8 +217,9 @@ static void read_range(char *ptr,char *end, char size){
 			if (ptr <= end){
 				fputs("\r\n ");							// Then set up a new line
 				column = 0;								// And print out the location header
+				fputs(SET_COLOR_FG(C_WHITE));
 				printLong(ptr);
-				fputs(" | ");
+				fputs(COLOR_FG(C_LIGHTGREEN, " | "));
 			}
 			while (column < 16 && ptr <= end){
 				printByte(inb(ptr++));							// Print data byte at this address
@@ -220,7 +228,7 @@ static void read_range(char *ptr,char *end, char size){
 				queryBreak();
 			}
 			for (i = column; i < 16; i++) fputs("   ");
-			fputs("| ");
+			fputs(SET_COLOR_FG(C_LIGHTGREEN) "| " SET_COLOR_FG(C_LIGHTYELLOW));
 			addrBuff = ptr - column;
 			for (i = 0; i < column; addrBuff++){
 				if (*addrBuff >= 0x20 && *addrBuff < 0x7F) putc(*addrBuff);
@@ -428,38 +436,6 @@ static enum errList echo_fmt(){
 	return errNONE;
 }
 
-static enum errList sirpinski(){
-	uint8_t size;
-	getArg(size);
-	int x, y, i;
-	puts("");
-	for (int loop = 0; loop <= size; loop++){
-		for (y = (1 << loop) - 1; y >= 0; y--, puts("")) {
-			for (i = 0; i < y; i++) putc(' ');
-			for (x = 0; x + y < (1 << loop); x++)
-			printf((x & y) ? "  " : "* ");
-		}
-		for (y = 1; y <= (1 << loop); y++, puts("")) {
-			for (i = 0; i < y; i++) putc(' ');
-			for (x = 0; x + y < (1 << loop); x++)
-			printf((x & y) ? "  " : "* ");
-		}
-	}
-	for (int loop = size-1; loop >= 0; loop--){
-		for (y = (1 << loop) - 1; y >= 0; y--, puts("")) {
-			for (i = 0; i < y; i++) putc(' ');
-			for (x = 0; x + y < (1 << loop); x++)
-			printf((x & y) ? "  " : "* ");
-		}
-		for (y = 1; y <= (1 << loop); y++, puts("")) {
-			for (i = 0; i < y; i++) putc(' ');
-			for (x = 0; x + y < (1 << loop); x++)
-			printf((x & y) ? "  " : "* ");
-		}
-	}
-	return errNONE;
-}
-
 static enum errList help(){
 	puts(helpText);
 	return errNONE;
@@ -473,36 +449,6 @@ static enum errList delay_arb(){
 		getArg(arg);
 	}
 	delay(arg);
-	return errNONE;
-}
-
-static enum errList brot(){
-	int n = 0;
-	float r,i,R,I,b;
-	for(i=-1;i<1;i+=.06,puts(""))for(r=-2;I=i,(R=r)<1;
-	r+=.040,putc(n+31))for(n=0;b=I*I,26>n++&&R*R+b<4;I=2*R*I+i,R=R*R-b+r);
-	return errNONE;
-}
-
-static enum errList dasm(){
-	/*
-	char buff[80];
-	uint8_t *ptr, *end;
-	if (!isEOI()){
-		getRange(&ptr, &end);
-	} else {
-		ptr = current_addr;
-		end = end_addr;
-	}
-	if (ptr > end) return errSYNTAX;
-	while (ptr < end){
-		ptr = sys_disassemble(ptr, ptr, &buff);
-		for (int i = 0; i < 75; i++){
-			putc(buff[i]);
-		}
-		puts("");
-	}
-	*/
 	return errNONE;
 }
 

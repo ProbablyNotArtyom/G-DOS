@@ -69,6 +69,10 @@ enum errList throw(enum errList index);
 uint32_t *getMonVar(char var);
 void setMonVar(char var, uint32_t val);
 bool getRange(void **lower, void **upper);
+void printHex(char num);
+void printByte(char num);
+void printWord(uint16_t num);
+void printLong(uint32_t num);
 
 //---------------------------------------------------
 

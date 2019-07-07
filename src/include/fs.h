@@ -11,7 +11,7 @@
 #define _HEADER_FSTOOLS
 
 	#include <stdbool.h>
-	#include <../fs/fat.h>
+	#include <fat.h>
 
 //-------------------Type Protos---------------------
 
