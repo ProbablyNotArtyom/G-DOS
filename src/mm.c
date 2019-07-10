@@ -149,7 +149,7 @@ bool mm_init() {
     return true;
 }
 
-bool free(void *free) {
+void free(void *free) {
     Block *block = heap->used;
     Block *prev  = NULL;
     while (block != NULL) {
@@ -163,12 +163,12 @@ bool free(void *free) {
 #ifndef TA_DISABLE_COMPACT
             compact();
 #endif
-            return true;
+            return;
         }
         prev  = block;
         block = block->next;
     }
-    return false;
+    return;
 }
 
 static Block *alloc_block(size_t num) {

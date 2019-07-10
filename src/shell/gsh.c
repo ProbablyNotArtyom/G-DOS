@@ -11,6 +11,7 @@
 	#include <stdarg.h>
 	#include <stdbool.h>
 	#include <std.h>
+	#include <stdlib.h>
 
 	#include <disk.h>
 	#include <fs.h>
@@ -96,13 +97,13 @@ static void putsPrompt(){
 	f_error res;
 	char promptBuff[256];
 
-	fputs(COLOR_FG(C_LIGHTGREEN,"("));
-	fputs(SET_COLOR_FG(C_WHITE));
+	printf(COLOR_FG(C_LIGHTGREEN,"("));
+	printf(SET_COLOR_FG(C_WHITE));
 	res = f_getcwd(promptBuff, sizeof(promptBuff));
 	if ((res == FR_OK) && (numMounts != 0))
-		fputs(promptBuff);
-	fputs(SET_COLOR_FG(C_LIGHTGREEN));
-	fputs(")" COLOR_RESET_FG ":" COLOR_FG(C_LIGHTGREEN, "> "));
+		printf(promptBuff);
+	printf(SET_COLOR_FG(C_LIGHTGREEN));
+	printf(")" COLOR_RESET_FG ":" COLOR_FG(C_LIGHTGREEN, "> "));
 }
 
 static void runCMD(shFunc_t func, char *buffer){

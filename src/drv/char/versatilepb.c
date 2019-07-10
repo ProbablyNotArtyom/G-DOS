@@ -44,6 +44,6 @@ charResult versatilepb_serial_dev_init(){
 	return CH_OK;
 }
 
-late_initcall(versatilepb_serial_dev_init);
+early_initcall(versatilepb_serial_dev_init);
 
  #endif

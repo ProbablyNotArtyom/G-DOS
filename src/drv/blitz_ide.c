@@ -63,9 +63,9 @@ void blitz_ide_dev_register(){
 			ide_disk[i]->numSecsInTrack = idBuff[6];
 			ide_disk[i]->size = ide_disk[i]->cylinders * ide_disk[i]->heads * ide_disk[i]->numSecsInTrack;
 
-			fputs("model: ");
-			putsl((&idBuff[27]), 20);
-			putnl();
+			printf("model: ");
+			idBuff[47] = '\0';
+			puts(&idBuff[27])
 			nprintf("sig:        0x%X", ide_disk[i]->signature);
 			nprintf("cylinders:  %d", ide_disk[i]->cylinders);
 			nprintf("heads:      %d", ide_disk[i]->heads);

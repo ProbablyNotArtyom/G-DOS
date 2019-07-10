@@ -14,6 +14,7 @@
 	#include <stdbool.h>
 	#include <limits.h>
 	#include <stdint.h>
+	#include <stdarg.h>
 	#include <char.h>
 
 //---------------------------------------------------
@@ -84,28 +85,28 @@ typedef int32_t ssize_t;
 
 //---------------------------------------------------
 
-void putnl(void);
-void putsl(char *str, int len);
-void fputs(char *str);
-void puts(char *str);
-char *gets(char *buff, int len);
-char *sgets(char *buff, int len);
-void *memcpy (void *str1, const void *str2, size_t n);
-void *memset(void *s, int c, size_t n);
-void *malloc(size_t size);
-void *pmalloc(size_t size);
-int strcmp(const char *s1, const char *s2);
-int strcmpl(const char *s1, const char *s2, int len);
-size_t strlen (const char *str);
-
 size_t mm_num_free();
 size_t mm_num_used();
 size_t mm_num_fresh();
 size_t mm_addr_top();
 bool mm_check();
 
-charResult putc(char out);
-char read(void);
+int puts(const char *str);
+
+#ifndef _HEADER_STDIO
+	char *gets(char *buff, int len);
+	char *sgets(char *buff, int len);
+	void *memcpy (void *str1, const void *str2, size_t n);
+	void *memset(void *s, int c, size_t n);
+	void *malloc(size_t size);
+	void *pmalloc(size_t size);
+	int strcmp(const char *s1, const char *s2);
+	int strcmpl(const char *s1, const char *s2, int len);
+	size_t strlen (const char *str);
+
+	charResult putc(char out);
+	char read(void);
+#endif
 
 unsigned long int strtoul(const char *nptr, char **endptr, int base);
 long int strtol(const char *nptr, char **endptr, int base);
@@ -119,6 +120,9 @@ int toLower(int val);
 
 bool __global_flags[];
 const char* const __global_flag_names[];
+
+int _bandaid_vnprintf(size_t max, const char *format, va_list arg);
+int _bandaid_vprintf(const char *format, va_list arg);
 
 //---------------------------------------------------
 #endif

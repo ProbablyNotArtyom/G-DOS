@@ -5,6 +5,7 @@
 #define	CONFIG_VERSATILEPB
 
 #define CONFIG_CPU_ARM
+#define __ARM_EABI__
 
 #define		RAMSTART		0x00000000		// The start of non-code RAM in memory
 #define		RAMEND			0x01000000		// End of usable RAM

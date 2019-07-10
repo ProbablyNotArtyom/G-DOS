@@ -30,4 +30,5 @@ _start:
         pea     0
 	pea	(%a1)
 	jbsr	main /* Here the main(..) function is called */
+_exit:
 	rts

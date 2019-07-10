@@ -121,25 +121,21 @@ void murder_kernel(char *str, struct pt_regs *fp, int num){
 }
 
 void __stack_chk_fail(void) {
-	
+
 }
 
 void __stack_chk_guard(void) {
-	
+
 }
 
 void __fortify_chk_fail(void) {
-	
+
 }
 
 int __aeabi_idiv0(int return_value) {
     return 0;
-}   
+}
 
 long long __aeabi_ldiv0(long long return_value) {
     return 0;
-}
-
-void abort(void) {
-
 }

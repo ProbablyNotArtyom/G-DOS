@@ -211,7 +211,7 @@ void draw_menu_list(menu_list_t *list, int selected_index) {
 			tui_set_color_fg_bg(list->normal.fg, list->normal.bg);
 		}
 		tui_cursor_setpos(tmp_entry->bg.x + (tmp_entry->bg.width - strlen(tmp_entry->label))/2, tmp_entry->bg.y + (tmp_entry->bg.height/2));
-		fputs(tmp_entry->label);
+		printf(tmp_entry->label);
 	}
 	tui_reset_color_fg_bg();
 }

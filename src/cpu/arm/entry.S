@@ -5,30 +5,7 @@
 	#include <entry.h>
 	#include <syscall.h>
 
-	.extern _C_LABEL (syscall_table)
-
 .globl addrerr, buserr, trap, __swi_handler
-.globl syscall_table
-
-.text
-ENTRY(trap)
-	B .
-END(trap)
-
-ENTRY(addrerr)
-	B .
-END(addrerr)
-
-ENTRY(buserr)
-	B .
-END(buserr)
-
-ENTRY(__swi_handler)
-	adr	 	r8, syscall_table
-	ldr		pc, [r8, r7, lsl #2]
-END(__swi_handler)
-
-.section .rodata
 
 ENTRY(syscall_table)
 	.long	f_open
@@ -65,3 +42,23 @@ ENTRY(syscall_table)
 	.long	read
 	.long	putc
 END(syscall_table)
+
+ENTRY(__swi_handler)
+	b	_start
+	//adr	r8, syscall_table
+	//ldr	pc, [r8, r7, lsl #2]
+
+END(__swi_handler)
+
+.text
+ENTRY(trap)
+	B .
+END(trap)
+
+ENTRY(addrerr)
+	B .
+END(addrerr)
+
+ENTRY(buserr)
+	B .
+END(buserr)

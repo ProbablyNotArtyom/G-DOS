@@ -18,7 +18,7 @@
 	#include <elf.h>
 	#include <fs.h>
 	#include "boot.h"
- 
+
 //---------------------------------------------------
 
 int loadELF(char* args[], int argCount, FIL *file){
@@ -43,6 +43,7 @@ int loadELF(char* args[], int argCount, FIL *file){
 			return -1;
 	}
 
+	
 	if(header.h_class != 1 ||
 		header.h_abiversion != 0 ||
 		header.h_osabi != 0 ||
@@ -54,6 +55,7 @@ int loadELF(char* args[], int argCount, FIL *file){
 		puts("ELF is not m68k native");
 		return -1;
 	}
+
 	switch (header.type) {
 		default:
 		case ET_NONE:
@@ -233,9 +235,9 @@ int loadELF_flat(char* args[], int argCount, char *loadAddr){
 		while (numProgs > 0){
 			paddr = *(uint32_t*)(progTable+loadAddr+0x0C);
 			segmentPtr = *(uint32_t*)(progTable+loadAddr+0x04) + loadAddr;
-			fputs("Loading segment from offset 0x");
+			printf("Loading segment from offset 0x");
 			printLong(progTable);
-			fputs(" to address 0x");
+			printf(" to address 0x");
 			printLong(paddr);
 			uint32_t segLen = *(uint32_t*)(progTable+loadAddr+0x10);
 			while (segLen > 0){

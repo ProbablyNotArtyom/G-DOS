@@ -7,7 +7,7 @@
 bool mm_init();
 void *malloc(size_t num);
 void *calloc(size_t num, size_t size);
-bool free(void *ptr);
+void free(void *ptr);
 
 size_t mm_num_free();
 size_t mm_num_used();

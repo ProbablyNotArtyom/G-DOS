@@ -11,16 +11,16 @@ static bool testAddr(size_t addr, uint8_t byte){
 	tmp = inb(addr);
 	if (tmp != byte){
 		puts("\r\n==============================");
-		fputs("Mismatch at address 0x");
+		printf("Mismatch at address 0x");
 		printLong(addr);
 		puts("\r\n==============================");
-		fputs("Wrote: 0x");
+		printf("Wrote: 0x");
 		printByte(byte);
-		fputs("\r\nRead: 0x");
+		printf("\r\nRead: 0x");
 		printByte(tmp);
 		return false;
 	} else {
-		fputs("\b\b");
+		printf("\b\b");
 		printByte(byte);
 		return true;
 	}
@@ -30,9 +30,9 @@ void do_memtest(size_t low, size_t high, char level){
 	puts("\r\nTesting RAM");
 	register size_t scan = low;
 	while(scan < high){
-		fputs("\r\nAddress: 0x");
+		printf("\r\nAddress: 0x");
 		printLong(scan);
-		fputs("      Wrote: 0x00");
+		printf("      Wrote: 0x00");
 		uint8_t i = 0xFF;
 		if (level == 'y'){
 			do {

@@ -6,7 +6,7 @@ PROVIDE (memEnd = 0);
 MEMORY
 {
   vectors (rx) : ORIGIN = 0x0000, LENGTH = 0x3FF
-  rom (rx) : ORIGIN = 0x400, LENGTH = 0x7FFFF-0x400
+  rom (rx) : ORIGIN = 0x400, LENGTH = 0xFFFFF-0x400
   ram (rwx) : ORIGIN = 0x00100000, LENGTH = 0x00600000
 }
 
@@ -66,7 +66,7 @@ SECTIONS
 		 __initcall7_start = .;
 		 *(.initcall7.init)
 	__initcall_end = .;
-
+		*(.eh_frame)
  	__text_start = .;
   	*(.text .text.*)
 	. = ALIGN(0x4);

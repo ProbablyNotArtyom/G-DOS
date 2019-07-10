@@ -2,7 +2,7 @@
 #ifndef _HEADER_INIT
 #define _HEADER_INIT
 
-	#include <compiler.h>
+	#include <sys/cdefs.h>
 	#include <std.h>
 
 //---------------------------------------------------

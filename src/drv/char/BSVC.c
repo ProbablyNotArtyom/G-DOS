@@ -16,6 +16,8 @@
 	#include <mod/init.h>
 	#include "BSVC.h"
 
+	#include <tui.h>
+
 //--------------------Functions----------------------
 
 char bsvc_dev_peek(){
@@ -56,6 +58,8 @@ charResult bsvc_dev_init(){
 		"move.b	#0b11001011, 0x00EFFC03\n\t"
 		"move.b	#0b00000101, 0x00EFFC05"
 	);
+	tui_cls();
+	puts("BSVC Serial driver / NotArtyom / 27-6-19");
 }
 
 early_initcall(bsvc_dev_init);

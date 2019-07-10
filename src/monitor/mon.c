@@ -128,7 +128,7 @@ void monBegin(){
 			printf(SET_COLOR_FG(C_RED) "." SET_COLOR_FG(C_WHITE) "%08X", end_addr);
 		puts(SET_COLOR_FG(C_LIGHTGREEN) ")");
 
-		fputs(COLOR_FG(C_RED, "   ~ "));
+		printf(COLOR_FG(C_RED, "   ~ "));
 		parse = inBuffer;							// Set the parse pointer to the beginning of the buffer
 		gets(inBuffer, BUFFLEN);					// Get user input
 		skipBlank();								// Skip and leading spaces
@@ -215,11 +215,11 @@ static void read_range(char *ptr,char *end, char size){
 		while (ptr <= end){								// Continue until we've reached the end of the range
 			int i;
 			if (ptr <= end){
-				fputs("\r\n ");							// Then set up a new line
+				printf("\r\n ");							// Then set up a new line
 				column = 0;								// And print out the location header
-				fputs(SET_COLOR_FG(C_WHITE));
+				printf(SET_COLOR_FG(C_WHITE));
 				printLong(ptr);
-				fputs(COLOR_FG(C_LIGHTGREEN, " | "));
+				printf(COLOR_FG(C_LIGHTGREEN, " | "));
 			}
 			while (column < 16 && ptr <= end){
 				printByte(inb(ptr++));							// Print data byte at this address
@@ -227,8 +227,8 @@ static void read_range(char *ptr,char *end, char size){
 				column++;									// Increase our column number
 				queryBreak();
 			}
-			for (i = column; i < 16; i++) fputs("   ");
-			fputs(SET_COLOR_FG(C_LIGHTGREEN) "| " SET_COLOR_FG(C_LIGHTYELLOW));
+			for (i = column; i < 16; i++) printf("   ");
+			printf(SET_COLOR_FG(C_LIGHTGREEN) "| " SET_COLOR_FG(C_LIGHTYELLOW));
 			addrBuff = ptr - column;
 			for (i = 0; i < column; addrBuff++){
 				if (*addrBuff >= 0x20 && *addrBuff < 0x7F) putc(*addrBuff);
@@ -237,9 +237,9 @@ static void read_range(char *ptr,char *end, char size){
 			}
 		}
 	} else {
-		fputs("\r\n   ");									// Then set up a new line
+		printf("\r\n   ");									// Then set up a new line
 		printLong(ptr);
-		fputs(" | ");
+		printf(" | ");
 		if (size == 'l') printLong(inl(ptr));
 		else printByte(inb(ptr));
 	}

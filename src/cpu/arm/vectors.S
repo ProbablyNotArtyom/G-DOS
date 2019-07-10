@@ -6,16 +6,37 @@
 
  _reset:
 	B _start
-	B .
+	B _start
 	B __swi_handler
-	B .
-	B .
-	B .
-	B .
-	B .
-	B .
-	B .
-	B .
-	B .
-	B .
-	B .
+	B _start
+	B __swi_handler
+	B _start
+	B __swi_handler
+	B _start
+	B __swi_handler
+	B _start
+	B __swi_handler
+	B _start
+	B __swi_handler
+	B _start
+	B __swi_handler
+	B _start
+	B __swi_handler
+	B _start
+	B __swi_handler
+	B _start
+	B __swi_handler
+	B _start
+	B __swi_handler
+	B _start
+	B __swi_handler
+	B _start
+	B __swi_handler
+	B _start
+	B __swi_handler
+	B _start
+	B __swi_handler
+	B _start
+	B __swi_handler
+	B _start
+	B __swi_handler

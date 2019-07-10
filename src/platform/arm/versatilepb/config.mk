@@ -11,6 +11,6 @@ CPY = $(PREFIX)objcopy
 RANLIB=$(PREFIX)ranlib
 
 LDFLAGS = -Bstatic
-CCFLAGS = -fno-exceptions -fno-unwind-tables -w -mfloat-abi=soft -nostdlib -static -mcpu=$(CPU)
-CCFLAGS_GENERIC = -fno-exceptions -fno-unwind-tables -w -mfloat-abi=soft -nostdlib -static -mcpu=$(CPU)
+CCFLAGS = -fno-builtin -fno-exceptions -fno-unwind-tables -w -mfloat-abi=soft -nostdlib -static -mcpu=$(CPU)
+CCFLAGS_GENERIC = -fno-builtin -fno-exceptions -fno-unwind-tables -w -mfloat-abi=soft -nostdlib -static -mcpu=$(CPU)
 LDLIBS := `$(CC) -print-libgcc-file-name`

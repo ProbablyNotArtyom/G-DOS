@@ -7,9 +7,8 @@ post:
 run:
 	@bsvc ./src/platform/$(ARCH)/$(PLATFORM)/BSVC.setup $(BINARY_NAME).s68
 
-.PHONY: rootfs
-rootfs: usr
-	@dd if=/dev/zero of=$(BINDIR)/romdisk.img bs=1024 count=256 status=none
+$(BINDIR)/romdisk.o: $(USRLIBC)
+	@dd if=/dev/zero of=$(BINDIR)/romdisk.img bs=1024 count=512 status=none
 	@echo "[DEP] making root filesystem"
 	@echo `mkfs.fat $(BINDIR)/romdisk.img -F 12 -s1 -f1` > /dev/null
 	@mkdir -p $(BINDIR)/tmproot

@@ -118,14 +118,14 @@ charResult vt8242_dev_init(){
 
 	keyBuff = vt8242_dev_cmd_ret(VT8242_CMD_SELFTEST);
 	if (keyBuff != 0x55){
-		fputs("[!] Controller failed self test with value: 0x");
+		printf("[!] Controller failed self test with value: 0x");
 		printByte(keyBuff);
 		puts("");
 	}
 
 	keyBuff = vt8242_dev_cmd_ret(VT8242_CMD_KEYBOARDTEST);
 	if (keyBuff != 0x00){
-		fputs("[?] Keyboard not found: 0x");
+		printf("[?] Keyboard not found: 0x");
 		printByte(keyBuff);
 		puts("");
 	} else {
@@ -139,7 +139,7 @@ charResult vt8242_dev_init(){
 
 	keyBuff = vt8242_dev_kbdcmd_ret(KBCMD_ENABLE_SCANNING);
 	if (keyBuff != KBRSP_ACK){
-		fputs("Keyboard enable failed: 0x");
+		printf("Keyboard enable failed: 0x");
 		printByte(keyBuff);
 		puts("");
 	}

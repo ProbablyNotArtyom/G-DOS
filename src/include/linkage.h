@@ -2,7 +2,7 @@
 #define _HEADER_LINKAGE
 
 	#include <asmlinkage.h>
-	#include <compiler.h>
+	#include <sys/cdefs.h>
 
 #define __VMLINUX_SYMBOL(x) _##x
 #define __VMLINUX_SYMBOL_STR(x) "_" #x

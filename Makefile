@@ -1,5 +1,5 @@
 export
-MAKE := $(MAKE) -s
+#MAKE := $(MAKE) -s
 include ${PWD}/.config
 include ${PWD}/src/platform/${ARCH}/${PLATFORM}/config.mk
 include ${PWD}/src/cpu/${ARCH}/arch.mk
@@ -64,21 +64,22 @@ deps: $(OBJECTS) $(OBJECTS_ASM) $(ARCHLIBOBJECTS) $(ARCHLIBOBJECTS_ASM) $(USRLIB
 	@$(MAKE) $(BINARY_NAME)
 	@$(MAKE) post
 
-$(USRLIBC): $(USRLIBOBJECTS) $(USRLIBOBJECTS_ASM) $(wildcard $(BINDIR)/src/lib/*.o)
+$(USRLIBC): $(USRLIBOBJECTS) $(USRLIBOBJECTS_ASM)  $(shell find $(BINDIR)/src/lib -iname '*.o')
 	@$(AR) -rcs $@ $^
-	@echo "[AR] created: $@ "
+	@echo "[AR] archiving: $^"
+	@echo "[AR] created: $@"
 
 $(USROBJECTS): $(USRLIBC)
 	@echo "[USR][CC] -c $(shell echo $@ | rev | cut -f -1 -d '/' | rev ).c -o $(shell echo $@ | rev | cut -f -1 -d '/' | rev).o"
 	@$(CC) $(CCFLAGS_GENERIC) -c $@.c -o $@.o
 	@echo "[USR][LD] $(shell echo $@ | rev | cut -f -1 -d '/' | rev).o -o $(shell echo $@ | rev | cut -f -1 -d '/' | rev )"
-	@$(LD) $@.o -L$(LIBDIR) -lc $(LDLIBS) -Bstatic -T $(LIBDIR)/link.ld -o $@
+	@$(LD) $@.o -L$(LIBDIR) -lc -Bstatic -T $(LIBDIR)/link.ld -o $@ $(LDLIBS)
 	@cp $(shell echo $(@:%.o=%.c) | cut -f 1 -d '.') $(USRBINDIR)
 
 .SECONDEXPANSION :
 $(BINARY_NAME): $(OBJECTS) $(OBJECTS_ASM) $(ARCHLIBOBJECTS) $(ARCHLIBOBJECTS_ASM) $(USRLIBOBJECTS) $(USRLIBOBJECTS_ASM) usr
 	@echo "[LD] Creating final binary"
-	@$(LD) $(shell find $(BINDIR) -name '*.o') $(LDLIBS) $(LDFLAGS) -o $@
+	$(LD) $(shell find $(BINDIR) -name '*.o') $(LDLIBS) $(LDFLAGS) -o $@
 
 $(OBJECTS): $$(patsubst $$(BINDIR)%.o, $$(BASEDIR)%.c, $$@)
 	@echo "[CC] -c $(shell realpath -m --relative-to=$(PWD) $(patsubst $(BINDIR)%, $(BASEDIR)%, $(@:%.o=%.c))) -o $(shell realpath -m --relative-to=$(PWD) $(@))"

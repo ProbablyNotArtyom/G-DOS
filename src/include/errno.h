@@ -116,6 +116,10 @@
 
 //---------------------------------------------------
 
+#define errno (*(int *)__geterrno())
+
+#define __set_errno(val) (errno = (val))
+
 char * strerror (int errnum);
 int strtoerrno (const char *name);
 int errno_max (void);

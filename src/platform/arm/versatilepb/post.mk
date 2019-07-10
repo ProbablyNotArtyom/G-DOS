@@ -8,6 +8,9 @@ post:
 run:
 	@qemu-system-arm -M versatilepb -m 128M -kernel $(BINARY_NAME) -nographic
 
+run-debug:
+	@qemu-system-arm -M versatilepb -m 128M -kernel $(BINARY_NAME)
+
 $(BINDIR)/romdisk.o: $(USRLIBC)
 	@dd if=/dev/zero of=$(BINDIR)/romdisk.img bs=1024 count=1024 status=none
 	@echo "[DEP] making root filesystem"
@@ -20,6 +23,7 @@ $(BINDIR)/romdisk.o: $(USRLIBC)
 	@cd $(BINDIR) && $(CPY) -I binary -O elf32-littlearm -B $(ARCH) --rename-section .data=.text ./romdisk.img ./romdisk.o
 	@rm $(BINDIR)/romdisk.img
 
+.PHONY: rescue
 rescue:
 	@sudo umount -fq $(BINDIR)/tmproot || /bin/true
 	@rm -rf $(BINDIR)/tmproot

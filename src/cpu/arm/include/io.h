@@ -10,7 +10,7 @@
 #ifndef _HEADER_CPU_IO
 #define _HEADER_CPU_IO
 
-	#include <compiler.h>
+	#include <sys/cdefs.h>
 	#include <std.h>
 
 //---------------------------------------------------

@@ -6,9 +6,11 @@
 	#include <linkage.h>
 	#include <syscall.h>
 	#include <flags.h>
+	#include <sys/cdefs.h>
 
 	#include <mod/init.h>
 	#include <tui.h>
+	#include <syscall.h>
 
 //---------------------------------------------------
 
@@ -88,26 +90,26 @@ static void do_initcalls(void){
 static void memtest_start(){
 	size_t test_start, test_end;
 	char chBuff[9];					// Buffer for ascii input
-	fputs("\r\n[?] Start address : 0x");
+	printf("\r\n[?] Start address : 0x");
 	gets(chBuff, 9);
 	if (chBuff[0] == '\r')
 		test_start = &_end;
 	else
 		test_start = strtoul(chBuff, NULL, 16);
 
-	fputs("\r\n[?] End address : 0x");
+	printf("\r\n[?] End address : 0x");
 	gets(chBuff, 9);
 	if (chBuff[0] == '\r')
 		test_end = RAMEND;
 	else
 		test_end = strtoul(chBuff, NULL, 16);
 
-	fputs("\r\n[?] Intense (y/n) : ");
+	printf("\r\n[?] Intense (y/n) : ");
 	do_memtest(test_end, test_start, read());
 }
 
 void print_boot_menu(void) {
-	fputs(b_opts);
+	printf(b_opts);
 	if (extra_bootmenu_entries[0] != NULL) {
 		int i = 0;
 		while (extra_bootmenu_entries[i] != NULL) {
@@ -116,14 +118,12 @@ void print_boot_menu(void) {
 		}
 		puts(COLOR_FG(C_YELLOW, "=============================================\r\n"));
 	}
-	fputs(COLOR_RESET_BG COLOR_RESET_FG "> ");
+	printf(COLOR_RESET_BG COLOR_RESET_FG "> ");
 }
 
 int main(void){
-	delay(0x1FFFF);
 
 	do_initcall_level(0);
-	tui_cls();
 	do_initcalls();
 	puts(b_logo);
 	#ifdef CUSTOM_SPLASH
@@ -161,6 +161,10 @@ int main(void){
 				break;
 		}
 	}
+}
+
+void _exit(int status) {
+	while (1);
 }
 
 //---------------------------------------------------

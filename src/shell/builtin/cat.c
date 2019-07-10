@@ -83,7 +83,7 @@ result_t shfunc_cat(char *argv[], int argc){
 						} else {
 							if (col < 80){
 								if (buff[i] == '\t'){
-									fputs("  ");
+									printf("  ");
 									col += 2;
 								} else {
 									putc(buff[i]);
@@ -107,7 +107,7 @@ result_t shfunc_cat(char *argv[], int argc){
 						} else {
 							if (col < 80){
 								if (buff[i] == '\t'){
-									fputs("  ");
+									printf("  ");
 									col += 2;
 								} else {
 									putc(buff[i]);

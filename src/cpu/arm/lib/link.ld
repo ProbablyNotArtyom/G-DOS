@@ -33,6 +33,12 @@ SECTIONS
 
  } > ram
 
+ .ARM.exidx : {
+    __exidx_start = .;
+    *(.ARM.exidx* .gnu.linkonce.armexidx.*)
+    __exidx_end = .;
+ } > ram
+ 
   . = ALIGN(0x4);
  .rodata : {
  	*(.rodata .rodata.*)
