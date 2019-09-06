@@ -18,7 +18,6 @@
 	.global _C_LABEL (_start)
 
  	.extern _C_LABEL (_start)
- 	.extern _C_LABEL (__swi_handler)
  	.extern _C_LABEL (_unvectored_start)
 
 	.global _C_LABEL (vectors_start)
@@ -43,8 +42,22 @@ vectors_end:
 //-------------------- SWI Stuff --------------------
 
 __swi_handler:
+	/* save some registers or something */
+	stmfd 	sp!, { r8 - r12, lr }
+	mrs 	r8, spsr
+	str 	r8, [sp, #-4]!
+
+	/* arrange arguments and do the magic instruction */
+	stmfd 	sp!, { r4 - r6 }
+	ldr 	lr, =1f
 	adr		r8, syscall_table
 	ldr		pc, [r8, r7, lsl #2]
+
+	/* clean up the mess we made */
+1:	add 	sp, sp, #12
+2:	ldr 	r8, [sp], #4
+	msr 	spsr, r8
+	ldmfd 	sp!, { r8 - r12, pc }^
 
 syscall_table:
 	.long	f_open
@@ -80,3 +93,4 @@ syscall_table:
 
 	.long	read
 	.long	putc
+syscall_table_end:
