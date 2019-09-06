@@ -6,6 +6,7 @@
 	#include <string.h>
 	#include <linkage.h>
 	#include <syscall.h>
+	#include <char.h>
 
 	#include <mod/init.h>
 

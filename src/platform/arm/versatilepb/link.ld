@@ -5,7 +5,6 @@ PROVIDE (memEnd = 0);
 
 MEMORY
 {
-  vectors (rx) : ORIGIN = 0x0000, LENGTH = 0x3FF
   ram (rwx) : ORIGIN = 0x00010000, LENGTH = 0x01000000
 }
 
@@ -38,52 +37,48 @@ PROVIDE (_software_init_hook = 0);
 
 SECTIONS
 {
- 
- .startup : {
-  . = 0x0000;
-  *(.vectors)
-  . = ALIGN(0x4);
- } > vectors
+ . = 0x10000;
 
  .text : {
-  __initcall_start = .;
-    *(.initcallearly.init)
-     __initcall0_start = .;
-     *(.initcall0.init)
-     __initcall1_start = .;
-     *(.initcall1.init)
-     __initcall2_start = .;
-     *(.initcall2.init)
-     __initcall3_start = .;
-     *(.initcall3.init)
-     __initcall4_start = .;
-     *(.initcall4.init)
-     __initcall5_start = .;
-     *(.initcall5.init)
-     __initcall6_start = .;
-     *(.initcall6.init)
-     __initcall7_start = .;
-     *(.initcall7.init)
-  __initcall_end = .;
+    *(.vectors)
+    . = ALIGN(0x4);
+    __initcall_start = .;
+      *(.initcallearly.init)
+       __initcall0_start = .;
+       *(.initcall0.init)
+       __initcall1_start = .;
+       *(.initcall1.init)
+       __initcall2_start = .;
+       *(.initcall2.init)
+       __initcall3_start = .;
+       *(.initcall3.init)
+       __initcall4_start = .;
+       *(.initcall4.init)
+       __initcall5_start = .;
+       *(.initcall5.init)
+       __initcall6_start = .;
+       *(.initcall6.init)
+       __initcall7_start = .;
+       *(.initcall7.init)
+    __initcall_end = .;
 
   __text_start = .;
-    *(.text .text.*)
-  . = ALIGN(0x4);
-    *(.rodata .rodata.*)
+     *(.text .text.*)
+     . = ALIGN(0x4);
+     *(.rodata .rodata.*)
   __text_end = .;
-
  } > ram
 
- .ARM.exidx : { 
-    __exidx_start = .; 
-    *(.ARM.exidx* .gnu.linkonce.armexidx.*) 
-    __exidx_end = .; 
+ .ARM.exidx : {
+    __exidx_start = .;
+    *(.ARM.exidx* .gnu.linkonce.armexidx.*)
+    __exidx_end = .;
  } > ram
- 
+
  .data : {
-   __data_start = . ;
-   *(.data);
-   __data_end = . ;
+    __data_start = . ;
+    *(.data);
+    __data_end = . ;
  } > ram
 
 

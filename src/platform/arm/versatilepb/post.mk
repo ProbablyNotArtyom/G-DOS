@@ -9,7 +9,7 @@ run:
 	@qemu-system-arm -M versatilepb -m 128M -kernel $(BINARY_NAME) -nographic
 
 run-debug:
-	@qemu-system-arm -M versatilepb -m 128M -kernel $(BINARY_NAME)
+	konsole -e qemu-system-arm -s -M versatilepb -m 128M -kernel $(BINARY_NAME) -nographic & arm-none-eabi-gdb $(BINARY_NAME) -ex "target remote localhost:1234" -ex "c"
 
 $(BINDIR)/romdisk.o: $(USRLIBC)
 	@dd if=/dev/zero of=$(BINDIR)/romdisk.img bs=1024 count=1024 status=none

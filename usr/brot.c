@@ -8,26 +8,35 @@
 
 //---------------------------------------------------
 
-static const char const brot_help_txt[] = {
+static const char const help_txt[] = {
 	"Brot renders a mandelbrot figure out to the terminal\r\n"
-	"Usage: brot \r\n"
+	"Usage: brot [number of loops]\r\n"
 };
 
 result_t main(char *argv[], int argc){
 	uint8_t opts = 0x00;				// Create something to log what options are ticked
+	uint8_t fnames;
+	uint32_t num;
+
 	for (int i = 0; i < argc; i++){
 		if (argv[i][0] == '-'){
 			switch (argv[i][1]){
 				case 'h':
-					puts(brot_help_txt);
+					puts(help_txt);
 					return RET_OK;
 				default:
 					return RET_ARGS;
 			}
+		} else {
+			fnames = i;
+			i = argc;
 		}
 	}
+	if (argc == 0)
+		num = 1;
+	else
+		num = strtoul(argv[fnames], NULL, 10);
 
-	uint8_t num = 1;
 	while (num > 0){
 		int n = 0;
 		float r,i,R,I,b;

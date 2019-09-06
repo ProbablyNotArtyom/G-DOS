@@ -153,10 +153,20 @@ static void runCMD(shFunc_t func, char *buffer){
 		f_error res;
 		f_file file;
 		res = f_open(&file, arg[0], FA_READ);
-		fs_putsError(res);
-		if (res != FR_OK) return;
+		if (res == FR_OK) {
+			loadELF(arg+1, numArgs-1, &file);
+		} else {
+			char *tmptr = (char *)malloc((size_t) 300);
+			if (tmptr == NULL) return;
+			strcpy(tmptr, "/bin/");
+			strcpy(tmptr+5, arg[0]);
 
-		loadELF(arg+1, numArgs-1, &file);
+			res = f_open(&file, tmptr, FA_READ);
+			fs_putsError(res);
+			if (res != FR_OK) return;
+			free(tmptr);
+			loadELF(arg+1, numArgs-1, &file);
+		}
 	}
 	return;
 }

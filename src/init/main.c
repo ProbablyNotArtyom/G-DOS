@@ -122,9 +122,9 @@ void print_boot_menu(void) {
 }
 
 int main(void){
-
 	do_initcall_level(0);
 	do_initcalls();
+
 	puts(b_logo);
 	#ifdef CUSTOM_SPLASH
 	puts(CUSTOM_SPLASH);

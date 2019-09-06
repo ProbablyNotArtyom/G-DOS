@@ -13,6 +13,7 @@
 	#include <io.h>
 
 	#include <keycodes.h>
+	#include <debug.h>
 	#include "mon.h"
 
 //---------------------------------------------------
@@ -101,7 +102,7 @@ const char const helpText[] =
 	"\r\n" COLOR_FG(C_LIGHTBLUE, "  echo    ") "<str>           Print a string out to the terminal."
 	"\r\n" COLOR_FG(C_LIGHTBLUE, "  printf  ") "<str>           Print a formatted string."
 	"\r\n" COLOR_FG(C_LIGHTBLUE, "  delay   ") "<val>           Hault execution for <val> ticks."
-	"\r\n" COLOR_FG(C_LIGHTBLUE, "  flag    ") "[name] = [val]  Set a global boolean flag."
+	"\r\n" COLOR_FG(C_LIGHTBLUE, "  flag    ") "[name] [val]    Set a global boolean flag."
 	"\r\n" COLOR_FG(C_LIGHTBLUE, "          ") "                val = (true | false)   boolean states"
 	"\r\n" COLOR_FG(C_LIGHTBLUE, "  help    ") "                Displays this help.";
 
@@ -475,12 +476,14 @@ static enum errList flag(){
 	}
 	if (i >= __num_global_flags) return errSYNTAX;
 
-	if (!strcmp(state, "true") && __global_flags[i] == false){
+	if (!strcmp(state, "true")){
 	 	__global_flags[i] = true;
-		nprintf("Setting %s true (from false)", flag_name);
-	} else if (!strcmp(state, "false") && __global_flags[i] == true){
+		printf("Setting %s true\n", flag_name);
+	} else if (!strcmp(state, "false")){
 	 	__global_flags[i] = false;
-		nprintf("Setting %s false (from true)", flag_name);
+		printf("Setting %s false\n", flag_name);
+	} else {
+		return errSYNTAX;
 	}
 
 	return errNONE;

@@ -17,7 +17,7 @@
 
 	#include <elf.h>
 	#include <fs.h>
-	#include "boot.h"
+	#include <boot.h>
 
 //---------------------------------------------------
 
@@ -43,7 +43,7 @@ int loadELF(char* args[], int argCount, FIL *file){
 			return -1;
 	}
 
-	
+
 	if(header.h_class != 1 ||
 		header.h_abiversion != 0 ||
 		header.h_osabi != 0 ||

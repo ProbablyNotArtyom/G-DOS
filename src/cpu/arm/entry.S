@@ -1,13 +1,52 @@
 
+	#include <entry.h>
 	#include <asm.h>
 	#include <linkage.h>
-	#include <traps.h>
-	#include <entry.h>
-	#include <syscall.h>
 
-.globl addrerr, buserr, trap, __swi_handler
+ .section .vectors, "x"
 
-ENTRY(syscall_table)
+/*
+ * Set things up so the application will run. For historical reasons
+ * this is called 'start'.  We set things up to provide '_start'
+ * as with other systems, but also provide a weak alias called
+ * 'start' for compatibility with existing linker scripts.
+ */
+	.global _C_LABEL (start)
+	.weak _C_LABEL (start)
+	.set _C_LABEL (start),_C_LABEL(_start)
+
+	.global _C_LABEL (_start)
+
+ 	.extern _C_LABEL (_start)
+ 	.extern _C_LABEL (__swi_handler)
+ 	.extern _C_LABEL (_unvectored_start)
+
+	.global _C_LABEL (vectors_start)
+	.global _C_LABEL (vectors_end)
+
+//---------------------------------------------------
+
+vectors_start:
+_C_LABEL (_start):
+	ldr 	pc, _unvectored_start_addr
+    ldr 	pc, _undef_vector_addr
+    ldr 	pc, _swi_vector_addr
+	ldr 	pc, _undef_vector_addr
+	ldr 	pc, _undef_vector_addr
+	b		.
+
+_unvectored_start_addr: .word _unvectored_start
+_undef_vector_addr: 	.word _unvectored_start
+_swi_vector_addr: 		.word __swi_handler
+vectors_end:
+
+//-------------------- SWI Stuff --------------------
+
+__swi_handler:
+	adr		r8, syscall_table
+	ldr		pc, [r8, r7, lsl #2]
+
+syscall_table:
 	.long	f_open
 	.long	f_close
 	.long	f_read
@@ -41,24 +80,3 @@ ENTRY(syscall_table)
 
 	.long	read
 	.long	putc
-END(syscall_table)
-
-ENTRY(__swi_handler)
-	b	_start
-	//adr	r8, syscall_table
-	//ldr	pc, [r8, r7, lsl #2]
-
-END(__swi_handler)
-
-.text
-ENTRY(trap)
-	B .
-END(trap)
-
-ENTRY(addrerr)
-	B .
-END(addrerr)
-
-ENTRY(buserr)
-	B .
-END(buserr)

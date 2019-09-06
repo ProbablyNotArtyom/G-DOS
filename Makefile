@@ -15,17 +15,22 @@ BINDIR := $(BASEDIR)/bin
 LIBDIR := $(BASEDIR)/lib
 USRDIR := $(BASEDIR)/usr
 
-USRBINDIR := $(ROOTDIR)/usr
+USRBINDIR := $(ROOTDIR)/bin
 USRLIBC := $(LIBDIR)/libc.a
 
 BINARY_NAME := $(BINDIR)/gdos
 
 #=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
-CCFLAGS := $(CCFLAGS) -include $(BASEDIR)/src/platform/${ARCH}/${PLATFORM}/hwdeps.h -I $(BASEDIR)/src/cpu/$(ARCH)/include -I ${PWD}/src/include -O3
+CCFLAGS := $(CCFLAGS) -include $(BASEDIR)/src/platform/${ARCH}/${PLATFORM}/hwdeps.h -I $(BASEDIR)/src/platform/${ARCH}/${PLATFORM} -I $(BASEDIR)/src/cpu/$(ARCH)/include -I ${PWD}/src/include
 CCFLAGS_GENERIC := $(CCFLAGS_GENERIC) -I $(LIBDIR)/include
+CCFLAGS_USR := $(CCFLAGS) -O3
 SUBDIRS = src
 LDFLAGS := -T $(BASEDIR)/src/platform/${ARCH}/${PLATFORM}/link.ld $(LDFLAGS)
+
+ifeq ("$(DEBUG)","true")
+CCFLAGS := $(CCFLAGS) -g
+endif
 
 #=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
@@ -54,6 +59,7 @@ all:
 	@cp $(PWD)/src/include $(LIBDIR) -rf
 	@cp $(PWD)/src/cpu/$(ARCH)/include/* $(LIBDIR)/include/cpu -rf
 	@cp $(PWD)/src/cpu/$(ARCH)/lib/link.ld $(LIBDIR)
+	@echo "[CCFLAGS] = $(CCFLAGS)"
 	@$(MAKE) deps
 
 .PHONY: deps
@@ -71,7 +77,7 @@ $(USRLIBC): $(USRLIBOBJECTS) $(USRLIBOBJECTS_ASM)  $(shell find $(BINDIR)/src/li
 
 $(USROBJECTS): $(USRLIBC)
 	@echo "[USR][CC] -c $(shell echo $@ | rev | cut -f -1 -d '/' | rev ).c -o $(shell echo $@ | rev | cut -f -1 -d '/' | rev).o"
-	@$(CC) $(CCFLAGS_GENERIC) -c $@.c -o $@.o
+	@$(CC) $(CCFLAGS_USR) -I$(LIBDIR)/include -c $@.c -o $@.o
 	@echo "[USR][LD] $(shell echo $@ | rev | cut -f -1 -d '/' | rev).o -o $(shell echo $@ | rev | cut -f -1 -d '/' | rev )"
 	@$(LD) $@.o -L$(LIBDIR) -lc -Bstatic -T $(LIBDIR)/link.ld -o $@ $(LDLIBS)
 	@cp $(shell echo $(@:%.o=%.c) | cut -f 1 -d '.') $(USRBINDIR)
@@ -93,7 +99,7 @@ $(ARCHLIBOBJECTS): $$(patsubst $$(BINDIR)/src/lib/%.o, $$(BASEDIR)/src/cpu/$(ARC
 $(USRLIBOBJECTS): $$(patsubst $$(LIBDIR)/bin/%.o, $$(BASEDIR)/src/cpu/$(ARCH)/lib/%.c, $$@)
 	@echo "[CC] -c $(shell realpath -m --relative-to=$(PWD) $(patsubst $(LIBDIR)/bin/%, $(BASEDIR)/src/cpu/$(ARCH)/lib/%, $(@:%.o=%.c))) -o $(shell realpath -m --relative-to=$(PWD) $(@))"
 	@mkdir -p $(dir $@)
-	@$(CC) -I$(LIBDIR)/include -c $(patsubst $(LIBDIR)/bin/%, $(BASEDIR)/src/cpu/$(ARCH)/lib/%, $(@:%.o=%.c)) $(CCFLAGS) -o $@
+	@$(CC) -I$(LIBDIR)/include -c $(patsubst $(LIBDIR)/bin/%, $(BASEDIR)/src/cpu/$(ARCH)/lib/%, $(@:%.o=%.c)) $(CCFLAGS_USR) -o $@
 
 $(OBJECTS_ASM): $$(patsubst $$(BINDIR)%.o, $$(BASEDIR)%.S, $$@)
 	@echo "[CC] -c $(shell realpath -m --relative-to=$(PWD) $(patsubst $(BINDIR)%, $(BASEDIR)%, $(@:%.o=%.S))) -o $(shell realpath -m --relative-to=$(PWD) $(@))"
@@ -107,7 +113,7 @@ $(ARCHLIBOBJECTS_ASM): $$(patsubst $$(BINDIR)/src/lib/%.o, $$(BASEDIR)/src/cpu/$
 $(USRLIBOBJECTS_ASM): $$(patsubst $$(LIBDIR)/bin/%.o, $$(BASEDIR)/src/cpu/$(ARCH)/lib/%.S, $$@)
 	@echo "[CC] -c $(shell realpath -m --relative-to=$(PWD) $(patsubst $(LIBDIR)/bin/%, $(BASEDIR)/src/cpu/$(ARCH)/lib/%, $(@:%.o=%.S))) -o $(shell realpath -m --relative-to=$(PWD) $(@))"
 	@mkdir -p $(dir $@)
-	@$(CC) -I$(LIBDIR)/include -c $(patsubst $(LIBDIR)/bin/%, $(BASEDIR)/src/cpu/$(ARCH)/lib/%, $(@:%.o=%.S)) $(CCFLAGS) -o $@
+	@$(CC) -I$(LIBDIR)/include -c $(patsubst $(LIBDIR)/bin/%, $(BASEDIR)/src/cpu/$(ARCH)/lib/%, $(@:%.o=%.S)) $(CCFLAGS_USR) -o $@
 
 #=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
@@ -119,6 +125,8 @@ clean:
 	rm -rf $(USRBINDIR)/*
 	rm -rf $(patsubst %, %.o, $(USROBJECTS))
 	rm -rf $(USROBJECTS)
+	rm -rf $(ROOTDIR)/usr/*
+	rm -rf $(ROOTDIR)/bin/*
 
 .PHONY: distclean
 distclean: clean

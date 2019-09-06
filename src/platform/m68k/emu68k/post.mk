@@ -5,7 +5,7 @@ post:
 
 .PHONY: run
 run:
-	@bsvc ./src/platform/$(ARCH)/$(PLATFORM)/BSVC.setup $(BINARY_NAME).s68
+	@emu68k $(BINARY_NAME).bin
 
 $(BINDIR)/romdisk.o: $(USRLIBC)
 	@dd if=/dev/zero of=$(BINDIR)/romdisk.img bs=1024 count=512 status=none
