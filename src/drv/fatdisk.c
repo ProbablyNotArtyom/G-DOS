@@ -33,7 +33,7 @@
 
 void fatdisk_dev_register(){
 	exists = false;
-	puts("\n\FAT-based romdisk driver / NotArtyom / 06-30-19");
+	puts("FAT-based romdisk driver / NotArtyom / 06-30-19");
 
 	struct device_info *driver = (struct device_info *)malloc(sizeof(struct device_info));
 	driver->driver_disk = (struct dev_disk *)malloc(sizeof(struct dev_disk));

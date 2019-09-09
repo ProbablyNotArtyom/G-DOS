@@ -30,7 +30,7 @@
 
 void ramdisk_dev_register(){
 	exists = false;
-	puts("\n\rramdisk driver / NotArtyom / 06-30-19");
+	puts("Ramdisk driver / NotArtyom / 06-30-19");
 
 	struct device_info *driver = (struct device_info *)malloc(sizeof(struct device_info));
 	driver->driver_disk = (struct dev_disk *)malloc(sizeof(struct dev_disk));

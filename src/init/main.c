@@ -182,7 +182,7 @@ const char const b_logo[] =
 	"\r\n   ___   _   ___   ___  ___ \r\n"
 	"  / __| ( ) |   \\ / _ \\/ __|\r\n"
 	" | (_ | |/  | |) | (_) \\__ \\\r\n"
-	"  \\___|     |___/ \\___/|___/\r\n\r\n";
+	"  \\___|     |___/ \\___/|___/\r\n";
 
 const char const b_opts[] =
 	" G'DOS Booter Menu\r\n"

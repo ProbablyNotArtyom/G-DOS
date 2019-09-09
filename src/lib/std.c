@@ -19,8 +19,8 @@ char *gets(char *buff, int len){
 	register int index = len;
 	while (true){
 		*s = read();
-		if (*s == 0x7F && index == len);
-		else if (*s == 0x7F){
+		if ((*s == 0x7F || *s == 0x08) && index == len);
+		else if (*s == 0x7F || *s == 0x08){
 			printf("\b \b");
 			*s = NULL;
 			index++;
@@ -46,8 +46,8 @@ char *sgets(char *buff, int len){
 	register int index = len;
 	while (index >= 2){
 		*s = read();
-		if (*s == 0x7F && index == len);
-		else if (*s == 0x7F){
+		if ((*s == 0x7F || *s == 0x08) && index == len);
+		else if (*s == 0x7F || *s == 0x08){
 			printf("\b \b");
 			*s = NULL;
 			index++;

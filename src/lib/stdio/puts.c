@@ -15,9 +15,10 @@ int puts(const char *str) {
 	if (0 == putchar('\n')) return EOF;
 	return out + 1;
 	*/
-	
+
 	char *ptr = str;
 	while(*ptr != NULL) putchar(*ptr++);
+	putchar('\r');
 	putchar('\n');
 	return NULL;
 }

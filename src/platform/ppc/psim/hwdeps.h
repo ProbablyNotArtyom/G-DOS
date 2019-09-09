@@ -12,7 +12,7 @@
 #define 	MEMTEST 		false
 #define 	ALLOW_UNALIGNED	true			// Set true for anything above 68020
 
-#define CUSTOM_SPLASH	qemu_splash
+#define CUSTOM_SPLASH	ppc_splash
 
 // ---------- Driver Support ----------
 
