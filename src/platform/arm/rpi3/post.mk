@@ -6,10 +6,10 @@ post:
 	@cd ./bin && $(CPY) -O binary $(BINARY_NAME) $(BINARY_NAME).bin
 
 run:
-	@qemu-system-arm -M versatilepb -m 128M -kernel $(BINARY_NAME) -nographic -monitor telnet::45454,server,nowait -serial mon:stdio
+	@qemu-system-arm -M versatilepb -m 128M -kernel $(BINARY_NAME) -nographic
 
 run-debug:
-	konsole -e qemu-system-arm -s -M versatilepb -m 128M -kernel $(BINARY_NAME) -nographic -monitor telnet::45454,server,nowait -serial mon:stdio & arm-none-eabi-gdb $(BINARY_NAME) -ex "target remote localhost:1234" -ex "c"
+	konsole -e qemu-system-arm -s -M versatilepb -m 128M -kernel $(BINARY_NAME) -nographic & arm-none-eabi-gdb $(BINARY_NAME) -ex "target remote localhost:1234" -ex "c"
 
 $(BINDIR)/romdisk.o: $(USRLIBC)
 	@dd if=/dev/zero of=$(BINDIR)/romdisk.img bs=1024 count=1024 status=none
@@ -27,7 +27,3 @@ $(BINDIR)/romdisk.o: $(USRLIBC)
 rescue:
 	@sudo umount -fq $(BINDIR)/tmproot || /bin/true
 	@rm -rf $(BINDIR)/tmproot
-
-.PHONY: dump
-dump: $(BINARY_NAME)
-	$(PREFIX)objdump -D $(BINARY_NAME) | less

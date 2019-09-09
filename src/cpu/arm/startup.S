@@ -46,7 +46,7 @@ _C_LABEL (environ):
 	.extern _C_LABEL (copy_vectors)
 
 _unvectored_start:
-	LDR sp, =_stack_end
+	ldr sp, =_stack_end
 	BL	copy_vectors
 	BL	main
 	B	.

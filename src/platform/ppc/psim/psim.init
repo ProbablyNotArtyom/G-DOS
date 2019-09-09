@@ -1,0 +1,2 @@
+/#address-cells 1
+/iobus@0xe0000000/com@0xe0000000/reg 0xe0000000 8

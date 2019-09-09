@@ -1,15 +1,15 @@
 .PHONY: post
-.PHONY: run
+.PHONY: run run-debug
 
 .PHONY: rescue
 post:
 	@cd ./bin && $(CPY) -O binary $(BINARY_NAME) $(BINARY_NAME).bin
 
 run:
-	@qemu-system-arm -M versatilepb -m 128M -kernel $(BINARY_NAME) -nographic -monitor telnet::45454,server,nowait -serial mon:stdio
+	cd $(BASEDIR)/src/platform/$(ARCH)/$(PLATFORM) && $(PREFIX)run -m $(CPU) -f psim.init $(BINARY_NAME)
 
 run-debug:
-	konsole -e qemu-system-arm -s -M versatilepb -m 128M -kernel $(BINARY_NAME) -nographic -monitor telnet::45454,server,nowait -serial mon:stdio & arm-none-eabi-gdb $(BINARY_NAME) -ex "target remote localhost:1234" -ex "c"
+	cd $(BASEDIR)/src/platform/$(ARCH)/$(PLATFORM) && $(PREFIX)gdb -batch
 
 $(BINDIR)/romdisk.o: $(USRLIBC)
 	@dd if=/dev/zero of=$(BINDIR)/romdisk.img bs=1024 count=1024 status=none
@@ -20,7 +20,7 @@ $(BINDIR)/romdisk.o: $(USRLIBC)
 	@sudo cp -r ./root/* $(BINDIR)/tmproot
 	@sudo umount $(BINDIR)/tmproot
 	@sudo rm -r $(BINDIR)/tmproot
-	@cd $(BINDIR) && $(CPY) -I binary -O elf32-littlearm -B $(ARCH) --rename-section .data=.text ./romdisk.img ./romdisk.o
+	@cd $(BINDIR) && $(CPY) -I binary -O elf32-powerpc -B powerpc --rename-section .data=.text ./romdisk.img ./romdisk.o
 	@rm $(BINDIR)/romdisk.img
 
 .PHONY: rescue

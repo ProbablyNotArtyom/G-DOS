@@ -49,13 +49,15 @@ __swi_handler:
 
 	/* arrange arguments and do the magic instruction */
 	stmfd 	sp!, { r4 - r6 }
-	ldr 	lr, =1f
+	ldr 	lr, =_swi_1
 	adr		r8, syscall_table
 	ldr		pc, [r8, r7, lsl #2]
 
 	/* clean up the mess we made */
-1:	add 	sp, sp, #12
-2:	ldr 	r8, [sp], #4
+_swi_1:
+	add 	sp, sp, #12
+_swi_2:
+	ldr 	r8, [sp], #4
 	msr 	spsr, r8
 	ldmfd 	sp!, { r8 - r12, pc }^
 

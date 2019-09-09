@@ -1,0 +1,2 @@
+
+BUILD_USERSPACE_LIBRARY = true

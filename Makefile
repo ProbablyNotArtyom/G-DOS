@@ -1,10 +1,18 @@
 export
 #MAKE := $(MAKE) -s
+ifneq ("$(wildcard $(PWD)/.config)","")
 include ${PWD}/.config
 include ${PWD}/src/platform/${ARCH}/${PLATFORM}/config.mk
 include ${PWD}/src/cpu/${ARCH}/arch.mk
-ifeq ("$(wildcard $(PWD)/.config)","")
-$(error .config does not exist. Run config.sh to configure the platform)
+endif
+
+ifneq ("$(MAKECMDGOALS)","clean")
+ifndef ARCH
+$(error "[!] ARCH is not set. Either pass it as an environment variable or use the config script.")
+endif
+ifndef PLATFORM
+$(error "[!] PLATFORM is not set. Either pass it as an environment variable or use the config script.")
+endif
 endif
 
 #=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -13,7 +21,7 @@ BASEDIR := $(PWD)
 ROOTDIR := $(BASEDIR)/root
 BINDIR := $(BASEDIR)/bin
 LIBDIR := $(BASEDIR)/lib
-USRDIR := $(BASEDIR)/usr
+USRBINDIR := $(BASEDIR)/usr
 
 USRBINDIR := $(ROOTDIR)/bin
 USRLIBC := $(LIBDIR)/libc.a
@@ -34,20 +42,20 @@ endif
 
 #=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
-SOURCES := $(filter-out ./src/cpu/% ./src/platform/%, $(shell find ./src -name '*.c')) $(shell find ./src/cpu/$(ARCH) -maxdepth 1 -name '*.c') $(shell find ./src/platform/$(ARCH)/$(PLATFORM) -maxdepth 1 -name '*.c')
-ARCHLIBSOURCES := $(shell find ./src/cpu/$(ARCH)/libkern/ -name '*.c')
-USRLIBSOURCES := $(shell find ./src/cpu/$(ARCH)/lib/ -name '*.c')
-SOURCES_ASM := $(filter-out ./src/cpu/%, $(shell find ./src -name '*.S')) $(shell find ./src/cpu/$(ARCH) -maxdepth 1 -name '*.S')
-ARCHLIBSOURCES_ASM := $(shell find ./src/cpu/$(ARCH)/libkern/ -name '*.S')
-USRLIBSOURCES_ASM := $(shell find ./src/cpu/$(ARCH)/lib/ -name '*.S')
-OBJECTS := $(foreach tmp, $(SOURCES:%.c=%.o), $(BINDIR)/$(tmp))
+SOURCES := $(filter-out $(BASEDIR)/src/cpu/% $(BASEDIR)/src/platform/%, $(shell find $(BASEDIR)/src -name '*.c')) $(shell find $(BASEDIR)/src/cpu/$(ARCH) -maxdepth 1 -name '*.c') $(shell find $(BASEDIR)/src/platform/$(ARCH)/$(PLATFORM) -maxdepth 1 -name '*.c')
+ARCHLIBSOURCES := $(shell find $(BASEDIR)/src/cpu/$(ARCH)/libkern/ -name '*.c')
+USRLIBSOURCES := $(shell find $(BASEDIR)/src/cpu/$(ARCH)/lib/ -name '*.c')
+SOURCES_ASM := $(filter-out $(BASEDIR)/src/cpu/%, $(shell find $(BASEDIR)/src -name '*.S')) $(shell find $(BASEDIR)/src/cpu/$(ARCH) -maxdepth 1 -name '*.S')
+ARCHLIBSOURCES_ASM := $(shell find $(BASEDIR)/src/cpu/$(ARCH)/libkern/ -name '*.S')
+USRLIBSOURCES_ASM := $(shell find $(BASEDIR)/src/cpu/$(ARCH)/lib/ -name '*.S')
+OBJECTS := $(patsubst $(BASEDIR)/%.c, $(BINDIR)/%.o, $(SOURCES))
 ARCHLIBOBJECTS := $(foreach tmp, $(ARCHLIBSOURCES:%.c=%.o), $(BINDIR)/src/lib/$(notdir $(tmp)))
 USRLIBOBJECTS := $(foreach tmp, $(USRLIBSOURCES:%.c=%.o), $(LIBDIR)/bin/$(notdir $(tmp)))
-OBJECTS_ASM := $(foreach tmp, $(SOURCES_ASM:%.S=%.o), $(BINDIR)/$(tmp))
+OBJECTS_ASM := $(patsubst $(BASEDIR)/%.S, $(BINDIR)/%.o, $(SOURCES_ASM))
 ARCHLIBOBJECTS_ASM := $(foreach tmp, $(ARCHLIBSOURCES_ASM:%.S=%.o), $(BINDIR)/src/lib/$(notdir $(tmp)))
 USRLIBOBJECTS_ASM := $(foreach tmp, $(USRLIBSOURCES_ASM:%.S=%.o), $(LIBDIR)/bin/$(notdir $(tmp)))
 
-USRSOURCES := $(shell find ./usr -maxdepth 1 -iname '*.c')
+USRSOURCES := $(shell find $(BASEDIR)/usr -maxdepth 1 -iname '*.c')
 USROBJECTS := $(USRSOURCES:%.c=%)
 
 #=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -59,6 +67,7 @@ all:
 	@cp $(PWD)/src/include $(LIBDIR) -rf
 	@cp $(PWD)/src/cpu/$(ARCH)/include/* $(LIBDIR)/include/cpu -rf
 	@cp $(PWD)/src/cpu/$(ARCH)/lib/link.ld $(LIBDIR)
+	mkdir -p $(BINDIR)
 	@echo "[CCFLAGS] = $(CCFLAGS)"
 	@$(MAKE) deps
 
@@ -79,13 +88,13 @@ $(USROBJECTS): $(USRLIBC)
 	@echo "[USR][CC] -c $(shell echo $@ | rev | cut -f -1 -d '/' | rev ).c -o $(shell echo $@ | rev | cut -f -1 -d '/' | rev).o"
 	@$(CC) $(CCFLAGS_USR) -I$(LIBDIR)/include -c $@.c -o $@.o
 	@echo "[USR][LD] $(shell echo $@ | rev | cut -f -1 -d '/' | rev).o -o $(shell echo $@ | rev | cut -f -1 -d '/' | rev )"
-	@$(LD) $@.o -L$(LIBDIR) -lc -Bstatic -T $(LIBDIR)/link.ld -o $@ $(LDLIBS)
+	@$(LD) $@.o -L$(LIBDIR) -Bstatic -z nodefaultlib -lc -T $(LIBDIR)/link.ld $(LDLIBS) -o $@
 	@cp $(shell echo $(@:%.o=%.c) | cut -f 1 -d '.') $(USRBINDIR)
 
 .SECONDEXPANSION :
 $(BINARY_NAME): $(OBJECTS) $(OBJECTS_ASM) $(ARCHLIBOBJECTS) $(ARCHLIBOBJECTS_ASM) $(USRLIBOBJECTS) $(USRLIBOBJECTS_ASM) usr
 	@echo "[LD] Creating final binary"
-	$(LD) $(shell find $(BINDIR) -name '*.o') $(LDLIBS) $(LDFLAGS) -o $@
+	@$(LD) $(shell find $(BINDIR) -name '*.o') $(LDLIBS) $(LDFLAGS) -o $@
 
 $(OBJECTS): $$(patsubst $$(BINDIR)%.o, $$(BASEDIR)%.c, $$@)
 	@echo "[CC] -c $(shell realpath -m --relative-to=$(PWD) $(patsubst $(BINDIR)%, $(BASEDIR)%, $(@:%.o=%.c))) -o $(shell realpath -m --relative-to=$(PWD) $(@))"
@@ -119,12 +128,10 @@ $(USRLIBOBJECTS_ASM): $$(patsubst $$(LIBDIR)/bin/%.o, $$(BASEDIR)/src/cpu/$(ARCH
 
 .PHONY: clean
 clean:
-	mkdir -p $(BINDIR)
 	rm -rf $(BINDIR)/* -vf
 	rm -rf $(LIBDIR)/* -vrf
 	rm -rf $(USRBINDIR)/*
 	rm -rf $(patsubst %, %.o, $(USROBJECTS))
-	rm -rf $(USROBJECTS)
 	rm -rf $(ROOTDIR)/usr/*
 	rm -rf $(ROOTDIR)/bin/*
 
