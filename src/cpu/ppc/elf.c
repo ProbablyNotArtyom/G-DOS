@@ -54,8 +54,8 @@ int loadELF(char* args[], int argCount, FIL *file){
 		return -1;
 	}
 
-	if(header.machine != EM_ARM){
-		puts("ELF is not arm native");
+	if(header.machine != EM_PPC){
+		puts("[!] ELF is not powerpc native");
 		return -1;
 	}
 
@@ -85,10 +85,10 @@ int loadELF(char* args[], int argCount, FIL *file){
 				break;
 			case PHT_DYNAMIC:
 			case PHT_SHLIB:
-				puts("Dynamically linked ELFs not supported");
+				puts("[!] Dynamically linked ELFs not supported");
 				return -1;
 			case PHT_LOAD:
-				debug_printf("Loading %d byte segment from offset 0x%x to address 0x%x\n",
+				debug_printf("Loading %d byte segment from offset 0x%x to address 0x%x\n\r",
 					progHeader.fileSize, progHeader.offset, progHeader.physAddr);
 				f_lseek(file, progHeader.offset);
 				f_read(file, progHeader.physAddr, progHeader.fileSize, &numBytes);
@@ -101,20 +101,22 @@ int loadELF(char* args[], int argCount, FIL *file){
 					lowMem = progHeader.physAddr + progHeader.align;
 				break;
 			case PHT_INTERP:
-				puts("Interpreted ELFs are not supported");
+				puts("[!] Interpreted ELFs are not supported");
 				return -1;
 		}
 		progIndex++;
 	}
 
 	/* Check for a linux kernel */
-	debug_printf("Checking for bootversion at 0x%x\n", lowMem);
+	debug_printf("Checking for bootversion at 0x%x\n\r", lowMem);
 	bVersion = (struct bootversion *)lowMem;
 	if(bVersion->magic == BOOTINFOV_MAGIC){
 		puts("Linux kernel found");
 		int i = 0;
 		while(bVersion->machversions[i].machine != MACH_BLITZ){
-			if(bVersion->machversions[i].machine == 0x0000){
+			// Check for a valid bootinfo header
+			// Only iterate 200 times max, just in case the bootinfo header is mising the terminating word
+			if(bVersion->machversions[i].machine == 0x0000 || i >= 200){
 				puts("[!] Blitz machine type not supported.");
 				return -1;
 			}
@@ -125,7 +127,7 @@ int loadELF(char* args[], int argCount, FIL *file){
 			return -1;
 		}
 
-		debug_printf("Creating kernel bootinfo at 0x%x\n", &bootInfo);
+		debug_printf("Creating kernel bootinfo at 0x%x\n\r", &bootInfo);
 
 		/* Machine type */
 		bootInfo = (struct biRecord*)((highMem + 0xFFF) & ~0xFFF);
@@ -189,7 +191,7 @@ int loadELF(char* args[], int argCount, FIL *file){
 		bootInfo->size = sizeof(struct biRecord);
 
 		/* Execute Kernel */
-		debug_printf("Entering kernel at 0x%x\n", header.entry);
+		debug_printf("Entering kernel at 0x%x\n\r", header.entry);
 		void (*entrypoint)(void) = header.entry;
 		(*entrypoint)();
 		return;				// Hopefully wont get here...
@@ -197,6 +199,7 @@ int loadELF(char* args[], int argCount, FIL *file){
 		/* -=-=-=-=-=-=-=-=-=- */
 	}
 
+	debug_printf("Jumping to elf entry point at 0x%x\n\r", header.entry);
 	int (*entrypoint)(char**, int) = header.entry;
 	return (*entrypoint)(args, argCount);
 }

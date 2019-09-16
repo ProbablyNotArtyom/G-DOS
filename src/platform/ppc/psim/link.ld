@@ -5,8 +5,8 @@ SEARCH_DIR(.)
 
 VECSTART = 0xFFF00000;
 VECEND = 0xFFF02FFF;
-ROMSIZE = 0x00200000;
-ROMSTART = VECEND - ROMSIZE;
+ROMSIZE = 0x01000000;
+ROMSTART = 0xFF000000;
 
 PROVIDE (__SDATA_START__ = 0);
 PROVIDE (__SBSS_END__ = 0);
@@ -16,8 +16,7 @@ PROVIDE (__SBSS2_END__ = 0);
 MEMORY
 {
   ram (rwx) : ORIGIN = 0x00000000, LENGTH = 0x02000000
-  rom (rx)	: ORIGIN = ROMSTART, LENGTH = ROMSIZE - VECEND - VECSTART
-  vectors (rx) : ORIGIN = VECSTART, LENGTH = VECEND - VECSTART
+  rom (rx)	: ORIGIN = ROMSTART, LENGTH = ROMSIZE
 }
 
 STACK_SIZE = 0x2000;
@@ -89,11 +88,8 @@ SECTIONS
      . = ALIGN(0x4);
      *(.rodata .rodata.*)
   __text_end = .;
+  . = VECSTART - ROMSTART;
+  *(.vectors)
  } > rom
-
- .vectors : {
-   . = ALIGN(0x4);
-   *(.vectors)
- } > vectors
 
 }

@@ -1,2 +1,4 @@
 /#address-cells 1
+/openprom/memory@0x01000000/reg 0x01000000 0x40000000
+/openprom/memory@0x01000000/available 0x01000000 0x40000000
 /iobus@0xe0000000/com@0xe0000000/reg 0xe0000000 8

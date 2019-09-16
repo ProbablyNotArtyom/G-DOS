@@ -69,3 +69,4 @@ __EXCEPT_START__:
 	 .global	__EH_FRAME_BEGIN__
 	.type	__EH_FRAME_BEGIN__,@object
 __EH_FRAME_BEGIN__:
+

@@ -98,7 +98,7 @@ result_t shfunc_cat(char *argv[], int argc){
 				fs_putsError(res);
 				for (int i = 0; i < bytes; i++){
 					if (buff[i] == '\n' || col >= width){
-						printf("\n");
+						printf("\n\r");
 						line++;
 						if (opts & SH_CAT_DO_NUMLINES) {
 							printf(" %04d | ", line); col = 8;

@@ -4,9 +4,18 @@
 	#include <linkage.h>
 	#include <cpu.h>
 
+#define LOCAL_ASM_PUTS(a)	\
+	lis	r3,1f@h;	\
+	ori	r3,r3,1f@l;	\
+	bl      FUNC_NAME(puts);\
+        b	_start;		\
+1:     	.ascii  a;		\
+	.byte	0x00
+
 //---------------------------------------------------
 
-#define ILLEGAL_VECTOR(v)	.org __vectors + v ; vector__##v: bl vector__##v ;
+//#define ILLEGAL_VECTOR(v)	.org __vectors + v ; vector__##v: LOCAL_ASM_PUTS("[!!!] Illegal Exception Fault:\n\r\tVector: ##v")
+#define ILLEGAL_VECTOR(v)	.org __vectors + v ; vector__##v: b	vector__##v
 #define VECTOR(v, dummystr)	.org __vectors + v ; vector__##v:
 
 //---------------------------------------------------
@@ -41,12 +50,11 @@ VECTOR(0x800, "FPU")
 	rfi
 ILLEGAL_VECTOR(0x900)
 ILLEGAL_VECTOR(0xa00)
-ILLEGAL_VECTOR(0xb00)
-ILLEGAL_VECTOR(0xc00)
+VECTOR(0xc00, "SYSCALL")
+	b	__syscall_handler
 ILLEGAL_VECTOR(0xd00)
 ILLEGAL_VECTOR(0xe00)
 ILLEGAL_VECTOR(0xf00)
-ILLEGAL_VECTOR(0xf20)
 ILLEGAL_VECTOR(0x1000)
 ILLEGAL_VECTOR(0x1100)
 ILLEGAL_VECTOR(0x1200)

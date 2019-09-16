@@ -9,7 +9,7 @@ FRESULT f_open (FIL* fp, const TCHAR* path, uint8_t mode){ FRESULT res = INTERNA
 FRESULT f_close (FIL* fp){ FRESULT res = INTERNAL_SYSCALL(syscall_f_close, 1, fp); return res; }
 FRESULT f_read (FIL* fp, void* buff, uint32_t btr, uint32_t* br){ FRESULT res = INTERNAL_SYSCALL(syscall_f_read, 4, fp, buff, btr, br); return res; }
 FRESULT f_write (FIL* fp, const void* buff, uint32_t btw, uint32_t* bw){ FRESULT res = INTERNAL_SYSCALL(syscall_f_write, 4, fp, buff, btw, bw); return res; }
-FRESULT f_lseek (FIL* fp, FSIZE_t ofs){ FRESULT res = INTERNAL_SYSCALL(syscall_f_open, 2, fp, ofs); return res; }
+FRESULT f_lseek (FIL* fp, FSIZE_t ofs){ FRESULT res = INTERNAL_SYSCALL(syscall_f_lseek, 2, fp, ofs); return res; }
 FRESULT f_truncate (FIL* fp);
 FRESULT f_sync (FIL* fp);
 FRESULT f_opendir (DIR* dp, const TCHAR* path);

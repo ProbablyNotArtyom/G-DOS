@@ -6,10 +6,10 @@ post:
 	@cd ./bin && $(CPY) -O binary $(BINARY_NAME) $(BINARY_NAME).bin
 
 run:
-	cd $(BASEDIR)/src/platform/$(ARCH)/$(PLATFORM) && xterm -e "stty raw -echo onlcr -icanon -iexten ofdel; $(PREFIX)run -m $(CPU) -f psim.init $(BINARY_NAME)"
+	cd $(BASEDIR)/src/platform/$(ARCH)/$(PLATFORM) && xterm -e "stty raw -echo onlcr -icanon -iexten ofdel; $(PREFIX)run -r 128m -m $(CPU) -e  netbsd -f psim.init $(BINARY_NAME); sleep 10"
 
 run-debug:
-	cd $(BASEDIR)/src/platform/$(ARCH)/$(PLATFORM) && $(PREFIX)gdb
+	cd $(BASEDIR)/src/platform/$(ARCH)/$(PLATFORM) && $(PREFIX)gdb --command=.gdbinit
 
 $(BINDIR)/romdisk.o: $(USRLIBC)
 	@dd if=/dev/zero of=$(BINDIR)/romdisk.img bs=1024 count=1024 status=none

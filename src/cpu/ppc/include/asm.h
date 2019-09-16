@@ -6,6 +6,16 @@
 #include <cpu.h>
 
 
+.macro asm_puts str
+.section .rodata
+1:	.ascii	str
+.section .text
+.extern	puts
+	lis	r3,1b@ha
+	la	r3,1b@l
+	bl	puts
+	blr
+.endm
 
 #ifdef __ASSEMBLY__
 
