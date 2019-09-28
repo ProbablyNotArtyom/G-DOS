@@ -85,6 +85,7 @@ int putc(int c, FILE *stream);
 #endif
 int putchar(int character);
 int puts(const char *str);
+int nputs(const char *str, size_t bytes);
 int ungetc(int character, FILE *stream);
 
 #ifdef __GNUC__

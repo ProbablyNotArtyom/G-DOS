@@ -224,7 +224,7 @@ static void read_range(char *ptr,char *end, char size){
 			}
 			while (column < 16 && ptr <= end){
 				printByte(inb(ptr++));							// Print data byte at this address
-				putc(' ');									// Space between bytes
+				putchar(' ');									// Space between bytes
 				column++;									// Increase our column number
 				queryBreak();
 			}
@@ -232,8 +232,8 @@ static void read_range(char *ptr,char *end, char size){
 			printf(SET_COLOR_FG(C_LIGHTGREEN) "| " SET_COLOR_FG(C_LIGHTYELLOW));
 			addrBuff = ptr - column;
 			for (i = 0; i < column; addrBuff++){
-				if (*addrBuff >= 0x20 && *addrBuff < 0x7F) putc(*addrBuff);
-				else putc('.');
+				if (*addrBuff >= 0x20 && *addrBuff < 0x7F) putchar(*addrBuff);
+				else putchar('.');
 				i++;
 			}
 		}

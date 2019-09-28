@@ -18,7 +18,7 @@ char *gets(char *buff, int len){
 	register char *s = buff;
 	register int index = len;
 	while (true){
-		*s = read();
+		*s = getchar();
 		if ((*s == 0x7F || *s == 0x08) && index == len);
 		else if (*s == 0x7F || *s == 0x08){
 			printf("\b \b");
@@ -27,12 +27,12 @@ char *gets(char *buff, int len){
 			s--;
 		} else {
 			if (index >= 2){
-				putc(*s);
+				putchar(*s);
 				if (*s == '\r') break;
 				s++;
 				index--;
 			} else if (*s == '\r') {
-				putc(*s);
+				putchar(*s);
 				break;
 			}
 		}
@@ -45,7 +45,7 @@ char *sgets(char *buff, int len){
 	register char *s = buff;
 	register int index = len;
 	while (index >= 2){
-		*s = read();
+		*s = getchar();
 		if ((*s == 0x7F || *s == 0x08) && index == len);
 		else if (*s == 0x7F || *s == 0x08){
 			printf("\b \b");

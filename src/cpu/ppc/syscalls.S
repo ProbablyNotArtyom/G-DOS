@@ -34,6 +34,6 @@ syscall_table:
 	.long	pmalloc
 	.long	malloc
 
-	.long	read
-	.long	putc
+	.long	getchar
+	.long	putchar
 syscall_table_end:

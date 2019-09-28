@@ -105,7 +105,6 @@ int puts(const char *str);
 	size_t strlen (const char *str);
 
 	charResult putc(char out);
-	char read(void);
 #endif
 
 unsigned long int strtoul(const char *nptr, char **endptr, int base);

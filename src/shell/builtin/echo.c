@@ -18,7 +18,7 @@ result_t shfunc_echo(char *argv[], int argc){
 	if (argc == 0) return RET_ARGS;
 	for (int i = 0; i < argc; i++){
 		printf(argv[i]);
-		putc(' ');
+		putchar(' ');
 	}
 	puts("");
 	return RET_OK;

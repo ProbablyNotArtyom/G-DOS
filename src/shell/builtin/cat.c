@@ -116,7 +116,7 @@ result_t shfunc_cat(char *argv[], int argc){
 							printf("  ");
 							col++;
 						} else {
-							putc(buff[i]);
+							putchar(buff[i]);
 						}
 					}
 				}

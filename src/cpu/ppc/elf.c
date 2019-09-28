@@ -246,7 +246,7 @@ int loadELF_flat(char* args[], int argCount, char *loadAddr){
 			uint32_t segLen = *(uint32_t*)(progTable+loadAddr+0x10);
 			while (segLen > 0){
 				*paddr++ = *segmentPtr++;
-				if ((segLen & 0x00000FFF) == 0x000000000) putc('.');
+				if ((segLen & 0x00000FFF) == 0x000000000) putchar('.');
 				segLen--;
 			}
 			puts(" OK");

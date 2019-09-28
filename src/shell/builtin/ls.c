@@ -44,7 +44,7 @@ result_t shfunc_ls(char *argv[], int argc){
             if (res != FR_OK || info.fname[0] == 0) break;
             if (info.fattrib & AM_DIR){
 				printf("  <DIR> %s", info.fname);
-				for(int i = 14 - strlen(info.fname); i > 0; i--) putc(' ');
+				for(int i = 14 - strlen(info.fname); i > 0; i--) putchar(' ');
 				if (info.fsize / 1024 >= 1)
 					if (info.fsize / 1048576 >= 1)
 						printf(" %d MB\r\n", info.fsize / 1048576);
@@ -60,7 +60,7 @@ result_t shfunc_ls(char *argv[], int argc){
             if (res != FR_OK || info.fname[0] == 0) break;
             if (!(info.fattrib & AM_DIR)){
                 printf("        %s", info.fname);
-				for(int i = 14 - strlen(info.fname); i > 0; i--) putc(' ');
+				for(int i = 14 - strlen(info.fname); i > 0; i--) putchar(' ');
 				if (info.fsize / 1024 >= 1)
 					if (info.fsize / 1048576 >= 1)
 						printf(" %d MB\r\n", info.fsize / 1048576);

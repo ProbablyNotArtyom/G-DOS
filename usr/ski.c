@@ -51,13 +51,13 @@ result_t main(char *argv[], int argc){
 	if (!progressive) loop_count = size;
 	while (loop_count <= size) {
 		for (y = (1 << loop_count) - 1; y >= 0; y--, puts("")) {
-			for (i = 0; i < y; i++) putc(' ');
+			for (i = 0; i < y; i++) putchar(' ');
 			for (x = 0; x + y < (1 << loop_count); x++)
 			printf((x & y) ? "  " : "* ");
 		}
 		if (diamond) {
 			for (y = 1; y <= (1 << loop_count); y++, puts("")) {
-				for (i = 0; i < y; i++) putc(' ');
+				for (i = 0; i < y; i++) putchar(' ');
 				for (x = 0; x + y < (1 << loop_count); x++)
 				printf((x & y) ? "  " : "* ");
 			}

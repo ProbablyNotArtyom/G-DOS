@@ -6,10 +6,8 @@
 //
 //---------------------------------------------------
 
-//#include <stdio.h>
-#include <std.h>
+#include <stdio.h>
 
-int putchar(int character) {
-	// TODO: ACTUAL IMPLEMENTATION FOR STREAMS
-	return putc(character);
+int getc(FILE *stream) {
+	
 }

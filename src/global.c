@@ -24,12 +24,12 @@
 
 //---------------------------------------------------
 
-charResult putc(char out) {
+int putchar(int out) {
 	return putc_def(out);
 }
 
-char read(void) {
-	return read_def();
+int getchar(void) {
+	return (int)read_def();
 }
 
 char peek() {

@@ -117,7 +117,7 @@ static void printchar(char **str, int c)
 		**str = c;
 		++(*str);
 	}
-	else (void)putc(c);
+	else (void)putchar(c);
 }
 
 #define PAD_RIGHT 1

@@ -15,7 +15,7 @@
 
 //---------------------Defines-----------------------
 
-#define putc_debug(chr)			if (__global_flags[0] == true) putc(chr)
+#define putc_debug(chr)			if (__global_flags[0] == true) putchar(chr)
 #define puts_debug(str)			if (__global_flags[0] == true) puts(str)
 #define debug_printf(fmt, ...) if (__global_flags[0] == true) printf(fmt, __VA_ARGS__)
 

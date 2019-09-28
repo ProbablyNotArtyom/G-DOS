@@ -105,7 +105,7 @@ static void memtest_start(){
 		test_end = strtoul(chBuff, NULL, 16);
 
 	printf("\r\n[?] Intense (y/n) : ");
-	do_memtest(test_end, test_start, read());
+	do_memtest(test_end, test_start, getchar());
 }
 
 void print_boot_menu(void) {
@@ -134,7 +134,7 @@ int main(void){
 	while(true){
 		print_boot_menu();
 		do {
-			tmp = read();
+			tmp = getchar();
 		} while (tmp == NULL);
 		switch (tmp){
 			case '0':

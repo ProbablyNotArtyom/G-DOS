@@ -35,5 +35,5 @@ TCHAR* f_gets (TCHAR* buff, int len, FIL* fp);
 
 void *malloc(size_t size){ void *res = INLINE_SYSCALL(malloc, 1, size); return res; }
 void *pmalloc(size_t size){ void *res = INLINE_SYSCALL(pmalloc, 1, size); return res; }
-charResult putc(char out){ charResult res = INLINE_SYSCALL(putc, 1, out); return res; }
-char read(void){ char res = INLINE_SYSCALL(read, 0); return res; }
+int putchar(char out){ charResult res = INLINE_SYSCALL(putchar, 1, out); return res; }
+char getchar(void){ char res = INLINE_SYSCALL(getchar, 0); return res; }

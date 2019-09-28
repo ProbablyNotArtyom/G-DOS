@@ -22,3 +22,19 @@ int puts(const char *str) {
 	putchar('\n');
 	return NULL;
 }
+
+int nputs(const char *str, size_t bytes) {
+	/*
+	int out = fputc(str, stdout);
+	if (out < 0) return out;
+	if (0 == putchar('\n')) return EOF;
+	return out + 1;
+	*/
+
+	char *ptr = str;
+	while(bytes > 0) {
+		putchar(*ptr++);
+		bytes--;
+	}
+	return NULL;
+}

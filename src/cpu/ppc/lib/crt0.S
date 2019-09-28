@@ -31,3 +31,15 @@
 
 _start:
 	bl	FUNC_NAME(main)
+
+.global __eabi
+__eabi:
+	addis   r13,r0,_SDA_BASE_@h
+	ori     r13,r13,_SDA_BASE_@l
+	addis   r2,r0,_SDA2_BASE_@h
+	ori     r2,r2,_SDA2_BASE_@l
+	blr
+
+.global __init
+__init:
+	blr

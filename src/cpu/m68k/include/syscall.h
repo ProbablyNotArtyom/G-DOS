@@ -32,8 +32,8 @@
 #define syscall_pmalloc		27
 #define syscall_malloc		28
 
-#define syscall_read		29
-#define syscall_putc		30
+#define syscall_getchar		29
+#define syscall_putchar		30
 
 #ifndef __ASSEMBLER__
 

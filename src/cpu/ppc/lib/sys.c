@@ -35,5 +35,5 @@ TCHAR* f_gets (TCHAR* buff, int len, FIL* fp);
 
 _syscall1(void*, malloc, size_t, size)
 _syscall1(void*, pmalloc, size_t, size)
-_syscall1(charResult, putc, char, out)
-_syscall0(char, read)
+_syscall1(charResult, putchar, char, out)
+_syscall0(char, getchar)

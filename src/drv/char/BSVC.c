@@ -41,7 +41,7 @@ char bsvc_dev_read(){
 }
 
 charResult bsvc_dev_write(char out){
-	if (out == '\n')	putc('\r');
+	if (out == '\n')	bsvc_dev_write('\r');
 	asm("%=:\n\t"
 		"btst	#0x02, 0x00EFFC03\n\t"
 		"beq.s 	%=b\n\t"

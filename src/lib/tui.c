@@ -76,14 +76,14 @@ char tui_mouse_get_event(point_t *point) {
 	char tmp;
 	while (tmp != 'M') {
 		while (tmp != '[') {
-			while (tmp != '\e') tmp = read();
-			tmp = read();
+			while (tmp != '\e') tmp = getchar();
+			tmp = getchar();
 		}
-		tmp = read();
+		tmp = getchar();
 	}
-	tmp = read();
-	point->x = read()-32;
-	point->y = read()-32;
+	tmp = getchar();
+	point->x = getchar()-32;
+	point->y = getchar()-32;
 	return tmp;
 }
 
@@ -221,8 +221,8 @@ void draw_gfx_box(struct gfx_box *box, unsigned char fg, unsigned char bg) {
 	for (int y = 0; y < box->height; y++) {
 		tui_cursor_setpos(box->x, box->y + y);
 		for (int x = 0; x < box->width; x++) {
-			if (box->fill == NULL) putc(' ');
-			else putc(box->fill);
+			if (box->fill == NULL) putchar(' ');
+			else putchar(box->fill);
 		}
 	}
 	tui_reset_color_fg_bg();
@@ -248,10 +248,10 @@ action_t trigger_menu_list(menu_list_t *list) {
 	}
 	while (true) {
 		draw_menu_list(list, selected);
-		tmpchr = read();
+		tmpchr = getchar();
 		if (tmpchr == '\033') { // if the first value is esc
-    		read(); // skip the [
-    		switch(read()) { // the real value
+    		getchar(); // skip the [
+    		switch(getchar()) { // the real value
 		        case 'A':
 					if (selected > 0) selected--;
 		            // code for arrow up
@@ -261,9 +261,9 @@ action_t trigger_menu_list(menu_list_t *list) {
 		            // code for arrow down
 		            break;
 				case 'M':
-					tmpchr = read();
-					point.x = read()-32;
-					point.y = read()-32;
+					tmpchr = getchar();
+					point.x = getchar()-32;
+					point.y = getchar()-32;
 					int tmp = get_entry_index_at_point(list, &point);
 					if (tmp == 0) break;		// break if no valid entry is generated
 					else selected = tmp - 1;
