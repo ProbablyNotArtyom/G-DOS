@@ -1,6 +1,6 @@
 # G'DOS
 
-G'DOS is a portable, ROM-native hobby OS that also functions as a bootloader for other software, such as Linux.
+G'DOS is a portable, multi-architecture ROM-native hobby OS that also functions as a bootloader for other software, such as Linux.
 It is being developed mainly to power my various homebrew computer projects.
 
 
@@ -35,6 +35,8 @@ This is the current list of supported platforms and architectures supported by G
 >  * mcf5208
 > * arm
 >  * versatilepb
+> * ppc
+>  * psim
 
 To build, just take the arch and platform name and run the config script with them
 ```
@@ -59,12 +61,14 @@ Out of the previous platform list, these are the ones that are simulators. also 
 >  * BSVC : [BSVC](https://github.com/BSVC/bsvc)
 > * arm
 >  * versatilepb : [QEMU](https://wiki.qemu.org/Documentation/Platforms/ARM)
+> * ppc
+>  * psim : [GDB & psim](https://www.sourceware.org/psim/)
 
 ## Porting / Contribution
 
 A porting guide is planned at some point soon.
 
-If by some chance you have homebrew hardware you want to port G'DOS to, or maybe just want to correct the typo that i made on line 34 of ./cpu/m68k/entry.S, by all means, contributions are welcome.
+If by some chance you have homebrew hardware you want to port G'DOS to, then by all means, contributions are welcome.
 
 ## Authors
 
