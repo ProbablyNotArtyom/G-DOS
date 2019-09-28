@@ -63,8 +63,10 @@ USROBJECTS := $(USRSOURCES:%.c=%)
 .PHONY: all
 all:
 	@echo "[DEP] Setting up directories"
+	@mkdir -p $(LIBDIR)
 	@cp $(PWD)/src/platform/${ARCH}/$(PLATFORM)/config.mk $(LIBDIR)/
 	@cp $(PWD)/src/include $(LIBDIR) -rf
+	@mkdir -p $(LIBDIR)/include/cpu
 	@cp $(PWD)/src/cpu/$(ARCH)/include/* $(LIBDIR)/include/cpu -rf
 	@cp $(PWD)/src/cpu/$(ARCH)/lib/link.ld $(LIBDIR)
 	mkdir -p $(BINDIR)
@@ -74,6 +76,7 @@ all:
 .PHONY: deps
 deps: $(OBJECTS) $(OBJECTS_ASM) $(ARCHLIBOBJECTS) $(ARCHLIBOBJECTS_ASM) $(USRLIBOBJECTS) $(USRLIBOBJECTS_ASM)
 	@$(MAKE) $(USRLIBC)
+	@mkdir -p $(ROOTDIR)/bin $(ROOTDIR)/etc $(ROOTDIR)/home $(ROOTDIR)/usr
 	@$(MAKE) $(USROBJECTS)
 	@$(MAKE) $(BINDIR)/romdisk.o
 	@$(MAKE) $(BINARY_NAME)
@@ -131,6 +134,7 @@ clean:
 	rm -rf $(BINDIR)/* -vf
 	rm -rf $(LIBDIR)/* -vrf
 	rm -rf $(USRBINDIR)/*
+	rm -rf $(USROBJECTS)
 	rm -rf $(patsubst %, %.o, $(USROBJECTS))
 	rm -rf $(ROOTDIR)/usr/*
 	rm -rf $(ROOTDIR)/bin/*
