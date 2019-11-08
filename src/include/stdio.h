@@ -82,16 +82,11 @@ int fputc(int character, FILE *stream);
 int fputs(const char *str, FILE *stream);
 #ifndef _HEADER_STDTOOLS
 int putc(int c, FILE *stream);
+char *gets(char *s);
 #endif
 int putchar(int character);
 int puts(const char *str);
 int nputs(const char *str, size_t bytes);
 int ungetc(int character, FILE *stream);
-
-#ifdef __GNUC__
-char *gets(char *s) __attribute__((deprecated));
-#else
-char *gets(char *s);
-#endif
 
 #endif

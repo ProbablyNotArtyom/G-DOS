@@ -35,7 +35,7 @@ char *getenv(const char *name);
 
 void *malloc(size_t num);
 void *calloc(size_t num, size_t size);
-void *realloc(void *ptr, size_t size);
+void *realloc(void *ptr, size_t num);
 void free(void *ptr);
 
 double atof(const char *str);

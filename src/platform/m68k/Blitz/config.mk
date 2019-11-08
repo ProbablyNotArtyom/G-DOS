@@ -9,6 +9,7 @@ AS = $(PREFIX)as
 AR = $(PREFIX)ar
 CPY = $(PREFIX)objcopy
 
-CCFLAGS = -Wall -mcpu=$(CPU) -nostdlib -static -I ${PWD}/src/include -O3
-LDFLAGS = -Bstatic 
-LDLIBS := `$(CC) -print-libgcc-file-name`
+CCFLAGS = -fno-builtin -mcpu=$(CPU) -msoft-float -nostdlib -static -w
+CCFLAGS_GENERIC = -fno-builtin -w -msoft-float -nostdlib -static -mcpu=$(CPU)
+LDFLAGS = -Bstatic
+LDLIBS = `$(CC) -print-libgcc-file-name`

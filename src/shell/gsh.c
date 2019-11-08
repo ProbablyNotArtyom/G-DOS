@@ -194,6 +194,8 @@ const result_t const (* const shFunctions[])() = {
 	shfunc_mkfs,
 	shfunc_pico,
 	shfunc_meminfo,
+	tckBegin,
+	shfunc_expr,
 	NULL
 };
 
@@ -213,6 +215,8 @@ const char* const shFuncNames[] = {
 	"mkfs ",
 	"pico ",
 	"meminfo ",
+	"tclgo ",
+	"expr ",
 	NULL
 };
 
@@ -232,6 +236,8 @@ const uint8_t const shFuncLen[] = {
 	4,
 	4,
 	7,
+	5,
+	4,
 	NULL
 };
 

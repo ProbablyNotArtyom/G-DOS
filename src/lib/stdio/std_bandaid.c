@@ -8,7 +8,7 @@
 
 
 #include <stdarg.h>
-#include <std.h>
+#include <stdlib.h>
 #include <stdint.h>
 #include "formatter.h"
 
@@ -123,7 +123,7 @@ static void printchar(char **str, int c)
 #define PAD_RIGHT 1
 #define PAD_ZERO 2
 
-static int prints(char **out, const char *string, int width, int pad)
+static int prints(char **out, const char *string, int width, int pad, int maxlen)
 {
 	register int pc = 0, padchar = ' ';
 
@@ -141,9 +141,17 @@ static int prints(char **out, const char *string, int width, int pad)
 			++pc;
 		}
 	}
-	for ( ; *string ; ++string) {
-		printchar (out, *string);
-		++pc;
+	if (maxlen == 0) {
+		for ( ; *string ; ++string) {
+			printchar (out, *string);
+			++pc;
+		}
+	} else {
+		for ( ; *string && maxlen > 0; ++string) {
+			printchar (out, *string);
+			--maxlen;
+			++pc;
+		}
 	}
 	for ( ; width > 0; --width) {
 		printchar (out, padchar);
@@ -166,7 +174,7 @@ static int printi(char **out, int i, int b, int sg, int width, int pad, int letb
 	if (i == 0) {
 		print_buf[0] = '0';
 		print_buf[1] = '\0';
-		return prints (out, print_buf, width, pad);
+		return prints (out, print_buf, width, pad, 0);
 	}
 
 	if (sg && b == 10 && i < 0) {
@@ -197,12 +205,12 @@ static int printi(char **out, int i, int b, int sg, int width, int pad, int letb
 		}
 	}
 
-	return pc + prints (out, s, width, pad);
+	return pc + prints (out, s, width, pad, 0);
 }
 
 static int print(char **out, char *format, va_list varg)
 {
-	register int width, pad;
+	int width, pad, len = 0;
 	register int pc = 0;
 
 	char scr[2];
@@ -217,6 +225,7 @@ static int print(char **out, char *format, va_list varg)
 				++format;
 				pad = PAD_RIGHT;
 			}
+
 			while (*format == '0') {
 				++format;
 				pad |= PAD_ZERO;
@@ -225,9 +234,21 @@ static int print(char **out, char *format, va_list varg)
 				width *= 10;
 				width += *format - '0';
 			}
+			if (*format == '.') {
+				++format;
+				if (*format == '*') {
+					++format;
+					len = va_arg(varg, int);
+				} else {
+					for ( ; *format >= '0' && *format <= '9'; ++format) {
+						len *= 10;
+						len += *format - '0';
+					}
+				}
+			}
 			if( *format == 's' ) {
 				register char *s = va_arg(varg, char*);
-				pc += prints (out, s?s:"(null)", width, pad);
+				pc += prints (out, s?s:"(null)", width, pad, len);
 				continue;
 			}
 			if( *format == 'd' ) {
@@ -254,7 +275,7 @@ static int print(char **out, char *format, va_list varg)
 				/* char are converted to int then pushed on the stack */
 				scr[0] = va_arg(varg, char);
 				scr[1] = '\0';
-				pc += prints (out, scr, width, pad);
+				pc += prints (out, scr, width, pad, 0);
 				continue;
 			}
 		}

@@ -18,8 +18,10 @@
 
 	#include "blitz_ide.h"
 
-blitz_ide_dev *ide_disk[2];
-struct dev_disk *blitz_ide_disk[2];
+	static const char drv_name[] = "blitz_ide";
+	static const char drv_vendor[] = "notartyom";
+
+	blitz_ide_dev *ide_disk[2];
 
 //--------------------Functions----------------------
 
@@ -48,7 +50,6 @@ void blitz_ide_dev_register(){
 		} else {
 			nprintf("IDE disk %d detected.", i);
 			ide_disk[i] = (blitz_ide_dev *)pmalloc(sizeof(blitz_ide_dev));
-			blitz_ide_disk[i] = (struct dev_disk *)pmalloc(sizeof(struct dev_disk));
 			ide_disk[i]->exists == 0x00;
 			/* read in the identify buffer */
 			uint16_t idBuff[256];
@@ -65,7 +66,7 @@ void blitz_ide_dev_register(){
 
 			printf("model: ");
 			idBuff[47] = '\0';
-			puts(&idBuff[27])
+			puts(&idBuff[27]);
 			nprintf("sig:        0x%X", ide_disk[i]->signature);
 			nprintf("cylinders:  %d", ide_disk[i]->cylinders);
 			nprintf("heads:      %d", ide_disk[i]->heads);
@@ -73,13 +74,22 @@ void blitz_ide_dev_register(){
 			nprintf("size:       %dMB", ide_disk[i]->size / 2048);
 			delay(0x8FFFF);
 
-			blitz_ide_disk[i]->init = &blitz_ide_init;
-			blitz_ide_disk[i]->status = &blitz_ide_status;
-			blitz_ide_disk[i]->write = &blitz_ide_write;
-			blitz_ide_disk[i]->read = &blitz_ide_read;
-			blitz_ide_disk[i]->ioctl = &blitz_ide_ioctl;
-			blitz_ide_disk[i]->local_drive_num = i;
-			diskRegister(blitz_ide_disk[i]);
+			// Create the driver struct and register the driver
+
+			struct device_info *driver = (struct device_info *)malloc(sizeof(struct device_info));
+			driver->driver_disk = (struct dev_disk *)malloc(sizeof(struct dev_disk));
+
+			driver->name = &drv_name;
+			driver->vendor = &drv_vendor;
+			driver->type = DEVTYPE_BLOCK;
+
+			driver->driver_disk->init = &blitz_ide_init;
+			driver->driver_disk->status = &blitz_ide_status;
+			driver->driver_disk->write = &blitz_ide_write;
+			driver->driver_disk->read = &blitz_ide_read;
+			driver->driver_disk->ioctl = &blitz_ide_ioctl;
+			driver->driver_disk->local_drive_num = i;
+			diskRegister(driver);
 		}
 	}
 	return;
