@@ -41,7 +41,7 @@
 #define putc_def 		isa_cga_dev_write
 #define tty_init_def	isa_cga_dev_init
 
-#define FF_DRIVER_STRS		"fatdisk", "ramdisk", NULL, NULL
+#define FF_DRIVER_STRS		"fatdisk", "ramdisk", "blitz_ide", NULL
 #define FF_VOLUME_STRS		"hd0", "hd1", "fd0", "fd1"
 #define DISK_AUTOMOUNT		true
 
