@@ -37,7 +37,7 @@ result_t shfunc_ls(char *argv[], int argc){
 		if (res != FR_OK) return RET_SYS;
 		sizeTmp = (sizeTmp * fsTmp->csize) / 2;
 		printf("Volume: %s\r\n", labelTmp);
-		nprintf("Size: %dKB, %dKB free\r\n", ((fsTmp->n_fatent - 2) * fsTmp->csize) / 2 , sizeTmp);
+		printf("Size: %dKB, %dKB free\r\n", ((fsTmp->n_fatent - 2) * fsTmp->csize) / 2 , sizeTmp);
 
 		while (true){
             res = f_readdir(&dir, &info);
