@@ -3,6 +3,9 @@
 G'DOS is a portable, multi-architecture ROM-native hobby OS that also functions as a bootloader for other software, such as Linux.
 It is being developed mainly to power my various homebrew computer projects.
 
+<p align="center">
+    <img src="https://i.imgur.com/DrvTYt8.png" alt="G-Dos after boot"></img>
+</p>
 
 Here are some highlights of what I've implemented so far:
 * ELF binary loading
