@@ -7,7 +7,7 @@ post:
 run:
 	@emu68k $(BINARY_NAME).bin
 
-$(BINDIR)/romdisk.o: $(USRLIBC)
+$(BINDIR)/romdisk.o: $(USRLIBC) $(PLATFORM_CONFIG)
 	@dd if=/dev/zero of=$(BINDIR)/romdisk.img bs=1024 count=512 status=none
 	@echo "[DEP] making root filesystem"
 	@echo `mkfs.fat $(BINDIR)/romdisk.img -F 12 -s1 -f1` > /dev/null

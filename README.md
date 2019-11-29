@@ -30,13 +30,13 @@ It still remains my main project, software-wise at least.
 
 This is the current list of supported platforms and architectures supported by G'DOS
 > * m68k
->  * Blitz
->  * BSVC
->  * mcf5208
+>   * Blitz
+>   * BSVC
+>   * mcf5208
 > * arm
->  * versatilepb
+>   * versatilepb
 > * ppc
->  * psim
+>   * psim
 
 To build, just take the arch and platform name and run the config script with them
 ```
@@ -58,11 +58,11 @@ Each architecture supports at least one simulator platform. When targeting a sim
 Out of the previous platform list, these are the ones that are simulators. also listed is the name of the simulator used
 
 > * m68k
->  * BSVC : [BSVC](https://github.com/BSVC/bsvc)
+>   * BSVC : [BSVC](https://github.com/BSVC/bsvc)
 > * arm
->  * versatilepb : [QEMU](https://wiki.qemu.org/Documentation/Platforms/ARM)
+>   * versatilepb : [QEMU](https://wiki.qemu.org/Documentation/Platforms/ARM)
 > * ppc
->  * psim : [GDB & psim](https://www.sourceware.org/psim/)
+>   * psim : [GDB & psim](https://www.sourceware.org/psim/)
 
 ## Porting / Contribution
 

@@ -1,4 +1,6 @@
 
+BUILD_USR_PROGRAMS := true
+
 BAREMETAL = TRUE
 CPU = 68000
 PREFIX = m68k-unknown-elf-
