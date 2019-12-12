@@ -11,6 +11,8 @@
  #define CONFIG_DEV_RPI_UART
 
 	#include <std.h>
+	#include <mod/init.h>
+	#include <io.h>
 	#include <platdep/rpi-gpio.h>
 	#include <platdep/rpi-mailbox.h>
 	#include "rpi-uart.h"
@@ -18,23 +20,23 @@
 //--------------------Functions----------------------
 
 charResult rpi_uart_dev_write(char out){
-    while (*UART0_FR & 0x20) asm("");	// Wait until we can send
-    *UART0_DR = out;
+    while (inl(UART0_FR) & 0x20) asm("");	// Wait until we can send
+    outl(out, UART0_DR);
 	return CH_OK;
 }
 
 char rpi_uart_dev_read(){
 	char tmp;
 
-	while(*UART0_FR & 0x10) asm("");	// Wait until something is in the buffer
-    tmp = (char)(*UART0_DR);			// Input char
+	while(inl(UART0_FR) & 0x10) asm("");	// Wait until something is in the buffer
+    tmp = inb(UART0_DR);				// Input char
     return tmp;
 }
 
-charResult rpi_uart_dev_init(){
+charResult rpi_uart_dev_init() {
 	unsigned int tmp;
 
-    *UART0_CR = 0;         				// turn off UART0
+    outl(0, UART0_CR);       			// turn off UART0
 
     /* set up clock */
     mbox[0] = (9 * 4);
@@ -49,22 +51,27 @@ charResult rpi_uart_dev_init(){
     mbox_call(MBOX_CH_PROP);
 
     /* map UART0 to GPIO pins */
-    tmp = *GPFSEL1;
+    tmp = inl(GPFSEL1);
     tmp &= ~((7 << 12) | (7 << 15)); 	// gpio14, gpio15
     tmp |= (4 << 12) | (4 << 15);    	// alt0
-    *GPFSEL1 = tmp;
+    outl(tmp, GPFSEL1);
 
-	*GPPUD = 0;            				// enable pins 14 and 15
-    for (tmp = 300; tmp > 0; tmp--) asm("");
-    *GPPUDCLK0 = (1 << 14) | (1 << 15);
-    for (tmp = 300; tmp > 0; tmp--) asm("");
-    *GPPUDCLK0 = 0;        				// flush GPIO setup
+	outl(0, GPPUD);            			// enable pins 14 and 15
+    for (tmp = 500; tmp > 0; tmp--) asm("");
+    outl(((1 << 14) | (1 << 15)), GPPUDCLK0);
+    for (tmp = 500; tmp > 0; tmp--) asm("");
+    outl(0, GPPUDCLK0);        			// flush GPIO setup
 
-    *UART0_ICR = 0x7FF;    				// clear interrupts
-    *UART0_IBRD = 2;       				// 115200 baud
-    *UART0_FBRD = 0xB;
-    *UART0_LCRH = 0b11 << 5;			// 8n1
-    *UART0_CR = 0x301;     				// enable Tx, Rx, FIFO
+    outl(0x7FF, UART0_ICR);    			// clear interrupts
+    outl(1, UART0_IBRD);       			// 115200 baud
+    outl(40, UART0_FBRD);
+    outl((1 << 4) | (1 << 5) | (1 << 6), UART0_LCRH);
+
+	outl(0x7F2, UART0_IMSC);
+    outl((1 << 0) | (1 << 8) | (1 << 9), UART0_CR);
+
+	for (tmp = 500; tmp > 0; tmp--) asm("");
+	puts("Raspberry pi UART driver / NotArtyom / 11-12-19");
 
 	return CH_OK;
 }
@@ -72,5 +79,7 @@ charResult rpi_uart_dev_init(){
 char rpi_uart_dev_peek() {
 		return NULL;
 }
+
+early_initcall(rpi_uart_dev_init);
 
 #endif

@@ -5,7 +5,7 @@ PROVIDE (memEnd = 0);
 
 MEMORY
 {
-  ram (rwx) : ORIGIN = 0x00008000, LENGTH = 0x01000000
+  ram (rwx) : ORIGIN = 0x00008000, LENGTH = 0x10000000
 }
 
 STACK_SIZE = 0x2000;
