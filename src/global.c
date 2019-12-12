@@ -25,18 +25,22 @@
 //---------------------------------------------------
 
 int putchar(int out) {
+	asm("");						// Prevent the parent function symbol from being optimized away
 	return putc_def(out);
 }
 
 int getchar(void) {
+	asm("");						// Prevent the parent function symbol from being optimized away
 	return (int)read_def();
 }
 
 char peek() {
+	asm("");						// Prevent the parent function symbol from being optimized away
 	return peek_def();
 }
 
 charResult tty_init() {
+	asm("");						// Prevent the parent function symbol from being optimized away
 	return tty_init_def();
 }
 

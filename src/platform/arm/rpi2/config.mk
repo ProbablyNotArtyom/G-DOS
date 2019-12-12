@@ -14,3 +14,6 @@ LDFLAGS = -Bstatic
 CCFLAGS = -fno-builtin -ffreestanding -nostdlib -static -mcpu=$(CPU)
 CCFLAGS_GENERIC = -fno-builtin -ffreestanding -nostdlib  -static -mcpu=$(CPU)
 LDLIBS := `$(CC) -print-libgcc-file-name`
+
+# Directs the build system to source any missing files from another target 
+PARENT_TARGET := rpi3

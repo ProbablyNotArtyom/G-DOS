@@ -1,11 +1,24 @@
+#=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+# G-DOS MASTER MAKEFILE
+#=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+#
+# This makefile contains nearly the entire build system for G-DOS.
+# It automatically finds all sources and handles them appropriately.
+# The only other makefiles in the entire project are located in the
+# platform target directory. The platform target must implement:
+#    "config.mk"   | platform specific variable definitions
+#    "post.mk"     | platform specific make targets
+#=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+# Read in the build system config file
 export
-#MAKE := $(MAKE) -s
 ifneq ("$(wildcard $(PWD)/.config)","")
 include ${PWD}/.config
 include ${PWD}/src/platform/${ARCH}/${PLATFORM}/config.mk
 include ${PWD}/src/cpu/${ARCH}/arch.mk
 endif
 
+# Error out if the required fields arent specified
 ifneq ("$(MAKECMDGOALS)","clean")
 ifndef ARCH
 $(error "[!] ARCH is not set. Either pass it as an environment variable or use the config script.")
@@ -16,6 +29,7 @@ endif
 endif
 
 #=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+# Define directories to use
 
 BASEDIR := $(PWD)
 ROOTDIR := $(BASEDIR)/root
@@ -29,6 +43,7 @@ USRLIBC := $(LIBDIR)/libc.a
 BINARY_NAME := $(BINDIR)/gdos
 
 #=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+# Append the default flags to the ones supplied by the target
 
 CCFLAGS := $(CCFLAGS) -include $(BASEDIR)/src/platform/${ARCH}/${PLATFORM}/hwdeps.h -I $(BASEDIR)/src/platform/${ARCH}/${PLATFORM} -I $(BASEDIR)/src/cpu/$(ARCH)/include -I ${PWD}/src/include
 CCFLAGS_GENERIC := $(CCFLAGS_GENERIC) -I $(LIBDIR)/include
@@ -36,29 +51,34 @@ CCFLAGS_USR := $(CCFLAGS) -O3
 SUBDIRS = src
 LDFLAGS := -T $(BASEDIR)/src/platform/${ARCH}/${PLATFORM}/link.ld $(LDFLAGS)
 
+# Append the debug flag to the CFLAGS if debug was passed in the config
 ifeq ("$(DEBUG)","true")
 CCFLAGS := $(CCFLAGS) -g
 endif
 
 #=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+# Find sources & generate object targets
 
+# Search source directories for any sources to build
 SOURCES := $(filter-out $(BASEDIR)/src/cpu/% $(BASEDIR)/src/platform/%, $(shell find $(BASEDIR)/src -name '*.c')) $(shell find $(BASEDIR)/src/cpu/$(ARCH) -maxdepth 1 -name '*.c') $(shell find $(BASEDIR)/src/platform/$(ARCH)/$(PLATFORM) -maxdepth 1 -name '*.c')
 ARCHLIBSOURCES := $(shell find $(BASEDIR)/src/cpu/$(ARCH)/libkern/ -name '*.c')
 USRLIBSOURCES := $(shell find $(BASEDIR)/src/cpu/$(ARCH)/lib/ -name '*.c')
-SOURCES_ASM := $(filter-out $(BASEDIR)/src/cpu/%, $(shell find $(BASEDIR)/src -name '*.S')) $(shell find $(BASEDIR)/src/cpu/$(ARCH) -maxdepth 1 -name '*.S')
+SOURCES_ASM := $(filter-out $(BASEDIR)/src/cpu/% $(BASEDIR)/src/platform/%, $(shell find $(BASEDIR)/src -name '*.S')) $(shell find $(BASEDIR)/src/cpu/$(ARCH) -maxdepth 1 -name '*.S') $(shell find $(BASEDIR)/src/platform/$(ARCH)/$(PLATFORM) -maxdepth 1 -name '*.S')
 ARCHLIBSOURCES_ASM := $(shell find $(BASEDIR)/src/cpu/$(ARCH)/libkern/ -name '*.S')
 USRLIBSOURCES_ASM := $(shell find $(BASEDIR)/src/cpu/$(ARCH)/lib/ -name '*.S')
-OBJECTS := $(patsubst $(BASEDIR)/%.c, $(BINDIR)/%.o, $(SOURCES))
-ARCHLIBOBJECTS := $(foreach tmp, $(ARCHLIBSOURCES:%.c=%.o), $(BINDIR)/src/lib/$(notdir $(tmp)))
-USRLIBOBJECTS := $(foreach tmp, $(USRLIBSOURCES:%.c=%.o), $(LIBDIR)/bin/$(notdir $(tmp)))
+USRSOURCES := $(shell find $(BASEDIR)/usr -maxdepth 1 -iname '*.c')
+
+# Create object lists from each source list
 OBJECTS_ASM := $(patsubst $(BASEDIR)/%.S, $(BINDIR)/%.o, $(SOURCES_ASM))
 ARCHLIBOBJECTS_ASM := $(foreach tmp, $(ARCHLIBSOURCES_ASM:%.S=%.o), $(BINDIR)/src/lib/$(notdir $(tmp)))
 USRLIBOBJECTS_ASM := $(foreach tmp, $(USRLIBSOURCES_ASM:%.S=%.o), $(LIBDIR)/bin/$(notdir $(tmp)))
-
-USRSOURCES := $(shell find $(BASEDIR)/usr -maxdepth 1 -iname '*.c')
+OBJECTS := $(patsubst $(BASEDIR)/%.c, $(BINDIR)/%.o, $(SOURCES))
+ARCHLIBOBJECTS := $(foreach tmp, $(ARCHLIBSOURCES:%.c=%.o), $(BINDIR)/src/lib/$(notdir $(tmp)))
+USRLIBOBJECTS := $(foreach tmp, $(USRLIBSOURCES:%.c=%.o), $(LIBDIR)/bin/$(notdir $(tmp)))
 USROBJECTS := $(USRSOURCES:%.c=%)
 
 #=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+# Build rules
 
 .PHONY: all
 all:
@@ -128,6 +148,7 @@ $(USRLIBOBJECTS_ASM): $$(patsubst $$(LIBDIR)/bin/%.o, $$(BASEDIR)/src/cpu/$(ARCH
 	@$(CC) -I$(LIBDIR)/include -c $(patsubst $(LIBDIR)/bin/%, $(BASEDIR)/src/cpu/$(ARCH)/lib/%, $(@:%.o=%.S)) $(CCFLAGS_USR) -o $@
 
 #=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+# Generic static targets
 
 .PHONY: clean
 clean:
@@ -144,5 +165,6 @@ distclean: clean
 	rm -vf $(PWD)/.config
 
 #=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+# Append the platform target specific targets
 
 -include ${PWD}/src/platform/${ARCH}/${PLATFORM}/post.mk

@@ -1,8 +1,8 @@
 //---------------------------------------------------
 // Hardware Configuration
 
-#ifndef CONFIG_RPI3
-#define	CONFIG_RPI3
+#ifndef CONFIG_RPI2
+#define	CONFIG_RPI2
 
 #define CONFIG_CPU_ARM
 #define __ARM_EABI__
@@ -18,7 +18,7 @@
 // ---------- Driver Support ----------
 
 #define CONFIG_DEV_DUMMY
-#define CONFIG_DEV_VERSATILEPB_UART
+#define CONFIG_DEV_RPI_UART
 
 // ---------- Disk Interfaces ----------
 
@@ -27,10 +27,10 @@
 #define CONFIG_DEV_RAMDISK
 #define DEV_RAMDISK_SIZE	256
 
-#define peek_def 		versatilepb_serial_dev_peek
-#define read_def		versatilepb_serial_dev_read
-#define putc_def		versatilepb_serial_dev_write
-#define tty_init_def	versatilepb_serial_dev_init
+#define peek_def 		rpi_uart_dev_peek
+#define read_def		rpi_uart_dev_read
+#define putc_def		rpi_uart_dev_write
+#define tty_init_def	rpi_uart_dev_init
 
 #define FF_DRIVER_STRS		"fatdisk", "ramdisk", NULL, NULL
 #define FF_VOLUME_STRS		"hd0", "hd1", "fd0", "fd1"
