@@ -37,6 +37,14 @@
 #define CGA_INDEX_LP_H				16
 #define CGA_INDEX_LP_L				17
 
+//-----------------VT100 Emulation-------------------
+
+enum {
+	TSTATE_NULL,
+	TSTATE_ESC,
+	TSTATE_ARG
+} vt_state;
+
 //-----------------Function Protos-------------------
 
 char isa_cga_dev_read();
