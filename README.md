@@ -29,6 +29,12 @@ From there it grew out of control like some sort of strange mold, into what G'DO
 Now just like the strange mold, G'DOS continues to grow.
 It still remains my main project, software-wise at least.
 
+## Try it out
+
+If you just want to try G-DOS out, then i reccomend the arm/versatilepb target for qemu-system-arm.
+Configure it with `./config.sh PLATFORM=versatilepb ARCH=arm`, then build with `make`. 
+To start the simulator, do `make run`.
+
 ## Building
 
 This is the current list of supported platforms and architectures supported by G'DOS
