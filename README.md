@@ -32,7 +32,8 @@ It still remains my main project, software-wise at least.
 ## Try it out
 
 If you just want to try G-DOS out, then i reccomend the arm/versatilepb target for qemu-system-arm.
-Configure it with `./config.sh PLATFORM=versatilepb ARCH=arm`, then build with `make`. 
+Configure it with `./config.sh PLATFORM=versatilepb ARCH=arm`.
+Build it with `make PREFIX=arm-none-eabi all`. If your arm gcc compiler has a different prefix, make sure to change the PREFIX variable to reflect it.
 To start the simulator, do `make run`.
 
 ## Building
