@@ -7,7 +7,7 @@ MEMORY
 {
   vectors (rx) : ORIGIN = 0x0000, LENGTH = 0x3FF
   rom (rx) : ORIGIN = 0x400, LENGTH = 0xFFFFF-0x400
-  ram (rwx) : ORIGIN = 0x00100000, LENGTH = 0x00600000
+  ram (rwx) : ORIGIN = 0x00100000, LENGTH = 0x00040000
 }
 
 STACK_SIZE = 0x2000;
@@ -18,7 +18,7 @@ _ram_end = ORIGIN(ram) + LENGTH(ram);
 _stack_start = _ram_end - STACK_SIZE;
 _stack_end = _ram_end;
 
-HEAP_SIZE = _stack_start - _ram_start - (_end - __bss_start);
+HEAP_SIZE = (_stack_start - _end);
 
 /*
  * allocate the stack
