@@ -77,15 +77,17 @@ SECTIONS
  } > rom
 
 
- .data :
- AT ( ADDR(.text) + SIZEOF (.text) ) {
-
-	. = ALIGN(0x4);
+ .data : AT(__data_rom) {
+	 . = ALIGN(0x4);
 	 __data_start = . ;
 	 *(.data);
 	 __data_end = . ;
  } > ram
 
+ .fill __data_rom + (__data_end - __data_start) : {
+	BYTE(1)
+ 	. = ORIGIN(rom) + LENGTH(rom);
+ } > rom
 
  .bss : {
 

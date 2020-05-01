@@ -41,7 +41,7 @@ char emu68k_dev_read(){
 }
 
 charResult emu68k_dev_write(char out){
-	if (out == '\n')	emu68k_dev_write('\r');
+	if (out == '\n') emu68k_dev_write('\r');
 	asm("%=:\n\t"
 		"btst	#0x02, 0x00EFFC03\n\t"
 		"beq.s 	%=b\n\t"

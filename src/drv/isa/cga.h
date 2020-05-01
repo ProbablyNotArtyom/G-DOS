@@ -54,5 +54,6 @@ static void drawFrame();
 static void cReturn();
 static void setCursor();
 static void write_frame(uint8_t byte, uint16_t offset);
+static char clense_escapes(char chr);
 
 #endif

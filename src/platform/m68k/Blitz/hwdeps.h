@@ -29,8 +29,9 @@
 
 // ---------- Disk Interfaces ----------
 
-#define CONFIG_DEV_BLITZ_IDE
-#define BLITZ_IDE_BASE		0x00100000
+//#define CONFIG_DEV_ISA_XTIDE
+//#define CONFIG_DEV_BLITZ_IDE
+//#define BLITZ_IDE_BASE		0x00100000
 
 #define CONFIG_DEV_FATDISK
 #define CONFIG_DEV_RAMDISK

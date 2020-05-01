@@ -63,7 +63,12 @@ static const char const *initcall_level_names[] = {
 
 const char const b_logo[];
 const char const b_opts[];
-struct entry_info *extra_bootmenu_entries[10];		// anything more than 10 extra entries would be absurd and shouldnt be allowed
+
+#define EXTRA_BOOTMENUS_MAX		10
+struct entry_info *extra_bootmenu_entries[EXTRA_BOOTMENUS_MAX];		// anything more than 10 extra entries would be absurd and shouldnt be allowed
+
+int register_bootmenu_entry(const struct entry_info *entry);
+int init_bootmenu_entrys(void);
 
 //---------------------------------------------------
 
@@ -123,6 +128,7 @@ void print_boot_menu(void) {
 
 int main(void){
 	do_initcall_level(0);
+	init_bootmenu_entrys();
 	do_initcalls();
 
 	puts(b_logo);
@@ -173,7 +179,12 @@ int register_bootmenu_entry(const struct entry_info *entry) {
 	int i = 0;
 	while (extra_bootmenu_entries[i] != NULL) i++;
 	extra_bootmenu_entries[i] = entry;
-	return 1;
+	return 0;
+}
+
+int init_bootmenu_entrys(void) {
+	for (int i = 0; i < EXTRA_BOOTMENUS_MAX; i++) extra_bootmenu_entries[i] = NULL;
+	return 0;
 }
 
 //---------------------------------------------------

@@ -40,12 +40,42 @@ bool 		isInit = false;
 
 //---------------------------------------------------
 
+static bool ignored = false;
+static char clense_escapes(char chr) {
+	if (chr == '\033' && !ignored) {
+		ignored = true;
+		return NULL;
+	} else if (ignored) {
+		switch (chr) {
+			case 'H':
+			case 'A':
+			case 'B':
+			case 'C':
+			case 'D':
+			case 'J':
+			case 'P':
+			case 'm':
+			case 'h':
+			case 'l':
+			case 'I':
+			case 'O':
+				ignored = false;
+				return NULL;
+			default:
+				return NULL;
+		}
+	}
+	return chr;
+}
+
 char isa_cga_dev_read(){
 	while(1);
 }
 
 charResult isa_cga_dev_write(char out){
 	if (isInit == false) return CH_OK;
+	out = clense_escapes(out);
+	if (out == NULL) return CH_OK;
 	if (vram_cursor_x >= 80) {
 		vram_cursor_x = 0;
 		if (vram_cursor_y <= 24){
