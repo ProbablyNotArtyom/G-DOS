@@ -37,3 +37,8 @@ void *malloc(size_t size){ void *res = INLINE_SYSCALL(malloc, 1, size); return r
 void *pmalloc(size_t size){ void *res = INLINE_SYSCALL(pmalloc, 1, size); return res; }
 int putchar(char out){ charResult res = INLINE_SYSCALL(putchar, 1, out); return res; }
 char getchar(void){ char res = INLINE_SYSCALL(getchar, 0); return res; }
+
+int raise(int sig) {
+	while (1) asm("");
+	return 0;
+}
