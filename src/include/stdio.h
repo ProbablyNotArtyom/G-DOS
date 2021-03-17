@@ -27,9 +27,7 @@
 
 typedef struct _stream FILE;
 
-FILE *stdin;
-FILE *stdout;
-FILE *stderr;
+
 
 FILE *fopen(const char *filename, const char *mode);
 FILE *freopen(const char *filename, const char *mode, FILE *stream);

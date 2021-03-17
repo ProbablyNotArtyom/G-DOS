@@ -46,7 +46,6 @@ BINARY_NAME := $(BINDIR)/gdos
 # Append the default flags to the ones supplied by the target
 
 CCFLAGS := $(CCFLAGS) -include $(BASEDIR)/src/platform/${ARCH}/${PLATFORM}/hwdeps.h -I $(BASEDIR)/src/platform/${ARCH}/${PLATFORM} -I $(BASEDIR)/src/cpu/$(ARCH)/include -I ${PWD}/src/include
-CCFLAGS_GENERIC := $(CCFLAGS_GENERIC) -I $(LIBDIR)/include
 CCFLAGS_USR := $(CCFLAGS) -O3
 SUBDIRS = src
 LDFLAGS := -T $(BASEDIR)/src/platform/${ARCH}/${PLATFORM}/link.ld $(LDFLAGS)
@@ -97,7 +96,9 @@ all:
 deps: $(OBJECTS) $(OBJECTS_ASM) $(ARCHLIBOBJECTS) $(ARCHLIBOBJECTS_ASM) $(USRLIBOBJECTS) $(USRLIBOBJECTS_ASM)
 	@$(MAKE) $(USRLIBC)
 	@mkdir -p $(ROOTDIR)/bin $(ROOTDIR)/etc $(ROOTDIR)/home $(ROOTDIR)/usr
+ifeq ("$(DONT_BUILD_USR)","")
 	@$(MAKE) $(USROBJECTS)
+endif
 	@$(MAKE) $(BINDIR)/romdisk.o
 	@$(MAKE) $(BINARY_NAME)
 	@$(MAKE) post
@@ -129,9 +130,9 @@ $(ARCHLIBOBJECTS): $$(patsubst $$(BINDIR)/src/lib/%.o, $$(BASEDIR)/src/cpu/$(ARC
 	@$(CC) $(CCFLAGS) -c $(patsubst $(BINDIR)/src/lib/%, $(BASEDIR)/src/cpu/$(ARCH)/libkern/%, $(@:%.o=%.c)) -o $@
 
 $(USRLIBOBJECTS): $$(patsubst $$(LIBDIR)/bin/%.o, $$(BASEDIR)/src/cpu/$(ARCH)/lib/%.c, $$@)
-	@echo "[CC] -c $(shell realpath -m --relative-to=$(PWD) $(patsubst $(LIBDIR)/bin/%, $(BASEDIR)/src/cpu/$(ARCH)/lib/%, $(@:%.o=%.c))) -o $(shell realpath -m --relative-to=$(PWD) $(@))"
+	@echo "[CC] -D _DONT_ADD_STD_STREAMS=true -c $(shell realpath -m --relative-to=$(PWD) $(patsubst $(LIBDIR)/bin/%, $(BASEDIR)/src/cpu/$(ARCH)/lib/%, $(@:%.o=%.c))) -o $(shell realpath -m --relative-to=$(PWD) $(@))"
 	@mkdir -p $(dir $@)
-	@$(CC) -I$(LIBDIR)/include -c $(patsubst $(LIBDIR)/bin/%, $(BASEDIR)/src/cpu/$(ARCH)/lib/%, $(@:%.o=%.c)) $(CCFLAGS_USR) -o $@
+	@$(CC) -I$(LIBDIR)/include -c $(patsubst $(LIBDIR)/bin/%, $(BASEDIR)/src/cpu/$(ARCH)/lib/%, $(@:%.o=%.c)) -D _DONT_ADD_STD_STREAMS=true $(CCFLAGS_USR) -o $@
 
 $(OBJECTS_ASM): $$(patsubst $$(BINDIR)%.o, $$(BASEDIR)%.S, $$@)
 	@echo "[CC] -c $(shell realpath -m --relative-to=$(PWD) $(patsubst $(BINDIR)%, $(BASEDIR)%, $(@:%.o=%.S))) -o $(shell realpath -m --relative-to=$(PWD) $(@))"
@@ -139,8 +140,8 @@ $(OBJECTS_ASM): $$(patsubst $$(BINDIR)%.o, $$(BASEDIR)%.S, $$@)
 	@$(CC) $(CCFLAGS) -c $(patsubst $(BINDIR)%, $(BASEDIR)%, $(@:%.o=%.S)) -o $@
 
 $(ARCHLIBOBJECTS_ASM): $$(patsubst $$(BINDIR)/src/lib/%.o, $$(BASEDIR)/src/cpu/$(ARCH)/libkern/%.S, $$@)
-	@echo "[CC] -c $(shell realpath -m --relative-to=$(PWD) $(patsubst $(BINDIR)/src/lib/%, $(BASEDIR)/src/cpu/$(ARCH)/libkern/%, $(@:%.o=%.S))) -o $(shell realpath -m --relative-to=$(PWD) $(@))"
-	@$(CC) $(CCFLAGS) -c $(patsubst $(BINDIR)/src/lib/%, $(BASEDIR)/src/cpu/$(ARCH)/libkern/%, $(@:%.o=%.S)) -o $@
+	@echo "[CC] -D _DONT_ADD_STD_STREAMS=true -c $(shell realpath -m --relative-to=$(PWD) $(patsubst $(BINDIR)/src/lib/%, $(BASEDIR)/src/cpu/$(ARCH)/libkern/%, $(@:%.o=%.S))) -o $(shell realpath -m --relative-to=$(PWD) $(@))"
+	@$(CC) $(CCFLAGS) -D _DONT_ADD_STD_STREAMS=true -c $(patsubst $(BINDIR)/src/lib/%, $(BASEDIR)/src/cpu/$(ARCH)/libkern/%, $(@:%.o=%.S)) -o $@
 
 $(USRLIBOBJECTS_ASM): $$(patsubst $$(LIBDIR)/bin/%.o, $$(BASEDIR)/src/cpu/$(ARCH)/lib/%.S, $$@)
 	@echo "[CC] -c $(shell realpath -m --relative-to=$(PWD) $(patsubst $(LIBDIR)/bin/%, $(BASEDIR)/src/cpu/$(ARCH)/lib/%, $(@:%.o=%.S))) -o $(shell realpath -m --relative-to=$(PWD) $(@))"

@@ -6,6 +6,9 @@
 //
 //---------------------------------------------------
 
+#define _DONT_ADD_STD_STREAMS
+
+#include <std.h>
 #include <stdio.h>
 
 int puts(const char *str) {

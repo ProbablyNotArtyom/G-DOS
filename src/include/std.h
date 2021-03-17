@@ -117,8 +117,8 @@ int isDigit(int val);
 int toUpper(int val);
 int toLower(int val);
 
-bool __global_flags[];
-const char* const __global_flag_names[];
+extern bool __global_flags[];
+extern const char* const __global_flag_names[];
 
 int _bandaid_vnprintf(size_t max, const char *format, va_list arg);
 int _bandaid_vprintf(const char *format, va_list arg);
