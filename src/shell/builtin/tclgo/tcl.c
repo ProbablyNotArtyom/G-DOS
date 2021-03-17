@@ -16,10 +16,12 @@
 
 const char const tcl_help_txt[] = {
 	"A lightweight TCL interpreter for embedded systems\r\n"
-	"Usage: tcl [-id] [-c \"command\"] [source] \r\n"
+	"Usage: tcl [-id] <file> OR <-c \"command\">\r\n"
 	"\r\n"
 	"    -i           runs the interreter in interactive mode\r\n"
-	"    -c           interpret and execute a single line of code\r\n"
+	"    -c           interpret the remaining args as a single line of code\r\n"
+	"                 this must be the last argument passed\r\n"
+	"                 passing a filename when using this isn't supported\r\n"
 	"    -d           Enables verbose debugging information\r\n"
 };
 
@@ -38,14 +40,9 @@ result_t tckBegin(char *argv[], int argc) {
 	f_file file;
 	f_info info;
 	f_error res;
-	doExit = false, debug = false, interactive = false;
+	doExit = false, debug = false, interactive = true;
 	docmd = NULL;
 
-	/* Default to starting in interactive mode if no args are passed */
-	if (argc < 1) {
-		debug = true;
-		interactive = true;
-	}
 	for (int i = 0; i < argc; i++){
 		if (argv[i][0] == '-'){
 			switch (argv[i][1]){
@@ -69,12 +66,13 @@ result_t tckBegin(char *argv[], int argc) {
 					debug = true;
 					break;
 			}
-		} else {
+		} else if (docmd == NULL) {
 			res = f_stat(argv[i], &info);
 			if (res != FR_OK) {
 				printf("[?] File could not be found\n");
 				return RES_OK;
 			}
+			interactive = false;
 			f_open(&file, argv[i], FA_READ);
 			f_lseek(&file, 0);
 		}
@@ -83,9 +81,12 @@ result_t tckBegin(char *argv[], int argc) {
 	struct tcl tcl;
 	tcl_init(&tcl);
 
-	if (docmd != NULL) {
+	if (interactive) {
+		printf("TCL Command Shell v0.8\n");
+		printf("NotArtyom 6/10/19\n");
+	} else if (docmd != NULL) {
 		if (tcl_eval(&tcl, argv[docmd+1], strlen(argv[docmd+1])+1) != FERROR) {
-    		if (*(tcl.result) != '\0') printf("> %s\n", tcl_string(tcl.result));
+			if (*(tcl.result) != '\0') printf("> %s\n", tcl_string(tcl.result));
 		} else {
 			printf("[?] Syntax\n");
 		}
@@ -93,37 +94,54 @@ result_t tckBegin(char *argv[], int argc) {
 		return;
 	}
 
-	printf("TCL Command Shell v0.8\n");
-	printf("NotArtyom 6/10/19\n");
-
-	size_t buffer_size;
-	char *buff;
-	if (interactive) {
-		buffer_size = 1024;
-		buff = malloc(buffer_size);
-	} else {
-		buffer_size = info.fsize;
-		buff = malloc(buffer_size);
-		size_t bytes;
-		f_read(&file, buff, buffer_size, &bytes);
-		if (buffer_size != bytes) {
-			printf("[?] File could not be loaded\n");
-			return -1;
-		}
+	int buffer_length = (interactive ? 1024 : info.fsize);
+	char *buff = malloc(buffer_length);
+	if (buff == NULL) {
+		printf("[?] Buffer could not be allocated\n");
+		return -1;
 	}
-
-	char *buff_backup = buff;
+	int i = 0;
 	while (!doExit) {
-		int line_size;
+		int input;
 		if (interactive) {
-			buff = buff_backup;
-			memset(buff, '\0', 1024);
-			gets(buff, 1024);
+			input = getchar();
+			putchar(input);
+		} else {
+			size_t bytes;
+			f_read(&file, buff, buffer_length, &bytes);
+			if (buffer_length != bytes) {
+				printf("[?] File could not be loaded\n");
+				free(buff);
+				return -1;
+			}
 		}
-		if (tcl_eval(&tcl, buff, strlen(buff)) != FERROR) {
-    		printf("%.*s\n", tcl_length(tcl.result), tcl_string(tcl.result));
+
+		if (input == 0 || input == EOF) break;
+		if (i > buffer_length - 1) buff = realloc(buff, buffer_length += 1024);
+		buff[i++] = input;
+
+		tcl_each(buff, i, 1) {
+			if (prse.token == TCL_ERROR && (prse.dest - buff) != i) {
+				memset(buff, 0, buffer_length);
+				i = 0;
+				break;
+			} else if (prse.token == TCL_CMD && *(prse.src) != '\0') {
+				putchar('\n');
+				int r = tcl_eval(&tcl, buff, strlen(buff));
+				if (r == FERROR) {
+					printf("[?] Syntax\n");
+				} else if (interactive && !doExit && *(tcl.result) != '\0') {
+					printf("> %.*s\n", tcl_length(tcl.result), tcl_string(tcl.result));
+				} else {
+					putchar('\n');
+				}
+				memset(buff, 0, buffer_length);
+				i = 0;
+				break;
+			}
 		}
 	}
+
 	free(buff);
 	//if (file != NULL) fclose(file);
 	return RET_OK;

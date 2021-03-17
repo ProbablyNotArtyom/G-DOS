@@ -1,5 +1,5 @@
 
-BAREMETAL = TRUE
+DONT_BUILD_USR = true
 CPU = 603e
 PREFIX = powerpc-none-eabi-
 

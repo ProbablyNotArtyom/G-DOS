@@ -20,6 +20,7 @@ const struct tcl_cmd_builtin const builtin_commands[] = {
 	FUNC_BUILTIN("continue",1,&tcl_cmd_flow),
 	FUNC_BUILTIN("incr",0,&tcl_cmd_incr),
 	FUNC_BUILTIN("exit",0,&tcl_cmd_exit),
+	FUNC_BUILTIN("quit",0,&tcl_cmd_exit),
 	FUNC_BUILTIN("eval",2,&tcl_cmd_eval),
 	FUNC_BUILTIN("expr",0,&tcl_cmd_expr)
 };
@@ -61,7 +62,8 @@ int tcl_cmd_puts(struct tcl *tcl, tcl_value_t *args, void *arg) {
 	(void)arg;
 	tcl_value_t *text = tcl_list_at(args, 1);
 	puts(tcl_string(text));
-	return tcl_result(tcl, FNORMAL, text);
+	free(text);
+	return tcl_result(tcl, FNORMAL, tcl_alloc("", 0));
 }
 
 int tcl_user_proc(struct tcl *tcl, tcl_value_t *args, void *arg) {
