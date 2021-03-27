@@ -7,7 +7,7 @@ MEMORY
 {
   vectors (rx) : ORIGIN = 0x0000, LENGTH = 0x3FF
   rom (rx) : ORIGIN = 0x400, LENGTH = 0xFFFFF-0x400
-  ram (rwx) : ORIGIN = 0x00100000, LENGTH = 0x00040000
+  ram (rwx) : ORIGIN = 0x00100000, LENGTH = 0x40000
 }
 
 STACK_SIZE = 0x2000;
@@ -33,6 +33,9 @@ HEAP_SIZE = (_stack_start - _end);
  * an underscore) and coff object file formats.
  */
 PROVIDE (__STACK = _stack_end);
+
+PROVIDE (__RAM_START = _ram_start);
+PROVIDE (__RAM_END = _ram_end);
 
 PROVIDE (software_init_hook = 0);
 PROVIDE (_software_init_hook = 0);

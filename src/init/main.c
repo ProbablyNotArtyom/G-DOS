@@ -30,6 +30,8 @@ extern initcall_t __initcall6_start[];
 extern initcall_t __initcall7_start[];
 extern initcall_t __initcall_end[];
 
+extern const size_t __RAM_START, __RAM_END;
+
 extern size_t _end;
 
 #ifdef CUSTOM_SPLASH
@@ -94,16 +96,16 @@ static void do_initcalls(void){
 
 static void memtest_start(){
 	size_t test_start, test_end;
-	char chBuff[9];					// Buffer for ascii input
+	char chBuff[9];
 	printf("\r\n[?] Start address : 0x");
-	gets(chBuff, 9);
+	gets(chBuff, sizeof(chBuff));
 	if (chBuff[0] == '\r')
 		test_start = &_end;
 	else
 		test_start = strtoul(chBuff, NULL, 16);
 
 	printf("\r\n[?] End address : 0x");
-	gets(chBuff, 9);
+	gets(chBuff, sizeof(chBuff));
 	if (chBuff[0] == '\r')
 		test_end = RAMEND;
 	else

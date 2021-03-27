@@ -5,7 +5,7 @@ post:
 
 .PHONY: run
 run:
-	@emu68k $(BINARY_NAME).bin
+	@emu68k -t 1000000 -r $(BINARY_NAME).bin
 
 $(BINDIR)/romdisk.o: $(USRLIBC) $(PLATFORM_CONFIG)
 	@dd if=/dev/zero of=$(BINDIR)/romdisk.img bs=1024 count=512 status=none

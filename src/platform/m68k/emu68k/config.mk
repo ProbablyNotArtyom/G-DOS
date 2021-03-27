@@ -1,6 +1,6 @@
 
 BAREMETAL = TRUE
-CPU = 68020
+CPU = 68030
 PREFIX = m68k-unknown-elf-
 
 CC = $(PREFIX)gcc
@@ -12,4 +12,4 @@ CPY = $(PREFIX)objcopy
 CCFLAGS = -fno-builtin -mcpu=$(CPU) -msoft-float -nostdlib -static -w
 CCFLAGS_GENERIC = -fno-builtin -w -msoft-float -nostdlib -static -mcpu=$(CPU)
 LDFLAGS = -Bstatic
-LDLIBS = `$(CC) -print-libgcc-file-name`
+LDLIBS = `$(CC) $(CCFLAGS) -print-libgcc-file-name`
