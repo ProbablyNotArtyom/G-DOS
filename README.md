@@ -82,4 +82,4 @@ If by some chance you have homebrew hardware you want to port G'DOS to, then by 
 
 ## Authors
 
-* **NotArtyom** - *Things that do stuff* - [Website](http://notartyoms-box.com)
+* **NotArtyom** - *Things that do stuff* - [Website](http://blog.notartyoms-box.net)
