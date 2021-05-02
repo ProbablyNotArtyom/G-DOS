@@ -42,6 +42,14 @@ USRLIBC := $(LIBDIR)/libc.a
 
 BINARY_NAME := $(BINDIR)/gdos
 
+# If doas is present on the host, use it instead of sudo
+# This allows you to bypass the annoying timeout when building ROMdisks
+ifneq ("$(shell which doas)","")
+SUDO := $(shell which doas)
+else
+SUDO := $(shell which sudo)
+endif
+
 #=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 # Append the default flags to the ones supplied by the target
 

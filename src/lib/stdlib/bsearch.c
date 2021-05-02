@@ -11,7 +11,7 @@
 
 //---------------------------------------------------
 
-__weak__ void *bsearch(const void *key, const void *base, size_t num, size_t width, __compare fn) {
+__weak_symbol void *bsearch(const void *key, const void *base, size_t num, size_t width, __compare fn) {
 	char *lo = (char *) base;
 	char *hi = (char *) base + (num - 1) * width;
 	char *mid;

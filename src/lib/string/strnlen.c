@@ -11,7 +11,7 @@
 
 //---------------------------------------------------
 
-__weak__ size_t strnlen(const char *str, size_t size) {
+__weak_symbol size_t strnlen(const char *str, size_t size) {
 	size_t len = 0;
 	while (*str++ != '\0' && size-- > 0)
 		len++;

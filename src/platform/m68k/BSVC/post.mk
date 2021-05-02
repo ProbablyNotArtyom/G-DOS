@@ -12,14 +12,14 @@ $(BINDIR)/romdisk.o: $(USRLIBC)
 	@echo "[DEP] making root filesystem"
 	@echo `mkfs.fat $(BINDIR)/romdisk.img -F 12 -s1 -f1` > /dev/null
 	@mkdir -p $(BINDIR)/tmproot
-	@sudo mount -o loop $(BINDIR)/romdisk.img $(BINDIR)/tmproot
-	@sudo cp -r ./root/* $(BINDIR)/tmproot
-	@sudo umount $(BINDIR)/tmproot
-	@sudo rm -r $(BINDIR)/tmproot
+	@$(SUDO) mount -o loop $(BINDIR)/romdisk.img $(BINDIR)/tmproot
+	@$(SUDO) cp -r ./root/* $(BINDIR)/tmproot
+	@$(SUDO) umount $(BINDIR)/tmproot
+	@$(SUDO) rm -r $(BINDIR)/tmproot
 	@cd $(BINDIR) && $(CPY) -I binary -O elf32-m68k -B $(ARCH) --rename-section .data=.text ./romdisk.img ./romdisk.o
 	@rm $(BINDIR)/romdisk.img
 
 .PHONY: rescue
 rescue:
-	@sudo umount -fq $(BINDIR)/tmproot || /bin/true
+	@$(SUDO) umount -fq $(BINDIR)/tmproot || /bin/true
 	@rm -rf $(BINDIR)/tmproot

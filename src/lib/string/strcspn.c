@@ -11,7 +11,7 @@
 
 //---------------------------------------------------
 
-__weak__ size_t strcspn (const char *string, const char *stopset) {
+__weak_symbol size_t strcspn (const char *string, const char *stopset) {
 	size_t length = 0;
 	while (*string++ != '\0') {
 		bool do_increase = true;		// determines if we increase the length or not

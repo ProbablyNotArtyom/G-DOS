@@ -16,7 +16,7 @@
 static void shortsort(char *lo, char *hi, unsigned width, int (*comp)(const void *, const void *));
 static void swap(char *p, char *q, unsigned int width);
 
-__weak__ void qsort(void *base, unsigned num, unsigned width, int (*comp)(const void *, const void *)) {
+__weak_symbol void qsort(void *base, unsigned num, unsigned width, int (*comp)(const void *, const void *)) {
 	char *lo, *hi;
 	char *mid;
 	char *l, *h;

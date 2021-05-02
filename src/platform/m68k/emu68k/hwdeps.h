@@ -22,13 +22,14 @@
 #define CONFIG_DEV_RAMDISK
 #define CONFIG_DEV_FATDISK
 #define CONFIG_DEV_EMU68KSERIAL
+#define CONFIG_EMU_VT100
 
 #define peek_def 		emu68k_dev_peek
 #define putc_def 		emu68k_dev_write
 #define read_def 		emu68k_dev_read
 #define tty_init_def 	emu68k_dev_init
 
-#define FF_DRIVER_STRS		"fatdisk", "ramdisk", NULL, NULL
+#define FF_DRIVER_STRS		"fatdisk", "ramdisk", "ramdisk", "ramdisk"
 #define FF_VOLUME_STRS		"hd0", "hd1", "fd0", "fd1"
 #define DISK_AUTOMOUNT		true
 #endif

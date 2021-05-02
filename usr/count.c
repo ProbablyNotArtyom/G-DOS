@@ -14,7 +14,7 @@ static const char const help_txt[] = {
 };
 
 
-result_t main(char *argv[], int argc){
+result_t main(int argc, char *argv[]){
 	uint8_t opts = 0x00;				// Create something to log what options are ticked
 	uint8_t numIndex;
 	uint32_t num;
@@ -23,7 +23,7 @@ result_t main(char *argv[], int argc){
 		puts(help_txt);
 		return RET_OK;
 	}
-	
+
 	for (int i = 0; i < argc; i++){
 		if (argv[i][0] == '-'){
 			switch (argv[i][1]){

@@ -11,7 +11,7 @@
 
 //---------------------------------------------------
 
-__weak__ char *strtok(char *str, const char *delims) {
+__weak_symbol char *strtok(char *str, const char *delims) {
 	static char *tmp = "";
 	char **lasts = &tmp;
 

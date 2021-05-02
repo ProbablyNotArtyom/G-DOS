@@ -12,7 +12,7 @@
 
 //---------------------------------------------------
 
-__weak__ size_t wcstombs(char* dest, const wchar_t* src, size_t max) {
+__weak_symbol size_t wcstombs(char* dest, const wchar_t* src, size_t max) {
 	size_t total = 0;
 	if (dest) {
 		while (*src && (total + 4) < max) {

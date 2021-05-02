@@ -11,6 +11,6 @@
 
 //---------------------------------------------------
 
-__weak__ lldiv_t lldiv(long long n0, long long n1) {
+__weak_symbol lldiv_t lldiv(long long n0, long long n1) {
 	return (lldiv_t){ n0 / n1, n0 % n1 };
 }

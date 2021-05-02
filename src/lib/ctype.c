@@ -156,20 +156,20 @@ static const int type[128] = {
 
 #define ASCII(x) (x >= 0 && x <= 0x7F)
 
-__weak__ int isalnum(int ch) {
+__weak_symbol int isalnum(int ch) {
 	return ASCII(ch)? (type[ch] & TYP_ALNUM): 0;
 }
-__weak__ int isalpha(int ch) { return ASCII(ch)? (type[ch] & TYP_ALPHA): 0; }
-__weak__ int isblank(int ch) { return ASCII(ch)? (type[ch] & TYP_BLANK): 0; }
-__weak__ int iscntrl(int ch) { return ASCII(ch)? (type[ch] & TYP_CNTRL): 0; }
-__weak__ int isdigit(int ch) { return ASCII(ch)? (type[ch] & TYP_DIGIT): 0; }
-__weak__ int isgraph(int ch) { return ASCII(ch)? (type[ch] & TYP_GRAPHIC): 0; }
-__weak__ int islower(int ch) { return ASCII(ch)? (type[ch] & TYP_LOWER): 0; }
-__weak__ int isprint(int ch) { return ASCII(ch)? (type[ch] & TYP_PRINT): 0; }
-__weak__ int ispunct(int ch) { return ASCII(ch)? (type[ch] & TYP_PUNCT): 0; }
-__weak__ int isspace(int ch) { return ASCII(ch)? (type[ch] & TYP_SPACE): 0; }
-__weak__ int isupper(int ch) { return ASCII(ch)? (type[ch] & TYP_UPPER): 0; }
-__weak__ int isxdigit(int ch) { return ASCII(ch)? (type[ch] & TYP_XDIGIT): 0; }
+__weak_symbol int isalpha(int ch) { return ASCII(ch)? (type[ch] & TYP_ALPHA): 0; }
+__weak_symbol int isblank(int ch) { return ASCII(ch)? (type[ch] & TYP_BLANK): 0; }
+__weak_symbol int iscntrl(int ch) { return ASCII(ch)? (type[ch] & TYP_CNTRL): 0; }
+__weak_symbol int isdigit(int ch) { return ASCII(ch)? (type[ch] & TYP_DIGIT): 0; }
+__weak_symbol int isgraph(int ch) { return ASCII(ch)? (type[ch] & TYP_GRAPHIC): 0; }
+__weak_symbol int islower(int ch) { return ASCII(ch)? (type[ch] & TYP_LOWER): 0; }
+__weak_symbol int isprint(int ch) { return ASCII(ch)? (type[ch] & TYP_PRINT): 0; }
+__weak_symbol int ispunct(int ch) { return ASCII(ch)? (type[ch] & TYP_PUNCT): 0; }
+__weak_symbol int isspace(int ch) { return ASCII(ch)? (type[ch] & TYP_SPACE): 0; }
+__weak_symbol int isupper(int ch) { return ASCII(ch)? (type[ch] & TYP_UPPER): 0; }
+__weak_symbol int isxdigit(int ch) { return ASCII(ch)? (type[ch] & TYP_XDIGIT): 0; }
 
-__weak__ int tolower(int ch) { return isupper(ch)? (ch + 'a' - 'A'): ch; }
-__weak__ int toupper(int ch) { return islower(ch)? (ch + 'A' - 'a'): ch; }
+__weak_symbol int tolower(int ch) { return isupper(ch)? (ch + 'a' - 'A'): ch; }
+__weak_symbol int toupper(int ch) { return islower(ch)? (ch + 'A' - 'a'): ch; }

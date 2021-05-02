@@ -4,6 +4,7 @@
 
 	#include <sys/cdefs.h>
 	#include <std.h>
+	#include <tui.h>
 
 //---------------------------------------------------
 

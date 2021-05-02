@@ -11,6 +11,6 @@
 
 //---------------------------------------------------
 
-__weak__ char *getenv(const char *name) {
+__weak_symbol char *getenv(const char *name) {
 	return NULL;		// Environment variables dont exist
 }

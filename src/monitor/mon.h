@@ -12,7 +12,7 @@
 
 //---------------------------------------------------
 
-	#define GMON_VERSION	"1.2"
+	#define GMON_VERSION	"1.8"
 	#define	BUFFLEN			0xFF
 
 	#define	ADDRSIZE	uint32_t

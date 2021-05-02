@@ -11,7 +11,7 @@
 
 //---------------------------------------------------
 
-__weak__ int mblen(const char *src, size_t max) {
+__weak_symbol int mblen(const char *src, size_t max) {
 	wchar_t dummy;
 	return mbtowc(&dummy, src, max);
 }

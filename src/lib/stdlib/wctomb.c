@@ -12,7 +12,7 @@
 
 //---------------------------------------------------
 
-__weak__ int wctomb(char *dest, wchar_t wc) {
+__weak_symbol int wctomb(char *dest, wchar_t wc) {
 	if (!dest) return 0;
 	if (wc < 0x80) {
 		// 0xxxxxxx: 7 bits

@@ -11,7 +11,7 @@
 
 //---------------------------------------------------
 
-__weak__ void * rawmemchr (const void *block, int c) {
+__weak_symbol void * rawmemchr (const void *block, int c) {
 	unsigned int i = 0;
 	while (i > 0x00) {
 		if (*(unsigned char *)(block + i) == (unsigned char)c)

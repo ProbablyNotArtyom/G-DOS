@@ -30,6 +30,8 @@ _stack_end = _ram_end;
 HEAP_SIZE = _stack_start - _end;
 
 PROVIDE (__STACK = _stack_end);
+PROVIDE (__RAM_START = _ram_start);
+PROVIDE (__RAM_END = _ram_end);
 
 PROVIDE (software_init_hook = 0);
 PROVIDE (_software_init_hook = 0);

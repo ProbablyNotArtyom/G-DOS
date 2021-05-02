@@ -154,7 +154,7 @@ static void runCMD(shFunc_t func, char *buffer){
 		f_file file;
 		res = f_open(&file, arg[0], FA_READ);
 		if (res == FR_OK) {
-			loadELF(arg+1, numArgs-1, &file);
+			loadELF(numArgs-1, arg+1, &file);
 		} else {
 			char *tmptr = (char *)malloc((size_t) 300);
 			if (tmptr == NULL) return;
@@ -165,7 +165,7 @@ static void runCMD(shFunc_t func, char *buffer){
 			fs_putsError(res);
 			if (res != FR_OK) return;
 			free(tmptr);
-			loadELF(arg+1, numArgs-1, &file);
+			loadELF(numArgs-1, arg+1, &file);
 		}
 	}
 	return;

@@ -11,7 +11,7 @@
 
 //---------------------------------------------------
 
-__weak__ int system(const char *command) {
+__weak_symbol int system(const char *command) {
 
 	// We dont really support multiprocessing yet
 	// So just return 0

@@ -11,6 +11,6 @@
 
 //---------------------------------------------------
 
-__weak__ long long llabs(long long val) {
+__weak_symbol long long llabs(long long val) {
 	return val < 0? -val: val;
 }

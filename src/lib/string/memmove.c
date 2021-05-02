@@ -11,7 +11,7 @@
 
 //---------------------------------------------------
 
-__weak__ void *memmove (void *to, const void *from, size_t len) {
+__weak_symbol void *memmove (void *to, const void *from, size_t len) {
 	unsigned char *dest = (unsigned char *)to;
 	unsigned char *src = (unsigned char *)from;
 	if (len == NULL)

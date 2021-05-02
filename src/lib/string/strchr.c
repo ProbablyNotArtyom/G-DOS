@@ -11,7 +11,7 @@
 
 //---------------------------------------------------
 
-__weak__ void * strchr (const void *block, int c) {
+__weak_symbol void * strchr (const void *block, int c) {
 	for (unsigned int i = 0; (unsigned char *)(block + i) != '\0'; i++) {
 		if (*(unsigned char *)(block + i) == (unsigned char)c)
 			return (unsigned char *)(block + i);

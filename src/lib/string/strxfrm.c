@@ -11,7 +11,7 @@
 
 //---------------------------------------------------
 
-__weak__ size_t strxfrm(char *dest, const char *src, size_t n) {
+__weak_symbol size_t strxfrm(char *dest, const char *src, size_t n) {
 	size_t out = 0;
 	while (n--) {
 		if ((*dest++ = *src++))

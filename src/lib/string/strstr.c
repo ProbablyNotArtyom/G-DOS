@@ -11,7 +11,7 @@
 
 //---------------------------------------------------
 
-__weak__ char * strstr (const char *haystack, const char *needle) {
+__weak_symbol char * strstr (const char *haystack, const char *needle) {
 	if (*needle == '\0') {
 		return haystack;
 	} else {

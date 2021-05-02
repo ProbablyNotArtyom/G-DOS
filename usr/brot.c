@@ -13,7 +13,7 @@ static const char const help_txt[] = {
 	"Usage: brot [number of loops]\r\n"
 };
 
-result_t main(char *argv[], int argc){
+result_t main(int argc, char *argv[]){
 	uint8_t opts = 0x00;				// Create something to log what options are ticked
 	uint8_t fnames;
 	uint32_t num;

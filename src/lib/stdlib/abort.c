@@ -12,7 +12,7 @@
 
 //---------------------------------------------------
 
-__weak__ void abort(void) {
+__weak_symbol void abort(void) {
 	raise(SIGABRT);
 	_exit(EXIT_FAILURE);
 }

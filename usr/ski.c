@@ -17,11 +17,11 @@ static const char const brot_help_txt[] = {
 	"                     until the input size\r\n"
 };
 
-result_t main(char *argv[], int argc){
+result_t main(int argc, char *argv[]){
 	uint8_t opts = 0x00;				// Create something to log what options are ticked
 	uint8_t size = 4;
 	bool diamond = false, progressive = false;
-	
+
 	if (argc == 0) {
 		puts(brot_help_txt);
 		return RET_OK;

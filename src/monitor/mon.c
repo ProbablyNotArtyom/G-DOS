@@ -86,7 +86,7 @@ const char* const errors[] = {
 const char const hexTable[] = "0123456789ABCDEF";
 
 const char const helpText[] =
-	"\r\n\r\nG'Mon Version " GMON_VERSION
+	"\r\nG'Mon Version " GMON_VERSION
 	SET_COLOR_FG(C_YELLOW) "\r\n-=-=-" SET_COLOR_FG(C_RED) " Commands " SET_COLOR_FG(C_YELLOW) "-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=" COLOR_RESET_FG
 	"\r\n" COLOR_FG(C_LIGHTBLUE, "  read ") "[range] ...        Dump the memory contents of one or more ranges."
 	"\r\n" COLOR_FG(C_LIGHTBLUE, "  copy ") "[range], <addr>    Copy a memory range to address <addr>."

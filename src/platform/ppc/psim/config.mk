@@ -1,7 +1,7 @@
 
 DONT_BUILD_USR = true
 CPU = 603e
-PREFIX = powerpc-none-eabi-
+PREFIX = powerpc-linux-linux-gnu-
 
 CC = $(PREFIX)gcc
 LD = $(PREFIX)ld

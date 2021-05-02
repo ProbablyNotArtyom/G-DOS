@@ -11,6 +11,6 @@
 
 //---------------------------------------------------
 
-__weak__ long labs(long val) {
+__weak_symbol long labs(long val) {
 	return val < 0? -val: val;
 }

@@ -11,6 +11,6 @@
 
 //---------------------------------------------------
 
-__weak__ long long atoll(const char *str) {
+__weak_symbol long long atoll(const char *str) {
 	return strtoll(str, (char**)NULL, 10);
 }

@@ -11,7 +11,7 @@
 
 //---------------------------------------------------
 
-__weak__ size_t mbstowcs(wchar_t *dest, const char *src, size_t max)
+__weak_symbol size_t mbstowcs(wchar_t *dest, const char *src, size_t max)
 {
 	size_t total = 0;
 	size_t read = 0;

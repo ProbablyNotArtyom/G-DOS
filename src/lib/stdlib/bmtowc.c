@@ -12,7 +12,7 @@
 
 //---------------------------------------------------
 
-__weak__ int mbtowc(wchar_t *dest, const char *src, size_t max) {
+__weak_symbol int mbtowc(wchar_t *dest, const char *src, size_t max) {
 	if (!src)
 		return 0;
 

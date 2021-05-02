@@ -11,7 +11,7 @@
 
 //---------------------------------------------------
 
-__weak__ int strcmpl(const char *s1, const char *s2, int len){
+__weak_symbol int strcmpl(const char *s1, const char *s2, int len){
 	while (*s1 == *s2++){
 		if (*s1++ == 0 || len == 1) return (0);
 		len--;

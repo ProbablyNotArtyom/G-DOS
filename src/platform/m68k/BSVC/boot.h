@@ -10,6 +10,8 @@
 #ifndef _BOOT_HEADER
 #define _BOOT_HEADER
 
+	#include <sys/cdefs.h>
+
 #define MACH_BLITZ		14
 #define CPUB_68030		1
 #define CPU_68030		(1 << CPUB_68030)
@@ -49,7 +51,7 @@ struct biRecord {
 	uint32_t entry[0];	// Param
 };
 
-struct __attribute__ ((__packed__)) bootversion {
+struct __attribute_packed bootversion {
 	uint16_t	branch;
 	uint32_t	magic;
 	struct {

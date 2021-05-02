@@ -11,7 +11,7 @@
 
 //---------------------------------------------------
 
-__weak__ int strncmp(const char *s1, const char *s2, size_t size){
+__weak_symbol int strncmp(const char *s1, const char *s2, size_t size){
 	for (int i = 0; i < size; i++)
 		while (*s1 == *s2++)
 			if (*s1++ == '\0')

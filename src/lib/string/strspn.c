@@ -11,7 +11,7 @@
 
 //---------------------------------------------------
 
-__weak__ size_t strspn (const char *string, const char *skipset) {
+__weak_symbol size_t strspn (const char *string, const char *skipset) {
 	size_t length = 0;
 	while (*string++ != '\0') {
 		bool do_increase = false;		// determines if we increase the length or not

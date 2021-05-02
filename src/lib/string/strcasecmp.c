@@ -11,7 +11,7 @@
 
 //---------------------------------------------------
 
-__weak__ int strcasecmp(const char *s1, const char *s2){
+__weak_symbol int strcasecmp(const char *s1, const char *s2){
 	while (toLower(*s1) == toLower(*s2++))
 		if (*s1++ == '\0')
 			return (0);

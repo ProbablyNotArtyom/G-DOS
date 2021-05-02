@@ -12,7 +12,7 @@
 
 //---------------------------------------------------
 
-__weak__ char * strncpy (char *restrict to, const char *restrict from, size_t size) {
+__weak_symbol char * strncpy (char *restrict to, const char *restrict from, size_t size) {
 	char *to_orig = to;
 	while (*from != '\0' && size-- > 0)
 		*to++ = *from++;

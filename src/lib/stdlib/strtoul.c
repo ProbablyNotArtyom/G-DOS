@@ -16,7 +16,7 @@
 
 //---------------------------------------------------
 
-__weak__ unsigned long int strtoul(const char *nptr, char **endptr, int base){
+__weak_symbol unsigned long int strtoul(const char *nptr, char **endptr, int base){
 	unsigned long int num;
 	if (base <= 0) base = 0;
 

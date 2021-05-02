@@ -12,7 +12,7 @@
 
 //---------------------------------------------------
 
-__weak__ void *memcpy (void *str1, const void *str2, size_t n){
+__weak_symbol void *memcpy (void *str1, const void *str2, size_t n){
 	char *d = str1;
 	const char *s = str2;
 	while (n--){

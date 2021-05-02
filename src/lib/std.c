@@ -14,19 +14,20 @@
 
 //---------------------------------------------------
 
-char *gets(char *buff, int len){
-	register char *s = buff;
-	register int index = len;
-	while (true){
+char *gets(char *buff, int len) {
+	char *s = buff;
+	int index = len;
+	while (true) {
 		*s = getchar();
-		if ((*s == 0x7F || *s == 0x08) && index == len);
-		else if (*s == 0x7F || *s == 0x08){
-			printf("\b \b");
-			*s = NULL;
-			index++;
-			s--;
+		if (*s == 0x7F || *s == 0x08) {
+			if (index < len) {
+				printf("\b \b");
+				*s = NULL;
+				index++;
+				s--;
+			}
 		} else {
-			if (index >= 2){
+			if (index >= 2) {
 				putchar(*s);
 				if (*s == '\r') break;
 				s++;
@@ -35,27 +36,6 @@ char *gets(char *buff, int len){
 				putchar(*s);
 				break;
 			}
-		}
-	}
-	*s = NULL;
-	return *buff;
-}
-
-char *sgets(char *buff, int len){
-	register char *s = buff;
-	register int index = len;
-	while (index >= 2){
-		*s = getchar();
-		if ((*s == 0x7F || *s == 0x08) && index == len);
-		else if (*s == 0x7F || *s == 0x08){
-			printf("\b \b");
-			*s = NULL;
-			index++;
-			s--;
-		} else {
-			if (*s == '\r') break;
-			s++;
-			index--;
 		}
 	}
 	*s = NULL;

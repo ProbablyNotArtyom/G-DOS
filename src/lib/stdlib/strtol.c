@@ -16,7 +16,7 @@
 
 //---------------------------------------------------
 
-__weak__ long int strtol(const char *nptr, char **endptr, int base){
+__weak_symbol long int strtol(const char *nptr, char **endptr, int base){
 	const char *ptr;
 	long int num;
 	unsigned short neg;

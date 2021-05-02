@@ -16,6 +16,7 @@
 	#include <stdint.h>
 	#include <stdarg.h>
 	#include <char.h>
+	#include <sys/cdefs.h>
 
 //---------------------------------------------------
 
@@ -95,7 +96,6 @@ int puts(const char *str);
 
 #ifndef _HEADER_STDIO
 	char *gets(char *buff, int len);
-	char *sgets(char *buff, int len);
 	void *memcpy (void *str1, const void *str2, size_t n);
 	void *memset(void *s, int c, size_t n);
 	void *malloc(size_t size);

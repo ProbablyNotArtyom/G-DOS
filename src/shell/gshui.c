@@ -47,6 +47,7 @@ void guiBegin(void){
 	test_info.bounds.width =  60;
 	test_info.bounds.x = 1;
 	test_info.bounds.y = 1;
+	test_info.bounds.fill = ' ';
 	test_info.entry[0] = test_entry_info[0];
 	test_info.entry[1] = test_entry_info[1];
 	test_info.entry[2] = test_entry_info[2];

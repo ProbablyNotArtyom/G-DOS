@@ -11,7 +11,7 @@
 
 //---------------------------------------------------
 
-__weak__ char *strcat(char *dest, const char *src, size_t n){
+__weak_symbol char *strcat(char *dest, const char *src, size_t n){
     char *ptr = dest + strlen(dest);
 	while (*src != '\0')
 		*ptr++ = *src++;

@@ -12,7 +12,7 @@
 
 //---------------------------------------------------
 
-__weak__ char *strdup(const char *s1) {
+__weak_symbol char *strdup(const char *s1) {
 	char *s2 = (char *)malloc(strlen(s1));
 	if (s2 == NULL)
 		return NULL;

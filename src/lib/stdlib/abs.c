@@ -11,6 +11,6 @@
 
 //---------------------------------------------------
 
-__weak__ int abs(int val) {
+__weak_symbol int abs(int val) {
 	return val < 0? -val: val;
 }

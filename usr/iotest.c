@@ -7,7 +7,7 @@
 
 //---------------------------------------------------
 
-result_t main(char *argv[], int argc){
+result_t main(int argc, char *argv[]){
 	char buffer[512];
 
 	puts("Standard Output (stdout): Testing...");

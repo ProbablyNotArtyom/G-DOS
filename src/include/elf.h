@@ -10,6 +10,9 @@
 #ifndef _ELF_STUFF
 #define _ELF_STUFF
 
+	#include <sys/cdefs.h>
+	#include <std.h>
+
 //---------------------------------------------------
 
 #define ET_NONE		0			/* No file type */
@@ -51,7 +54,17 @@
 #define EM_RCE		39	/* Motorola RCE */
 #define EM_ARM		40	/* ARM */
 
-#define EM_RISCV	243	/* RISC-V */
+#if defined(__powerpc__)
+	#define CPU_ARCH	EM_PPC
+#elif defined(__powerpc64__)
+	#define CPU_ARCH	EM_PPC64
+#elif defined(__arm__)
+	#define CPU_ARCH	EM_ARM
+#elif defined(__m68k__)
+	#define CPU_ARCH	EM_68K
+#else
+	#define CPU_ARCH	EM_NONE
+#endif
 
 //---------------------------------------------------
 
@@ -59,48 +72,59 @@
 #define ARGBUFF 256
 #endif
 
-enum {
-    PHT_NULL,
-    PHT_LOAD,
-    PHT_DYNAMIC,
-    PHT_INTERP,
-    PHT_NOTE,
-    PHT_SHLIB,
-    PHT_PHDR
+typedef enum {
+    PT_NULL = 0,
+    PT_LOAD,
+    PT_DYNAMIC,
+    PT_INTERP,
+    PT_NOTE,
+    PT_SHLIB,
+    PT_PHDR,
+	PT_TLS
+} progtype_t;
+
+typedef enum {
+	HDATA_NONE = 0,
+	HDATA_LITTLE,
+	HDATA_BIG
+} endianness_t;
+
+struct __attribute_packed ident_t {
+	unsigned char	magic[4];
+	unsigned char	class;
+	unsigned char	data;
+	unsigned char	version;
+	unsigned char	osabi;
+	unsigned char	abiversion;
+	unsigned char	padding[7];
 };
 
-typedef struct __attribute__ ((__packed__)) {
-    unsigned char  magic[4];
-    unsigned char  h_class;
-    unsigned char  h_data;
-    unsigned char  h_version;
-    unsigned char  h_osabi;
-    unsigned char  h_abiversion;
-    unsigned char  padding[7];
-    unsigned short type;
-    unsigned short machine;
-    unsigned long  version;
-    unsigned long  entry;
-    unsigned long  progOffset;
-    unsigned long  shoff;
-    unsigned long  flags;
-    unsigned short ehsize;
-    unsigned short progSize;
-    unsigned short progNum;
-    unsigned short shentsize;
-    unsigned short shnum;
-    unsigned short shtrndx;
+typedef struct __attribute_packed {
+    struct ident_t	ident;
+    unsigned short	type;
+    unsigned short	machine;
+    unsigned long	version;
+    unsigned long	entry;
+    unsigned long	progOffset;
+    unsigned long	shoff;
+    unsigned long	flags;
+    unsigned short	ehsize;
+    unsigned short	progSize;
+    unsigned short	progNum;
+    unsigned short	shentsize;
+    unsigned short	shnum;
+    unsigned short	shtrndx;
 } elf32_header;
 
-typedef struct __attribute__ ((__packed__)) {
-    unsigned long type;
-    unsigned long offset;
-    unsigned long virtAddr;
-    unsigned long physAddr;
-    unsigned long fileSize;
-    unsigned long memSize;
-    unsigned long flags;
-    unsigned long align;
+typedef struct __attribute_packed {
+    unsigned long	type;
+    unsigned long	offset;
+    unsigned long	virtAddr;
+    unsigned long	physAddr;
+    unsigned long	fileSize;
+    unsigned long	memSize;
+    unsigned long	flags;
+    unsigned long	align;
 } elf32_program_header;
 
 #endif

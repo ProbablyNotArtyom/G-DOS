@@ -11,7 +11,7 @@
 
 //---------------------------------------------------
 
-__weak__ void *memchr(const void *buf, int c, size_t size) {
+__weak_symbol void *memchr(const void *buf, int c, size_t size) {
 	const unsigned char *src = buf;
 	while (size--) {
 		if (*src == (unsigned char)c) {

@@ -11,6 +11,6 @@
 
 //---------------------------------------------------
 
-__weak__ div_t div(int n0, int n1) {
+__weak_symbol div_t div(int n0, int n1) {
 	return (div_t){ n0 / n1, n0 % n1 };
 }

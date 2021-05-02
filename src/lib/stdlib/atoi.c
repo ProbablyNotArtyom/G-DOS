@@ -12,6 +12,6 @@
 
 //---------------------------------------------------
 
-__weak__ int atoi(const char *str) {
+__weak_symbol int atoi(const char *str) {
 	return (int)strtol(str, (char**)NULL, 10);
 }

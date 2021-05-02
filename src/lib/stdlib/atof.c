@@ -11,6 +11,6 @@
 
 //---------------------------------------------------
 
-__weak__ double atof(const char *str) {
+__weak_symbol double atof(const char *str) {
 	return strtod(str, NULL);
 }

@@ -11,7 +11,7 @@
 
 //---------------------------------------------------
 
-__weak__ char * strchrnul (const void *block, int c) {
+__weak_symbol char * strchrnul (const void *block, int c) {
 	unsigned int i;
 	for (i = 0; (unsigned char *)(block + i) != '\0'; i++) {
 		if (*(unsigned char *)(block + i) == (unsigned char)c)

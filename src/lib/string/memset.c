@@ -11,7 +11,7 @@
 
 //---------------------------------------------------
 
-__weak__ void * memset (void *block, int c, size_t size) {
+__weak_symbol void * memset (void *block, int c, size_t size) {
 	unsigned char* s = block;
 	uint32_t* ws = (uint32_t*)s;
 	uint32_t wc = c & 0xFF;
