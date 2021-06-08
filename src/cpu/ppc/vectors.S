@@ -71,10 +71,15 @@ __vectors_end:
 _start:
 	mtspr	8,r0
 
-
-
-	#addis   r0,0,0x0000		// from reset, the BATs are in an unknown state on most PPCs.
+	addis   r0,0,0x0000		// from reset, the BATs are in an unknown state on most PPCs.
 							// Invalidate them all to avoid error states
+	
+
+	xor r1, r1, r1
+	lis r1, __STACK@h
+	addi r1, r1, __STACK@l
+
+	bl __eabi
 
 	#addis   r3,r0,main@h
 	#ori     r3,r3,main@l
@@ -91,8 +96,6 @@ _start:
 	#mtspr   284,r4
 
 	#rfi
-	addis   r1,r0,0x00070000@h
-	ori     r1,r1,0x00070000@l
 
 
 	/* exit into main */

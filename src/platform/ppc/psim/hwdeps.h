@@ -23,7 +23,6 @@
 
 // ---------- Disk Interfaces ----------
 
-
 #define CONFIG_DEV_FATDISK
 #define CONFIG_DEV_RAMDISK
 #define DEV_RAMDISK_SIZE	256

@@ -44,8 +44,8 @@ result_t tckBegin(char *argv[], int argc) {
 	docmd = NULL;
 
 	for (int i = 0; i < argc; i++){
-		if (argv[i][0] == '-'){
-			switch (argv[i][1]){
+		if (argv[i][0] == '-') {
+			switch (argv[i][1]) {
 				default:
 				case 'h':
 					puts(tcl_help_txt);
@@ -55,8 +55,8 @@ result_t tckBegin(char *argv[], int argc) {
 					break;
 				case 'c':
 					if (i < argc - 1) {
-						docmd = i;
-						i++;
+						docmd = i + 1;
+						interactive = false;
 					} else {
 						printf("[?] No command specified\n");
 						return;
@@ -85,7 +85,7 @@ result_t tckBegin(char *argv[], int argc) {
 		printf("TCL Command Shell v0.8\n");
 		printf("NotArtyom 6/10/19\n");
 	} else if (docmd != NULL) {
-		if (tcl_eval(&tcl, argv[docmd+1], strlen(argv[docmd+1])+1) != FERROR) {
+		if (tcl_eval(&tcl, argv[docmd], strlen(argv[docmd])+1) != FERROR) {
 			if (*(tcl.result) != '\0') printf("> %s\n", tcl_string(tcl.result));
 		} else {
 			printf("[?] Syntax\n");
@@ -100,6 +100,7 @@ result_t tckBegin(char *argv[], int argc) {
 		printf("[?] Buffer could not be allocated\n");
 		return -1;
 	}
+
 	int i = 0;
 	while (!doExit) {
 		int input;

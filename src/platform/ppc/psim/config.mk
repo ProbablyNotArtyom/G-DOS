@@ -1,5 +1,5 @@
 
-DONT_BUILD_USR = true
+DONT_BUILD_USR = 1
 CPU = 603e
 PREFIX = powerpc-linux-linux-gnu-
 
