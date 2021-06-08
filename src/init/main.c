@@ -7,6 +7,7 @@
 	#include <linkage.h>
 	#include <syscall.h>
 	#include <flags.h>
+	#include <errno.h>
 	#include <sys/cdefs.h>
 
 	#include <mod/init.h>
@@ -15,7 +16,7 @@
 
 //---------------------------------------------------
 
-extern void gdos(void);
+extern int monBegin(void);
 
 extern void init_IRQ(void);
 extern void init_traps(void);
@@ -31,7 +32,6 @@ extern initcall_t __initcall6_start[];
 extern initcall_t __initcall7_start[];
 extern initcall_t __initcall_end[];
 
-extern const char __RAM_START, __RAM_END;
 extern const char _end;
 
 #ifdef CUSTOM_SPLASH
@@ -92,27 +92,6 @@ static void do_initcalls(void) {
 	}
 }
 
-static void memtest_start() {
-	size_t test_start = &_end;
-	size_t test_end = &__RAM_END;
-	char buff0[9];
-
-	memset(buff0, NULL, 9);
-	printf("[.] Start (default 0x%X) : 0x", test_start);
-	gets(buff0, 9);
-	printf("\r\n");
-	if (buff0[0]) test_start = strtoul(&buff0, NULL, 16);
-
-	memset(buff0, NULL, 9);
-	printf("[.] End (default 0x%X) : 0x", test_end);
-	gets(buff0, 9);
-	printf("\r\n");
-	if (buff0[0]) test_end = strtoul(&buff0, NULL, 16);
-
-	printf("[?] Intense (Y/n) : ");
-	do_memtest(test_start, test_end, getchar());
-}
-
 void print_boot_menu(void) {
 	/* Display G'DOS logo */
 	printf(COLOR_FG(C_LIGHTBLUE, "%s\r\n"), b_logo);
@@ -144,28 +123,30 @@ int main(void) {
 #endif
 
 	char tmp = 0xFF;
+	int retval = 0;
 	while(true) {
 		if (tmp) print_boot_menu();
+		if (retval) printf("%s\n", strerror(errno));
 		do {
 			tmp = getchar();
 		} while (!tmp);
 		switch (tmp) {
 			case '0':
 				puts("");
-				memtest_start();
+				retval = memtest_start();
 				break;
 			case '1':
 			case '\r':
 				puts("");
-				shellBegin();
+				retval = shellBegin();
 				break;
 			case '2':
 				puts("");
-				guiBegin();
+				retval = guiBegin();
 				break;
 			case '3':
 				puts("");
-				monBegin();
+				retval = monBegin();
 				break;
 			case 'D':
 			case 'd':
@@ -173,6 +154,7 @@ int main(void) {
 				break;
 			default:
 				tmp = NULL;
+				retval = 0;
 				break;
 		}
 		if (tmp) tui_cls();

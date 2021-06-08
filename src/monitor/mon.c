@@ -11,6 +11,7 @@
 	#include <stdbool.h>
 	#include <std.h>
 	#include <io.h>
+	#include <errno.h>
 
 	#include <keycodes.h>
 	#include <debug.h>
@@ -114,7 +115,7 @@ char *current_addr;
 char *end_addr;
 char *cmdStart;
 
-void monBegin() {
+int monBegin() {
 
 	static uint8_t numCMDs;
 	static uint32_t numLoops;
@@ -158,9 +159,9 @@ void monBegin() {
 			}
 		} else {
 			puts("");
-		}											// Call it from a throw so we can print out any errors after returning
+		}							// Call it from a throw so we can print out any errors after returning
 	}
-	return;
+	return 0;
 }
 
 bool gmon_do_cmd(uint8_t num) {

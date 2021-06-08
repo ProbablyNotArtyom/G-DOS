@@ -14,7 +14,8 @@
 	extern uint8_t numMounts;
 	extern uint8_t currentDisk;
 
-	void shellBegin(void);
+	int shellBegin(void);
+	void gsh_init(void);
 	void shThrow(result_t err);
 
 	result_t shfunc_ls(char *argv[], int argc);
@@ -34,10 +35,15 @@
 	result_t tckBegin(char *argv[], int argc);
 	result_t shfunc_expr(char *argv[], int argc);
 
+	result_t shfunc_exit(char *argv[], int argc);
+
 //---------------------------------------------------
 
-	#define SHBUFFLEN	256
-	#define MAXARGS		40
+	#define GSH_BUFFLEN			512
+	#define GSH_MAXARGS			40
+	#define GSH_HISTORY_SIZE	128			// The maximum number of lines to save in the history buffer
+
+	#define GSH_BINDIR			"/bin/"		// The path to the default binary dir
 
 //---------------------------------------------------
 

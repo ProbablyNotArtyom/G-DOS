@@ -104,6 +104,8 @@ typedef struct {
 //---------------------------------------------------
 
 void tui_cls();
+void tui_clear_line();
+void tui_clear_line_right();
 void tui_cursor_up(const int len);
 void tui_cursor_down(const int len);
 void tui_cursor_left(const int len);
@@ -116,6 +118,8 @@ void tui_set_color_fg_bg(unsigned char fg, unsigned char bg);
 void tui_reset_color_fg_bg();
 void tui_reset_color_fg();
 void tui_reset_color_bg();
+void tui_cursor_save();
+void tui_cursor_restore();
 
 menu_list_t *new_menu_list(unsigned int numEntries, plot_t height, plot_t width, plot_t x, plot_t y);
 menu_list_t *new_menu_list_from(menu_info_t *info);

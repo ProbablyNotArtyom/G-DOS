@@ -20,6 +20,14 @@ void tui_cls() {
 	printf("\e[H\e[2J\e[3J\ec" COLOR_RESET_BG COLOR_RESET_FG);
 }
 
+void tui_clear_line() {
+	printf("\e[2K");
+}
+
+void tui_clear_line_right() {
+	printf("\e[0J");
+}
+
 void tui_cursor_up(const int len) {
 	printf("\e[%dA", len);
 }
@@ -70,6 +78,16 @@ void tui_reset_color_bg() {
 	//printf(COLOR_RESET_BG);
 	printf("\e[%dm", C_BLACK_BG);
 }
+
+void tui_cursor_save() {
+	printf("\e[s");
+}
+
+void tui_cursor_restore() {
+	printf("\e[u");
+}
+
+//---------------------------------------------------
 
 /* returns the state */
 char tui_mouse_get_event(point_t *point) {

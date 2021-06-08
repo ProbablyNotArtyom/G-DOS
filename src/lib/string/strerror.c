@@ -33,7 +33,7 @@ struct error_info {
 
 static int __kern_errno;
 static const char **error_names;
-static int num_error_names = 0;
+static int num_errors = 0;
 static int sys_nerr;
 static const char **sys_errlist;
 
@@ -421,16 +421,12 @@ char * strerror (int errnum) {
 	const char *msg;
 	static char buf[32];
 
-	if (error_names == NULL)
-		init_error_tables();
-	if (errnum < 0 || errnum >= sys_nerr)
-		msg = NULL;
+	if (error_names == NULL) init_error_tables();
+	if (errnum < 0 || errnum >= sys_nerr) msg = NULL;
 	else if (sys_errlist == NULL || sys_errlist[errnum] == NULL) {
-		/* In range, but no sys_errlist or no ERR_TABLE_ENTRY at this index. */
-		sprintf (buf, "Error %d", errnum);
+		sprintf (buf, "Error %d", errnum);	// In range, but no sys_errlist or no ERR_TABLE_ENTRY at this index
 		msg = buf;
-	} else
-		msg = (char *)sys_errlist[errnum];
+	} else msg = (char *)sys_errlist[errnum];
 	return msg;
 }
 
@@ -438,17 +434,11 @@ int strtoerrno (const char *name) {
 	int errnoval = 0;
 
     if (name != NULL) {
-        if (error_names == NULL) {
-			init_error_tables();
-  		}
-        for (errnoval = 0; errnoval < num_error_names; errnoval++) {
-			if ((error_names[errnoval] != NULL) && (strcmp(name, error_names[errnoval]) == 0)) {
-				break;
-			}
+        if (error_names == NULL) init_error_tables();
+        for (errnoval = 0; errnoval < num_errors; errnoval++) {
+			if ((error_names[errnoval] != NULL) && (strcmp(name, error_names[errnoval]) == 0)) break;
 		}
-        if (errnoval == num_error_names) {
-			errnoval = 0;
-		}
+        if (errnoval == num_errors) errnoval = 0;
 	}
     return errnoval;
 }
@@ -463,50 +453,35 @@ void init_error_tables (void) {
     /* If we haven't already scanned the error_table once to find the maximum
        errno value, then go find it now. */
 
-    if (num_error_names == 0) {
-        for (eip = error_table; eip->name != NULL; eip++) {
-			if (eip->value >= num_error_names) {
-  	      		num_error_names = eip->value + 1;
-  	    	}
-  		}
+    if (num_errors == 0) {
+        for (eip = error_table; eip->name != NULL; eip++)
+			if (eip->value >= num_errors) num_errors = eip->value + 1;
 	}
-	printf("Error names found: %d\r\n", num_error_names);
+	printf("Error names found: %d\n", num_errors);
 
     /* Now attempt to allocate the error_names table, zero it out, and then
        initialize it from the statically initialized error_table. */
 
-    nbytes = num_error_names * sizeof (char *);
+    nbytes = num_errors * sizeof(char *);
 	if ((error_names = (const char **)malloc(nbytes)) != NULL) {
 		memset(error_names, 0, nbytes);
-		for (eip = error_table; eip->name != NULL; eip++) {
-			error_names[eip->value] = eip->name;
-		}
-	} else
-		puts("[!] Unable to allocate error name table");
+		for (eip = error_table; eip->name != NULL; eip++) error_names[eip->value] = eip->name;
+	} else puts("[!] Unable to allocate error name table");
 
 	/* Now attempt to allocate the sys_errlist table, zero it out, and then
      initialize it from the statically initialized error_table. */
 
-	nbytes = num_error_names * sizeof (char *);
-	if ((sys_errlist = (const char **) malloc (nbytes)) != NULL) {
+	nbytes = num_errors * sizeof(char *);
+	if ((sys_errlist = (const char **)malloc(nbytes)) != NULL) {
 		memset(sys_errlist, 0, nbytes);
-		sys_nerr = num_error_names;
-		for (eip = error_table; eip -> name != NULL; eip++) {
-			sys_errlist[eip -> value] = eip -> msg;
-		}
-	} else
-		puts("[!] Unable to allocate system error table");
+		sys_nerr = num_errors;
+		for (eip = error_table; eip -> name != NULL; eip++) sys_errlist[eip -> value] = eip->msg;
+	} else puts("[!] Unable to allocate system error table");
 }
 
 int errno_max (void) {
-	int maxsize;
-
-    if (error_names == NULL) {
-        init_error_tables();
-	}
-
-    maxsize = MAX(sys_nerr, num_error_names);
-    return (maxsize - 1);
+    if (error_names == NULL) init_error_tables();
+    return (MAX(sys_nerr, num_errors) - 1);
 }
 
 int *__geterrno(void) {

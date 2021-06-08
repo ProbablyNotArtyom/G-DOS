@@ -110,7 +110,7 @@
 #define EOWNERDEAD 142	/* Previous owner died */
 
 #define ENOFS 160	/* no filesystem detected */
-#define ENOMALLOC 161
+#define ENOMALLOC 161	/* malloc returned NULL */
 
 #define EWOULDBLOCK EAGAIN	/* Operation would block */
 
@@ -119,6 +119,7 @@
 #define errno (*(int *)__geterrno())
 
 #define __set_errno(val) (errno = (val))
+#define __ret_errno(val) ({ (errno = (val)); errno; })
 
 char * strerror (int errnum);
 int strtoerrno (const char *name);

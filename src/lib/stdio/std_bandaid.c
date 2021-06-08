@@ -30,78 +30,34 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-// crude divide and modulo function here
-
-// integer modulo v with d
-int mydiv(int value, int divisor)
-{
-	int quotient=0;
-	int remainder=0;
-	int bitcount;
-	int value_sign=1;
-	int divisor_sign=1;
-
-	if (value<0)
-	{
-		value = -value;
-		value_sign=-1;
-	}
-
-	if (divisor<0)
-	{
-		divisor=-divisor;
-		divisor_sign=-1;
-	}
-
-	if (divisor == 0) return 0xffffffff;
-
-	for (bitcount = 31; bitcount>=0; bitcount--)
-	{
-		remainder <<= 1;
-
-  		if (value & (1<<bitcount)) remainder|=1;
-
-		if (remainder >= divisor)
-		{
-    			remainder -= divisor;
-			quotient |= (1<<bitcount);
-		}
-	}
-	return (quotient * value_sign * divisor_sign);
-}
 
 // integer modulo
-int mymod(int value, int divisor)
-{
+int mymod(int value, int divisor) {
 	int quotient=0;
 	int remainder=0;
 	int bitcount;
 	int value_sign=1;
 	int divisor_sign=1;
 
-	if (value<0)
-	{
+	if (value<0) {
 		value = -value;
 		value_sign=-1;
 	}
 
-	if (divisor<0)
-	{
+	if (divisor<0) {
 		divisor=-divisor;
 		divisor_sign=-1;
 	}
 
 	if (divisor == 0) return 0xffffffff;
 
-	for (bitcount = 31; bitcount>=0; bitcount--)
-	{
+	for (bitcount = 31; bitcount>=0; bitcount--) {
 		remainder <<= 1;
 
   		if (value & (1<<bitcount)) remainder|=1;
 
-		if (remainder >= divisor)
-		{
-    			remainder -= divisor;
+		if (remainder >= divisor) {
+    		remainder -= divisor;
 			quotient |= (1<<bitcount);
 		}
 	}
@@ -110,8 +66,7 @@ int mymod(int value, int divisor)
 }
 
 
-static void printchar(char **str, int c)
-{
+static void printchar(char **str, int c) {
 	extern int putchar(int c);
 	if (str) {
 		**str = c;
@@ -123,8 +78,7 @@ static void printchar(char **str, int c)
 #define PAD_RIGHT 1
 #define PAD_ZERO 2
 
-static int prints(char **out, const char *string, int width, int pad, int maxlen)
-{
+static int prints(char **out, const char *string, int width, int pad, int maxlen) {
 	register int pc = 0, padchar = ' ';
 
 	if (width > 0) {
@@ -164,8 +118,7 @@ static int prints(char **out, const char *string, int width, int pad, int maxlen
 /* the following should be enough for 32 bit int */
 #define PRINT_BUF_LEN 32
 
-static int printi(char **out, int i, int b, int sg, int width, int pad, int letbase)
-{
+static int printi(char **out, int i, int b, int sg, int width, int pad, int letbase) {
 	char print_buf[PRINT_BUF_LEN];
 	register char *s;
 	register int t, neg = 0, pc = 0;
@@ -190,8 +143,7 @@ static int printi(char **out, int i, int b, int sg, int width, int pad, int letb
 		if( t >= 10 )
 			t += letbase - '0' - 10;
 		*--s = t + '0';
-		// u /= b
-		u = mydiv(u,b);
+		u /= b;
 	}
 
 	if (neg) {
@@ -208,8 +160,7 @@ static int printi(char **out, int i, int b, int sg, int width, int pad, int letb
 	return pc + prints (out, s, width, pad, 0);
 }
 
-static int print(char **out, char *format, va_list varg)
-{
+static int print(char **out, char *format, va_list varg) {
 	int width, pad, len = 0;
 	register int pc = 0;
 
@@ -273,7 +224,7 @@ static int print(char **out, char *format, va_list varg)
 			}
 			if( *format == 'c' ) {
 				/* char are converted to int then pushed on the stack */
-				scr[0] = va_arg(varg, char);
+				scr[0] = va_arg(varg, int);
 				scr[1] = '\0';
 				pc += prints (out, scr, width, pad, 0);
 				continue;
@@ -309,8 +260,8 @@ int _bandaid_vnprintf(size_t max, const char *format, va_list arg) {
 }
 
 int _bandaid_vprintf(const char *format, va_list arg) {
-	//return _bandaid_vnprintf(SIZE_MAX, format, arg);
+	return _bandaid_vnprintf(SIZE_MAX, format, arg);
 	// TODO: this one too
-	print(0, format, arg);
-	return 2;
+	//print(0, format, arg);
+	//return 2;
 }
