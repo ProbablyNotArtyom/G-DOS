@@ -4,7 +4,7 @@ G'DOS is a portable, multi-architecture ROM-native hobby OS that also functions 
 It is being developed mainly to power my various homebrew computer projects.
 
 <p align="center">
-    <img src="https://i.imgur.com/DrvTYt8.png" alt="G-Dos after boot"></img>
+    <img src="https://i.imgur.com/efdsIlt.png" alt="G'DOS after boot"></img>
 </p>
 
 Here are some highlights of what I've implemented so far:
@@ -21,20 +21,27 @@ Here are some highlights of what I've implemented so far:
 
 G'DOS initially started as G'Mon, the machine language monitor I wrote for use on my various homebrew computer projects.
 Each time I began working with a new piece of hardware, I had to port the its 100% assembly source over the the new machine.
-After 3 architectures, i figured i had spent more time porting it than i did actually working on it. *This angers the programmer*.
+After 3 architectures, I figured I had spent more time porting it than I did actually working on it. *This angers the programmer*.
 
 So I rewrote the entire thing in C instead, and adopted the helpful strategy of "throw everything you can't possibly write in C into a special folder so you can deal with it later" approach.
 From there it grew out of control like some sort of strange mold, into what G'DOS is today.
 
-Now just like the strange mold, G'DOS continues to grow.
+Now just like a strange mold, G'DOS continues to grow.
 It still remains my main project, software-wise at least.
 
 ## Try it out
 
-If you just want to try G-DOS out, then i reccomend the arm/versatilepb target for qemu-system-arm.
-Configure it with `./config.sh PLATFORM=versatilepb ARCH=arm`.
-Build it with `make PREFIX=arm-none-eabi all`. If your arm gcc compiler has a different prefix, make sure to change the PREFIX variable to reflect it.
-To start the simulator, do `make run`.
+If you just want to try G'DOS out, then I recommend targeting [emu68k](https://github.com/ProbablyNotArtyom/emu68k) platform for the m68k architecture, since that's the platform I can provide the most support for.
+
+After building and installing the [simulator](https://github.com/ProbablyNotArtyom/emu68k), you can configure G'DOS using
+```
+./config.sh ARCH=m68k PLATFORM=emu68k
+```
+then to build and launch the simulator use
+```
+make && make run
+```
+after the window opens, click `Run` and you should see G'DOS booting up.
 
 ## Building
 

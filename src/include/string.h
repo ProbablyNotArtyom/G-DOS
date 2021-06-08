@@ -39,7 +39,7 @@ void *rawmemchr(const void *block,int c);
 int strcasecmp(const char *s1,const char *s2);
 char *strcasestr(const char *haystack,const char *needle);
 size_t strlen(const char *str);
-char *strcat(char *dest,const char *src,size_t n);
+char *strcat(char *dest,const char *src);
 void *strchr(const void *block,int c);
 char *strchrnul(const void *block,int c);
 int strcmp(const char *s1,const char *s2);

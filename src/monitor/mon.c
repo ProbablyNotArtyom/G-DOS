@@ -114,7 +114,7 @@ char *current_addr;
 char *end_addr;
 char *cmdStart;
 
-void monBegin(){
+void monBegin() {
 
 	static uint8_t numCMDs;
 	static uint32_t numLoops;
@@ -123,7 +123,7 @@ void monBegin(){
 	doExit = false;
 	current_addr = 0x00;
 	end_addr = 0x00;
-	while (doExit == false){
+	while (doExit == false) {
 		printf(SET_COLOR_FG(C_LIGHTGREEN) "\r\n(" SET_COLOR_FG(C_WHITE) "%08X", (size_t)current_addr);
 		if (end_addr != 0x00)
 			printf(SET_COLOR_FG(C_RED) "." SET_COLOR_FG(C_WHITE) "%08X", end_addr);
@@ -133,20 +133,20 @@ void monBegin(){
 		parse = inBuffer;							// Set the parse pointer to the beginning of the buffer
 		gets(inBuffer, BUFFLEN);					// Get user input
 		skipBlank();								// Skip and leading spaces
-		if (!isEOI()){
+		if (!isEOI()) {
 			puts("");
 			numLoops = 1;
 			numCMDs = 0x01;
 			skipBlank();
 			cmdStart = parse;
-			if (*cmdStart == '{'){
+			if (*cmdStart == '{') {
 				while (*cmdStart != '}') cmdStart++;
 				numLoops = strtoul(parse+1, NULL, 10);
 				cmdStart++;
 			}
 			parse = cmdStart;
 			for (char *tmp = parse; *tmp != '\0'; tmp++) if (*tmp == ';') numCMDs += 1;
-			while (numLoops > 0){
+			while (numLoops > 0) {
 				gmon_do_cmd(numCMDs);
 				if (peek() == PS2_ESC) {
 					throw(errBREAK);
@@ -163,18 +163,18 @@ void monBegin(){
 	return;
 }
 
-bool gmon_do_cmd(uint8_t num){
+bool gmon_do_cmd(uint8_t num) {
 	uint8_t i;
-	for (char *tmp = parse; *tmp != '\0'; tmp++){
-		if (*tmp == ';'){
+	for (char *tmp = parse; *tmp != '\0'; tmp++) {
+		if (*tmp == ';') {
 			*tmp = '\0';
 		}
 	}
-	while(num > 0){
+	while(num > 0) {
 		skipBlank();
 		for (i = 0; funcCmp(parse, funcNames[i]) == false && i < ARRAY_SIZE(funcNames)-1; i++);	// Identify what function it is
 		if (i == ARRAY_SIZE(funcNames)-1) {
-			if (setCurrents() == false){
+			if (setCurrents() == false) {
 				throw(errUNDEF);			// If none matches, complain
 				return false;
 			}
@@ -189,16 +189,16 @@ bool gmon_do_cmd(uint8_t num){
 }
 
 /* Exits the monitor */
-static enum errList exit(){
+static enum errList exit() {
 	doExit = true;
 	return errNONE;
 }
 
 /* Writes bytes to memory */
-static enum errList deposit(){
+static enum errList deposit() {
 	char *ptr = current_addr;
 	skipBlank();
-	if (isCurrentVar){
+	if (isCurrentVar) {
 		outl(strToHEX(), ptr);
 	} else {
 		while (*parse != '\0'){							// Keep reading in arguments until we hit the end of input
@@ -209,20 +209,20 @@ static enum errList deposit(){
 	return errNONE;										// Return error free
 }
 
-static void read_range(char *ptr,char *end, char size){
+static void read_range(char *ptr,char *end, char size) {
 	if (end != NULL){									// If we hit a range identifier...
 		uint8_t column;									// Create something to track how many columns have been printed so far
 		char *addrBuff;
 		while (ptr <= end){								// Continue until we've reached the end of the range
 			int i;
-			if (ptr <= end){
+			if (ptr <= end) {
 				printf("\r\n ");							// Then set up a new line
 				column = 0;								// And print out the location header
 				printf(SET_COLOR_FG(C_WHITE));
 				printLong(ptr);
 				printf(COLOR_FG(C_LIGHTGREEN, " | "));
 			}
-			while (column < 16 && ptr <= end){
+			while (column < 16 && ptr <= end) {
 				printByte(inb(ptr++));							// Print data byte at this address
 				putchar(' ');									// Space between bytes
 				column++;									// Increase our column number
@@ -231,7 +231,7 @@ static void read_range(char *ptr,char *end, char size){
 			for (i = column; i < 16; i++) printf("   ");
 			printf(SET_COLOR_FG(C_LIGHTGREEN) "| " SET_COLOR_FG(C_LIGHTYELLOW));
 			addrBuff = ptr - column;
-			for (i = 0; i < column; addrBuff++){
+			for (i = 0; i < column; addrBuff++) {
 				if (*addrBuff >= 0x20 && *addrBuff < 0x7F) putchar(*addrBuff);
 				else putchar('.');
 				i++;
@@ -247,12 +247,12 @@ static void read_range(char *ptr,char *end, char size){
 }
 
 /* Handles viewing of memory */
-static enum errList view(){
+static enum errList view() {
 	char *ptr, *end;									// Create start and end pointers
-	if (!isEOI()){
-		while(*parse != '\0'){
+	if (!isEOI()) {
+		while(*parse != '\0') {
 			skipBlank();
-			if (isVar()){
+			if (isVar()) {
 				read_range(getMonVar(*parse), 0x00000000, 'l');
 				parse++;
 			} else {
@@ -269,10 +269,10 @@ static enum errList view(){
 }
 
 /* Copies a range of data */
-static enum errList copy(){
+static enum errList copy() {
 	char *ptr, *end, *dest;								// Create pointers for start, end, and destination of block
 
-	if (isRange()){
+	if (isRange()) {
 		if (!getRange(&ptr, &end)) return errSYNTAX;
 	} else {
 		ptr = current_addr;
@@ -291,10 +291,10 @@ static enum errList copy(){
 }
 
 /* Moves a block of data, filling the old space with 00 */
-static enum errList move(){
+static enum errList move() {
 	char *ptr, *end, *dest;								// Create pointers for start, end, and destination of block
 
-	if (isRange()){
+	if (isRange()) {
 		if (!getRange(&ptr, &end)) return errSYNTAX;
 	} else {
 		ptr = current_addr;
@@ -303,13 +303,13 @@ static enum errList move(){
 	getArg(dest);
 
 	if (dest <= ptr) {									// If the destination is below the source in memory,
-		while (ptr <= end){
+		while (ptr <= end) {
 			outb(*ptr, dest++);						// then copy it starting at the beginning
 			outb(NULL, ptr++);
 		}
 	} else {
 		dest += end - ptr;								// If the destination is above the start of the source,
-		while (end >= ptr){
+		while (end >= ptr) {
 			outb(*end, dest--);						// then copy starting at the end of the source
 			outb(NULL, end--);
 		}
@@ -319,11 +319,11 @@ static enum errList move(){
 }
 
 /* Fills a range with a pattern byte */
-static enum errList fill(){
+static enum errList fill() {
 	char *ptr, *end;									// Create pointers for the start and end of the section
 	uint8_t val;										// The fill pattern itself
 
-	if (isRange()){
+	if (isRange()) {
 		if (!getRange(&ptr, &end)) return errSYNTAX;
 	} else {
 		ptr = current_addr;
@@ -336,9 +336,9 @@ static enum errList fill(){
 }
 
 /* Starts executing code from a place in memory */
-static enum errList execute(){
+static enum errList execute() {
 	void (*ptr)(void);
-	if (!isEOI()){
+	if (!isEOI()) {
 		getArg(ptr);
 	} else {
 		ptr = current_addr;
@@ -347,7 +347,7 @@ static enum errList execute(){
 	return errNONE;										// Return error free, assuming that whatever we call actually returns (good chance it wont)
 }
 
-static enum errList memmod(){
+static enum errList memmod() {
 	void *ptr;
 	char size;
 	parse--;
@@ -357,44 +357,44 @@ static enum errList memmod(){
 	parse++;
 	skipBlank();
 
-	if (isArg()){
+	if (isArg()) {
 		getArg(ptr);
 	} else {
 		ptr = current_addr;
 	}
 
 	skipBlank();
-	switch (size){
+	switch (size) {
 		case 'b':
-			if (*parse == '-'){
+			if (*parse == '-') {
 				*(uint8_t *)ptr = *(uint8_t *)ptr - strtoul(++parse, NULL, 10);
-			} else if (*parse == '+'){
+			} else if (*parse == '+') {
 				*(uint8_t *)ptr = *(uint8_t *)ptr + strtoul(++parse, NULL, 10);
-			} else if (*parse == '/'){
+			} else if (*parse == '/') {
 				*(uint8_t *)ptr = *(uint8_t *)ptr / strtoul(++parse, NULL, 10);
-			} else if (*parse == '*'){
+			} else if (*parse == '*') {
 				*(uint8_t *)ptr = *(uint8_t *)ptr * strtoul(++parse, NULL, 10);
 			} else return errSYNTAX;
 			break;
 		case 'w':
-			if (*parse == '-'){
+			if (*parse == '-') {
 				*(uint16_t *)ptr = *(uint16_t *)ptr - strtoul(++parse, NULL, 10);
-			} else if (*parse == '+'){
+			} else if (*parse == '+') {
 				*(uint16_t *)ptr = *(uint16_t *)ptr + strtoul(++parse, NULL, 10);
-			} else if (*parse == '/'){
+			} else if (*parse == '/') {
 				*(uint16_t *)ptr = *(uint16_t *)ptr / strtoul(++parse, NULL, 10);
-			} else if (*parse == '*'){
+			} else if (*parse == '*') {
 				*(uint16_t *)ptr = *(uint16_t *)ptr * strtoul(++parse, NULL, 10);
 			} else return errSYNTAX;
 			break;
 		case 'l':
-			if (*parse == '-'){
+			if (*parse == '-') {
 				*(uint32_t *)ptr = *(uint32_t *)ptr - strtoul(++parse, NULL, 10);
-			} else if (*parse == '+'){
+			} else if (*parse == '+') {
 				*(uint32_t *)ptr = *(uint32_t *)ptr + strtoul(++parse, NULL, 10);
-			} else if (*parse == '/'){
+			} else if (*parse == '/') {
 				*(uint32_t *)ptr = *(uint32_t *)ptr / strtoul(++parse, NULL, 10);
-			} else if (*parse == '*'){
+			} else if (*parse == '*') {
 				*(uint32_t *)ptr = *(uint32_t *)ptr * strtoul(++parse, NULL, 10);
 			} else return errSYNTAX;
 			break;
@@ -405,7 +405,7 @@ static enum errList memmod(){
 	return errNONE;
 }
 
-static enum errList echo(){
+static enum errList echo() {
 	skipBlank();
 	if (isEOI()) return;
 
@@ -414,7 +414,7 @@ static enum errList echo(){
 	return errNONE;
 }
 
-static enum errList echo_fmt(){
+static enum errList echo_fmt() {
 	char *ptr = parse;
 	char *end;
 	uint32_t *val;
@@ -437,14 +437,14 @@ static enum errList echo_fmt(){
 	return errNONE;
 }
 
-static enum errList help(){
+static enum errList help() {
 	puts(helpText);
 	return errNONE;
 }
 
-static enum errList delay_arb(){
+static enum errList delay_arb() {
 	uint32_t arg;
-	if (isEOI()){
+	if (isEOI()) {
 		arg = 0xFFFF;
 	} else {
 		getArg(arg);
@@ -453,7 +453,7 @@ static enum errList delay_arb(){
 	return errNONE;
 }
 
-static enum errList flag(){
+static enum errList flag() {
 	uint8_t *flag_name;
 	uint8_t *state;
 
@@ -470,16 +470,16 @@ static enum errList flag(){
 	*parse = '\0';
 
 	int i = 0;
-	while (i < __num_global_flags){
+	while (i < __num_global_flags) {
 		if (!strcmp(__global_flag_names[i], flag_name)) break;
 		i++;
 	}
 	if (i >= __num_global_flags) return errSYNTAX;
 
-	if (!strcmp(state, "true")){
+	if (!strcmp(state, "true")) {
 	 	__global_flags[i] = true;
 		printf("Setting %s true\n", flag_name);
-	} else if (!strcmp(state, "false")){
+	} else if (!strcmp(state, "false")) {
 	 	__global_flags[i] = false;
 		printf("Setting %s false\n", flag_name);
 	} else {
