@@ -1,3 +1,11 @@
+//---------------------------------------------------
+//
+//	G-DOS
+//	NotArtyom
+//	14/12/21
+//
+//---------------------------------------------------
+// Global flag support & I/O wrappers
 
 	#include <stddef.h>
 	#include <stdarg.h>
@@ -9,6 +17,7 @@
 	#include <char.h>
 
 	#include <mod/init.h>
+	#include <flags.h>
 
 //---------------------------------------------------
 

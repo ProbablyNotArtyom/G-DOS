@@ -41,69 +41,61 @@ PROVIDE (_software_init_hook = 0);
 
 SECTIONS
 {
+	.startup : {
+		. = 0x0000;
+		*(.vectors)
+		. = ALIGN(0x4);
+	} > vectors
 
- .startup : {
-  . = 0x0000;
-  *(.vectors)
-  . = ALIGN(0x4);
- } > vectors
-
- .text : {
- 	__initcall_start = .;
+	.text : {
+		__initcall_start = .;
 		*(.initcallearly.init)
-		 __initcall0_start = .;
-		 *(.initcall0.init)
-		 __initcall1_start = .;
-		 *(.initcall1.init)
-		 __initcall2_start = .;
-		 *(.initcall2.init)
-		 __initcall3_start = .;
-		 *(.initcall3.init)
-		 __initcall4_start = .;
-		 *(.initcall4.init)
-		 __initcall5_start = .;
-		 *(.initcall5.init)
-		 __initcall6_start = .;
-		 *(.initcall6.init)
-		 __initcall7_start = .;
-		 *(.initcall7.init)
-	__initcall_end = .;
+		__initcall0_start = .;
+		*(.initcall0.init)
+		__initcall1_start = .;
+		*(.initcall1.init)
+		__initcall2_start = .;
+		*(.initcall2.init)
+		__initcall3_start = .;
+		*(.initcall3.init)
+		__initcall4_start = .;
+		*(.initcall4.init)
+		__initcall5_start = .;
+		*(.initcall5.init)
+		__initcall6_start = .;
+		*(.initcall6.init)
+		__initcall7_start = .;
+		*(.initcall7.init)
+		__initcall_end = .;
 		*(.eh_frame)
- 	__text_start = .;
-  	*(.text .text.*)
-	. = ALIGN(0x4);
-  	*(.rodata .rodata.*)
-	__text_end = .;
+		__text_start = .;
+		*(.text .text.*)
+		. = ALIGN(0x4);
+		*(.rodata .rodata.*)
+		__text_end = .;
 
-	__data_rom = .;
- } > rom
+		__data_rom = .;
+	} > rom =0xFF
 
- .data : AT(__data_rom) {
-	 . = ALIGN(0x4);
-	 __data_start = . ;
-	 *(.data);
-	 __data_end = . ;
- } > ram
+	.data : AT(__data_rom) {
+		. = ALIGN(0x4);
+		__data_start = . ;
+		*(.data);
+		__data_end = . ;
+	} > ram
 
- .fill __data_rom + (__data_end - __data_start) : {
-	BYTE(1)
- 	. = ORIGIN(rom) + LENGTH(rom);
- } > rom
+	.bss : {
+		. = ALIGN(0x4);
+		__bss_start = .;
+		*(.bss)
+		_end = .;
+	} > ram
 
- .bss : {
-
-	. = ALIGN(0x4);
-	__bss_start = .;
-  	*(.bss)
-  	_end = .;
- } > ram
-
- .heap (NOLOAD): {
- 	. = ALIGN(8);
-	__heap_start = .;
-	. = . + HEAP_SIZE;
-	. = ALIGN(8);
-	__heap_end = .;
- } > ram
-
+	.heap (NOLOAD): {
+		. = ALIGN(8);
+		__heap_start = .;
+		. = . + HEAP_SIZE;
+		. = ALIGN(8);
+		__heap_end = .;
+	} > ram
 }

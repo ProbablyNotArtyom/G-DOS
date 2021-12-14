@@ -13,9 +13,9 @@
 # Read in the build system config file
 export
 ifneq ("$(wildcard $(PWD)/.config)","")
-include ${PWD}/.config
-include ${PWD}/src/platform/${ARCH}/${PLATFORM}/config.mk
-include ${PWD}/src/cpu/${ARCH}/arch.mk
+include $(PWD)/.config
+include $(PWD)/src/platform/$(ARCH)/$(PLATFORM)/config.mk
+include $(PWD)/src/cpu/$(ARCH)/arch.mk
 endif
 
 # Error out if the required fields arent specified
@@ -53,10 +53,12 @@ endif
 #=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 # Append the default flags to the ones supplied by the target
 
-CCFLAGS := $(CCFLAGS) -include $(BASEDIR)/src/platform/${ARCH}/${PLATFORM}/hwdeps.h -I $(BASEDIR)/src/platform/${ARCH}/${PLATFORM} -I $(BASEDIR)/src/cpu/$(ARCH)/include -I ${PWD}/src/include
+CCFLAGS := $(CCFLAGS) -include $(BASEDIR)/src/platform/$(ARCH)/$(PLATFORM)/hwdeps.h -I $(BASEDIR)/src/platform/$(ARCH)/$(PLATFORM) -I $(BASEDIR)/src/cpu/$(ARCH)/include -I $(BASEDIR)/src/include
 CCFLAGS_USR := $(CCFLAGS) -O3
+LDFLAGS := -T $(BASEDIR)/src/platform/$(ARCH)/$(PLATFORM)/link.ld $(LDFLAGS)
+LDFLAGS_USR := $(-marm -mbe32 -mabi=aapcs-linux)
+
 SUBDIRS = src
-LDFLAGS := -T $(BASEDIR)/src/platform/${ARCH}/${PLATFORM}/link.ld $(LDFLAGS)
 
 # Append the debug flag to the CFLAGS if debug was passed in the config
 ifeq ("$(DEBUG)","true")
@@ -91,7 +93,7 @@ USROBJECTS := $(USRSOURCES:%.c=%)
 all:
 	@echo "[DEP] Setting up directories"
 	@mkdir -p $(LIBDIR)
-	@cp $(PWD)/src/platform/${ARCH}/$(PLATFORM)/config.mk $(LIBDIR)/
+	@cp $(PWD)/src/platform/$(ARCH)/$(PLATFORM)/config.mk $(LIBDIR)/
 	@cp $(PWD)/src/include $(LIBDIR) -rf
 	@mkdir -p $(LIBDIR)/include/cpu
 	@cp $(PWD)/src/cpu/$(ARCH)/include/* $(LIBDIR)/include/cpu -rf
@@ -104,24 +106,15 @@ all:
 deps: $(OBJECTS) $(OBJECTS_ASM) $(ARCHLIBOBJECTS) $(ARCHLIBOBJECTS_ASM) $(USRLIBOBJECTS) $(USRLIBOBJECTS_ASM)
 	@$(MAKE) $(USRLIBC)
 	@mkdir -p $(ROOTDIR)/bin $(ROOTDIR)/etc $(ROOTDIR)/home $(ROOTDIR)/usr
-ifeq ("$(DONT_BUILD_USR)","")
+ifneq ("$(DONT_BUILD_USR)","TRUE")
 	@$(MAKE) $(USROBJECTS)
 endif
-	@$(MAKE) $(BINDIR)/romdisk.o
+	@$(MAKE) $(BINDIR)/romdisk.o || $(MAKE) rescue
 	@$(MAKE) $(BINARY_NAME)
 	@$(MAKE) post
 
-$(USRLIBC): $(USRLIBOBJECTS) $(USRLIBOBJECTS_ASM)  $(shell find $(BINDIR)/src/lib -iname '*.o')
-	@$(AR) -rcs $@ $^
-	@echo "[AR] archiving: $^"
-	@echo "[AR] created: $@"
-
-$(USROBJECTS): $(USRLIBC)
-	@echo "[USR][CC] -c $(shell echo $@ | rev | cut -f -1 -d '/' | rev ).c -o $(shell echo $@ | rev | cut -f -1 -d '/' | rev).o"
-	@$(CC) $(CCFLAGS_USR) -I$(LIBDIR)/include -c $@.c -o $@.o
-	@echo "[USR][LD] $(shell echo $@ | rev | cut -f -1 -d '/' | rev).o -o $(shell echo $@ | rev | cut -f -1 -d '/' | rev )"
-	@$(LD) $@.o -L$(LIBDIR) -Bstatic -z nodefaultlib -lc -T $(LIBDIR)/link.ld $(LDLIBS) -o $@
-	@cp $(shell echo $(@:%.o=%.c) | cut -f 1 -d '.') $(USRBINDIR)
+#=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+# Recursive build targets for all kernel sources
 
 .SECONDEXPANSION :
 $(BINARY_NAME): $(OBJECTS) $(OBJECTS_ASM) $(ARCHLIBOBJECTS) $(ARCHLIBOBJECTS_ASM) $(USRLIBOBJECTS) $(USRLIBOBJECTS_ASM) usr
@@ -137,11 +130,6 @@ $(ARCHLIBOBJECTS): $$(patsubst $$(BINDIR)/src/lib/%.o, $$(BASEDIR)/src/cpu/$(ARC
 	@echo "[CC] -c $(shell realpath -m --relative-to=$(PWD) $(patsubst $(BINDIR)/src/lib/%, $(BASEDIR)/src/cpu/$(ARCH)/libkern/%, $(@:%.o=%.c))) -o $(shell realpath -m --relative-to=$(PWD) $(@))"
 	@$(CC) $(CCFLAGS) -c $(patsubst $(BINDIR)/src/lib/%, $(BASEDIR)/src/cpu/$(ARCH)/libkern/%, $(@:%.o=%.c)) -o $@
 
-$(USRLIBOBJECTS): $$(patsubst $$(LIBDIR)/bin/%.o, $$(BASEDIR)/src/cpu/$(ARCH)/lib/%.c, $$@)
-	@echo "[CC] -D _DONT_ADD_STD_STREAMS=true -c $(shell realpath -m --relative-to=$(PWD) $(patsubst $(LIBDIR)/bin/%, $(BASEDIR)/src/cpu/$(ARCH)/lib/%, $(@:%.o=%.c))) -o $(shell realpath -m --relative-to=$(PWD) $(@))"
-	@mkdir -p $(dir $@)
-	@$(CC) -I$(LIBDIR)/include -c $(patsubst $(LIBDIR)/bin/%, $(BASEDIR)/src/cpu/$(ARCH)/lib/%, $(@:%.o=%.c)) -D _DONT_ADD_STD_STREAMS=true $(CCFLAGS_USR) -o $@
-
 $(OBJECTS_ASM): $$(patsubst $$(BINDIR)%.o, $$(BASEDIR)%.S, $$@)
 	@echo "[CC] -c $(shell realpath -m --relative-to=$(PWD) $(patsubst $(BINDIR)%, $(BASEDIR)%, $(@:%.o=%.S))) -o $(shell realpath -m --relative-to=$(PWD) $(@))"
 	@mkdir -p $(dir $@)
@@ -151,10 +139,57 @@ $(ARCHLIBOBJECTS_ASM): $$(patsubst $$(BINDIR)/src/lib/%.o, $$(BASEDIR)/src/cpu/$
 	@echo "[CC] -D _DONT_ADD_STD_STREAMS=true -c $(shell realpath -m --relative-to=$(PWD) $(patsubst $(BINDIR)/src/lib/%, $(BASEDIR)/src/cpu/$(ARCH)/libkern/%, $(@:%.o=%.S))) -o $(shell realpath -m --relative-to=$(PWD) $(@))"
 	@$(CC) $(CCFLAGS) -D _DONT_ADD_STD_STREAMS=true -c $(patsubst $(BINDIR)/src/lib/%, $(BASEDIR)/src/cpu/$(ARCH)/libkern/%, $(@:%.o=%.S)) -o $@
 
+#=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+# ROMdisk build targets
+
+# Builds the final ROMdisk object
+$(BINDIR)/romdisk.o: $(USRLIBC)
+	@dd if=/dev/zero of=$(BINDIR)/romdisk.img bs=1024 count=$(ROMDISK_SIZE) status=none
+	@echo "[DEP] making root filesystem"
+ifeq ($(shell expr $(ROMDISK_SIZE) \> 2048), 1)
+	echo `mkfs.fat $(BINDIR)/romdisk.img -F 16 -s1 -f1` > /dev/null
+else
+	echo `mkfs.fat $(BINDIR)/romdisk.img -F 12 -s1 -f1` > /dev/null
+endif
+	@mkdir -p $(BINDIR)/tmproot
+	@$(SUDO) mount -o loop $(BINDIR)/romdisk.img $(BINDIR)/tmproot
+	@$(SUDO) cp -r ./root/* $(BINDIR)/tmproot
+	@$(SUDO) umount $(BINDIR)/tmproot
+	@$(SUDO) rm -r $(BINDIR)/tmproot
+	@cp $(BASEDIR)/src/platform/romdisk_wrapper.S $(BINDIR)
+	@$(CC) -Wa,-I$(BINDIR) $(CCFLAGS) -c $(BINDIR)/romdisk_wrapper.S -o $(BINDIR)/romdisk.o
+	#@rm $(BINDIR)/romdisk.img
+
+# Builds and installs the userspace programs to the ROMdisk root
+$(USROBJECTS): $(USRLIBC)
+	@echo "[USR][CC] -c $(shell echo $@ | rev | cut -f -1 -d '/' | rev ).c -o $(shell echo $@ | rev | cut -f -1 -d '/' | rev).o"
+	@$(CC) $(CCFLAGS_USR) -I$(LIBDIR)/include -c $@.c -o $@.o
+	@echo "[USR][LD] $(shell echo $@ | rev | cut -f -1 -d '/' | rev).o -o $(shell echo $@ | rev | cut -f -1 -d '/' | rev )"
+	@$(LD) $@.o $(LDFLAGS_USR) -L$(LIBDIR) -z nodefaultlib -lc -T $(LIBDIR)/link.ld $(LDLIBS) -o $@
+	@cp $(shell echo $(@:%.o=%.c) | cut -f 1 -d '.') $(USRBINDIR)
+
+# Builds the userspace C library
+$(USRLIBC): $(USRLIBOBJECTS) $(USRLIBOBJECTS_ASM)  $(shell find $(BINDIR)/src/lib -iname '*.o')
+	@$(AR) -rcs $@ $^
+	@echo "[AR] archiving: $^"
+	@echo "[AR] created: $@"
+
+$(USRLIBOBJECTS): $$(patsubst $$(LIBDIR)/bin/%.o, $$(BASEDIR)/src/cpu/$(ARCH)/lib/%.c, $$@)
+	@echo "[CC] -D _DONT_ADD_STD_STREAMS=true -c $(shell realpath -m --relative-to=$(PWD) $(patsubst $(LIBDIR)/bin/%, $(BASEDIR)/src/cpu/$(ARCH)/lib/%, $(@:%.o=%.c))) -o $(shell realpath -m --relative-to=$(PWD) $(@))"
+	@mkdir -p $(dir $@)
+	@$(CC) -I$(LIBDIR)/include -c $(patsubst $(LIBDIR)/bin/%, $(BASEDIR)/src/cpu/$(ARCH)/lib/%, $(@:%.o=%.c)) -D _DONT_ADD_STD_STREAMS=true $(CCFLAGS_USR) -o $@
+
 $(USRLIBOBJECTS_ASM): $$(patsubst $$(LIBDIR)/bin/%.o, $$(BASEDIR)/src/cpu/$(ARCH)/lib/%.S, $$@)
 	@echo "[CC] -c $(shell realpath -m --relative-to=$(PWD) $(patsubst $(LIBDIR)/bin/%, $(BASEDIR)/src/cpu/$(ARCH)/lib/%, $(@:%.o=%.S))) -o $(shell realpath -m --relative-to=$(PWD) $(@))"
 	@mkdir -p $(dir $@)
 	@$(CC) -I$(LIBDIR)/include -c $(patsubst $(LIBDIR)/bin/%, $(BASEDIR)/src/cpu/$(ARCH)/lib/%, $(@:%.o=%.S)) $(CCFLAGS_USR) -o $@
+
+# This target removes any mounts in the event that generation of the romdisk fails
+.PHONY: rescue
+rescue:
+	@$(SUDO) umount -fq $(BINDIR)/tmproot || /bin/true
+	@rm -rf $(BINDIR)/tmproot
+	@$(error "[USR][!] Error generating root filesystem image! rescuing...")
 
 #=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 # Generic static targets
@@ -176,4 +211,4 @@ distclean: clean
 #=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 # Append the platform target specific targets
 
--include ${PWD}/src/platform/${ARCH}/${PLATFORM}/post.mk
+-include $(BASEDIR)/src/platform/$(ARCH)/$(PLATFORM)/post.mk

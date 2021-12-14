@@ -2,6 +2,28 @@
 #ifndef	_HEADER_CDEFS
 #define	_HEADER_CDEFS
 
+
+#ifdef __ELF__
+# define _C_LABEL(x)	x
+#else
+# ifdef __STDC__
+#  define _C_LABEL(x)	_ ## x
+# else
+#  define _C_LABEL(x)	_/**/x
+# endif
+#endif
+#define	_ASM_LABEL(x)	x
+#ifdef __STDC__
+# define __CONCAT(x,y)	x ## y
+# define __STRING(x)	#x
+#else
+# define __CONCAT(x,y)	x/**/y
+# define __STRING(x)	"x"
+#endif
+#ifndef _ALIGN_TEXT
+# define _ALIGN_TEXT .align 0
+#endif
+
 /*
  * The __CONCAT macro is used to concatenate parts of symbol names, e.g.
  * with "#define OLD(foo) __CONCAT(old,foo)", OLD(foo) produces oldfoo.

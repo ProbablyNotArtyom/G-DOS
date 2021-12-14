@@ -1,5 +1,8 @@
 
+DONT_BUILD_USR = FALSE
 BAREMETAL = TRUE
+ROMDISK_SIZE = 384
+
 CPU = 68030
 PREFIX = m68k-unknown-elf-
 
@@ -10,6 +13,5 @@ AR = $(PREFIX)ar
 CPY = $(PREFIX)objcopy
 
 CCFLAGS = -fno-builtin -mcpu=$(CPU) -msoft-float -nostdlib -static -w
-CCFLAGS_GENERIC = -fno-builtin -w -msoft-float -nostdlib -static -mcpu=$(CPU)
 LDFLAGS = -Bstatic
 LDLIBS = `$(CC) -print-libgcc-file-name`

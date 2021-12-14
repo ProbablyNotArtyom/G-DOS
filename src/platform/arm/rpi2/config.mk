@@ -1,5 +1,8 @@
 
+DONT_BUILD_USR = FALSE
 BAREMETAL = TRUE
+ROMDISK_SIZE = 2048
+
 CPU = cortex-a7
 PREFIX = arm-none-eabi-
 
@@ -11,9 +14,8 @@ CPY = $(PREFIX)objcopy
 RANLIB=$(PREFIX)ranlib
 
 LDFLAGS = -Bstatic
-CCFLAGS = -fno-builtin -ffreestanding -nostdlib -static -mcpu=$(CPU)
-CCFLAGS_GENERIC = -fno-builtin -ffreestanding -nostdlib  -static -mcpu=$(CPU)
+CCFLAGS = -fno-builtin -ffreestanding -nostdlib -static -mcpu=$(CPU) -marm -mbe32 -mabi=aapcs-linux
 LDLIBS := `$(CC) -print-libgcc-file-name`
 
-# Directs the build system to source any missing files from another target 
+# Directs the build system to source any missing files from another target
 PARENT_TARGET := rpi3

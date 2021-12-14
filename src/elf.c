@@ -1,8 +1,8 @@
 //---------------------------------------------------
 //
-//	GBoot v0.0
+//	G-DOS
 //	NotArtyom
-//	02/11/18
+//	14/12/21
 //
 //---------------------------------------------------
 // Loading ELFs into memory & linking
@@ -70,7 +70,7 @@ const char *const cpu_lookup[] = {
 
 static endianness_t endianness_detect(void) {
     const int i = 1;
-    return ((const char *)(&i)[3] == 1)? HDATA_LITTLE : HDATA_BIG;
+    return (*(const char *)&i == 1)? HDATA_LITTLE : HDATA_BIG;
 }
 
 int loadELF(int argCount, char* args[], FIL *file) {
