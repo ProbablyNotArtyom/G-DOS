@@ -17,22 +17,22 @@
 	void shellBegin(void);
 	void shThrow(result_t err);
 
-	result_t shfunc_ls(char *argv[], int argc);
-	result_t shfunc_cd(char *argv[], int argc);
-	result_t shfunc_echo(char *argv[], int argc);
-	result_t shfunc_cat(char *argv[], int argc);
-	result_t shfunc_rm(char *argv[], int argc);
-	result_t shfunc_cp(char *argv[], int argc);
-	result_t shfunc_mv(char *argv[], int argc);
-	result_t shfunc_mkdir(char *argv[], int argc);
-	result_t shfunc_mon(char *argv[], int argc);
-	result_t shfunc_mount(char *argv[], int argc);
-	result_t shfunc_fputs(char *argv[], int argc);
-	result_t shfunc_mkfs(char *argv[], int argc);
-	result_t shfunc_pico(char *argv[], int argc);
-	result_t shfunc_meminfo(char *argv[], int argc);
-	result_t tckBegin(char *argv[], int argc);
-	result_t shfunc_expr(char *argv[], int argc);
+	result_t shfunc_ls(int argc, char *argv[]);
+	result_t shfunc_cd(int argc, char *argv[]);
+	result_t shfunc_echo(int argc, char *argv[]);
+	result_t shfunc_cat(int argc, char *argv[]);
+	result_t shfunc_rm(int argc, char *argv[]);
+	result_t shfunc_cp(int argc, char *argv[]);
+	result_t shfunc_mv(int argc, char *argv[]);
+	result_t shfunc_mkdir(int argc, char *argv[]);
+	result_t shfunc_mon(int argc, char *argv[]);
+	result_t shfunc_mount(int argc, char *argv[]);
+	result_t shfunc_fputs(int argc, char *argv[]);
+	result_t shfunc_mkfs(int argc, char *argv[]);
+	result_t shfunc_pico(int argc, char *argv[]);
+	result_t shfunc_meminfo(int argc, char *argv[]);
+	result_t tckBegin(int argc, char *argv[]);
+	result_t shfunc_expr(int argc, char *argv[]);
 
 //---------------------------------------------------
 

@@ -14,7 +14,7 @@
 
 //---------------------------------------------------
 
-result_t shfunc_cd(char *argv[], int argc){
+result_t shfunc_cd(int argc, char *argv[]) {
 	if (argc == 0) return RET_ARGS;
 
 	f_error res;

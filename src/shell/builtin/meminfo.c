@@ -17,7 +17,7 @@
 extern size_t __heap_start;
 extern size_t __heap_end;
 
-result_t shfunc_meminfo(char *argv[], int argc){
+result_t shfunc_meminfo(int argc, char *argv[]) {
 	size_t tmp;
 
 	printf("Blocks free: %d\n", mm_num_free());

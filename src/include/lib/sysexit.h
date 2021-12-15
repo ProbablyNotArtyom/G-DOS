@@ -26,7 +26,7 @@ enum {
 	RET_BADSTR				// String with no end
 };
 
-typedef result_t (*shFunc_t)(char *argv[], int argc);
+typedef result_t (*shFunc_t)(int argc, char *argv[]);
 
 //---------------------------------------------------
 #endif

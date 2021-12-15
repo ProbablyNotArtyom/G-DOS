@@ -21,12 +21,12 @@ static const char const cp_help_txt[] = {
 	"       [-r allow-recursive]\r\n"
 };
 
-result_t shfunc_cp(char *argv[], int argc){
+result_t shfunc_cp(int argc, char *argv[]) {
 	uint8_t opts = 0x00;				// Create something to log what options are ticked
 	uint8_t fnames;						// Track the index where file names begin
-	for (int i = 0; i < argc; i++){
-		if (argv[i][0] == '-'){
-			switch (argv[i][1]){
+	for (int i = 0; i < argc; i++) {
+		if (argv[i][0] == '-') {
+			switch (argv[i][1]) {
 				case 'h':
 					puts(cp_help_txt);
 					return RET_OK;
@@ -44,9 +44,9 @@ result_t shfunc_cp(char *argv[], int argc){
 
 	f_error res;
 	f_info info;
-	while (fnames < argc){
+	while (fnames < argc) {
 		res = f_stat(argv[fnames], &info);
-		if (info.fattrib & AM_DIR){
+		if (info.fattrib & AM_DIR) {
 			nprintf("ignoring %s, is a directory", argv[fnames]);
 		} else {
 
@@ -63,7 +63,7 @@ result_t shfunc_cp(char *argv[], int argc){
 
 			uint8_t buff[512];
 			uint32_t bytes, bytes_wr;
-			for (int i = 0; i < info.fsize; i += 512){
+			for (int i = 0; i < info.fsize; i += 512) {
 				res = f_read(&source, buff, sizeof(buff), &bytes);
 				fs_putsError(res);
 				res = f_write(&dest, buff, bytes, &bytes_wr);

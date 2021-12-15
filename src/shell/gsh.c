@@ -37,7 +37,7 @@
 
 //-----------------------Main------------------------
 
-void shellBegin(void){
+void shellBegin(void) {
 	sh_doExit = false;
 	numMounts = 0;
 	currentDisk = 0;
@@ -52,14 +52,14 @@ void shellBegin(void){
 
 	f_error res;
 	res = f_mount(fsMounts[0], "0", 1);
-	if (res != FR_OK){
+	if (res != FR_OK) {
 		fs_putsError(res);
 		puts("[!] Default disk could not be mounted");
 	} else {
 		numMounts++;
 	}
 #endif
-	while (sh_doExit == false){
+	while (sh_doExit == false) {
 		putsPrompt();
 		shParse = shellBuff;
 		gets(shellBuff, SHBUFFLEN);
@@ -67,7 +67,7 @@ void shellBegin(void){
 		uint8_t i;
 		for (i = 0; shFuncNames[i] != NULL && funcCmp(shParse, shFuncNames[i]) == false; i++);	// Identify what function it is
 		puts("");
-		if (shFunctions[i] != NULL){
+		if (shFunctions[i] != NULL) {
 			shParse += shFuncLen[i];
 			runCMD(*shFunctions[i], shParse);
 		} else {
@@ -76,7 +76,7 @@ void shellBegin(void){
 	}
 }
 
-void shThrow(result_t err){
+void shThrow(result_t err) {
 	if (err == RES_OK) {
 		//puts("");
 		return;
@@ -84,8 +84,8 @@ void shThrow(result_t err){
 	puts(shErrors[err]);
 }
 
-static bool funcCmp(const char *s1, const char *s2){
-	while (*s1 == *s2){
+static bool funcCmp(const char *s1, const char *s2) {
+	while (*s1 == *s2) {
 		if (*s1++ == ' ') return true;
 		*s2++;
 	}
@@ -93,7 +93,7 @@ static bool funcCmp(const char *s1, const char *s2){
 	return false;
 }
 
-static void putsPrompt(){
+static void putsPrompt() {
 	f_error res;
 	char promptBuff[256];
 
@@ -106,50 +106,52 @@ static void putsPrompt(){
 	printf(")" COLOR_RESET_FG ":" COLOR_FG(C_LIGHTGREEN, "> "));
 }
 
-static void runCMD(shFunc_t func, char *buffer){
+static void runCMD(shFunc_t func, char *buffer) {
 	char *ptr;
 	char *arg[MAXARGS+1];
 	int numArgs = 0;
 
 	ptr = buffer;
-	while(1){
-		if (numArgs == MAXARGS){
+	while(1) {
+		if (numArgs == MAXARGS) {
 			printf("[!] Too many arguments, %d maximum", MAXARGS);
 			*ptr = NULL;
 			return;
 		}
-		if (!*ptr){
+		if (!*ptr) {
 			arg[numArgs] = NULL;
 			break;
 		}
 		while (isSpace(*ptr)) ptr++;
-		if (*ptr == '\"'){
+		if (*ptr == '\"') {
 			ptr++;
 			arg[numArgs] = ptr;
 			numArgs++;
 			while (*ptr && *ptr != '\"') ptr++;
-			if (!*ptr){
+			if (!*ptr) {
 				shThrow(RET_BADSTR);
 				continue;
 			} else {
 				*ptr = NULL;
 				ptr++;
 			}
-		} else if (!isSpace(*ptr)){
+		} else if (!isSpace(*ptr)) {
 			arg[numArgs] = ptr;
 			numArgs++;
 			while (*ptr && !isSpace(*ptr)) ptr++;
 			if (!*ptr) continue;
-			while (isSpace(*ptr)){
+			while (isSpace(*ptr)) {
 				*ptr = NULL;
 				ptr++;
 			}
 		}
 	}
 
-	if (func != NULL){
-		shThrow(func(arg, numArgs));
+	if (func != NULL) {
+		/* Run the detected builtin function */
+		shThrow(func(numArgs, arg));
 	} else {
+		/* Fallback to trying to load an ELF file */
 		f_error res;
 		f_file file;
 		res = f_open(&file, arg[0], FA_READ);
@@ -171,7 +173,7 @@ static void runCMD(shFunc_t func, char *buffer){
 	return;
 }
 
-result_t shfunc_exit(char *argv[], int argc){
+result_t shfunc_exit(int argc, char *argv[]) {
 	sh_doExit = true;
 	return RET_OK;
 }

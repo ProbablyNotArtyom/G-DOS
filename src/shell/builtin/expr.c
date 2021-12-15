@@ -15,7 +15,7 @@
 extern double tcl_interp_expr(const char *expression, int *error);
 //---------------------------------------------------
 
-result_t shfunc_expr(char *argv[], int argc) {
+result_t shfunc_expr(int argc, char *argv[]) {
 	if (argc == 0) return RET_ARGS;
 	double expr_ret = tcl_interp_expr(argv[0], 0);
 

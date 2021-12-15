@@ -17,17 +17,17 @@ extern uint8_t numMounts;
 
 //---------------------------------------------------
 
-result_t shfunc_mount(char *argv[], int argc){
+result_t shfunc_mount(int argc, char *argv[]) {
 	uint8_t diskNum;
 	if (argc == 0) return RET_ARGS;
 	diskNum = strtoul(argv[0], NULL, 10);
 
-	if (numMounts >= sizeof(fsMounts)){
+	if (numMounts >= sizeof(fsMounts)) {
 		puts("[!] Mount limit reached");
 		return RET_OK;
 	}
 	fsMounts[numMounts] = malloc(sizeof(FATFS));
-	if (fsMounts[numMounts] == NULL){
+	if (fsMounts[numMounts] == NULL) {
 		puts("[!] Could not allocate mount header");
 		return RET_SYS;
 	}

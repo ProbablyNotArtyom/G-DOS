@@ -21,12 +21,12 @@ static const char const rm_help_txt[] = {
 	"       [-r allow-recursive]\r\n"
 };
 
-result_t shfunc_rm(char *argv[], int argc){
+result_t shfunc_rm(int argc, char *argv[]) {
 	uint8_t opts = 0x00;				// Create something to log what options are ticked
 	uint8_t fnames;						// Track the index where file names begin
-	for (int i = 0; i < argc; i++){
-		if (argv[i][0] == '-'){
-			switch (argv[i][1]){
+	for (int i = 0; i < argc; i++) {
+		if (argv[i][0] == '-') {
+			switch (argv[i][1]) {
 				case 'h':
 					puts(rm_help_txt);
 					return RET_OK;
@@ -44,9 +44,9 @@ result_t shfunc_rm(char *argv[], int argc){
 
 	f_error res;
 	f_info info;
-	while (fnames < argc){
+	while (fnames < argc) {
 		res = f_stat(argv[fnames], &info);
-		if ((info.fattrib & AM_DIR) && !(opts & SH_RM_DO_RECURSIVE)){
+		if ((info.fattrib & AM_DIR) && !(opts & SH_RM_DO_RECURSIVE)) {
 			nprintf("ignoring %s, is a directory", argv[fnames]);
 		} else {
 			res = f_unlink(argv[fnames]);

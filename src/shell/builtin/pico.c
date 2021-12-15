@@ -14,7 +14,7 @@
 
 //---------------------------------------------------
 
-result_t shfunc_pico(char *argv[], int argc){
+result_t shfunc_pico(int argc, char *argv[]) {
 
 	return RET_OK;
 }

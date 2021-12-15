@@ -15,7 +15,7 @@
 //---------------------------------------------------
 
 
-result_t shfunc_fputs(char *argv[], int argc){
+result_t shfunc_fputs(int argc, char *argv[]) {
 	if (argc != 2) return RET_ARGS;
 
 	FIL file;

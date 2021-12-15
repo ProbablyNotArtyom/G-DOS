@@ -29,16 +29,16 @@ static const char const cat_help_txt[] = {
 	"       [-n number-lines][-l less][-x width][-y height]\r\n"
 };
 
-result_t shfunc_cat(char *argv[], int argc){
+result_t shfunc_cat(int argc, char *argv[]) {
 	uint8_t opts = 0x00;					// Create something to log what options are ticked
 	uint8_t fnames;							// Track the index where file names begin
 
 	uint32_t width = CAT_WIDTH_DEFAULT;		// Defaults for less mode
 	uint32_t height = CAT_HEIGHT_DEFAULT;
 
-	for (int i = 0; i < argc; i++){
-		if (argv[i][0] == '-'){
-			switch (argv[i][1]){
+	for (int i = 0; i < argc; i++) {
+		if (argv[i][0] == '-') {
+			switch (argv[i][1]) {
 				case 'h':
 					puts(cat_help_txt);
 					return RET_OK;
@@ -74,9 +74,9 @@ result_t shfunc_cat(char *argv[], int argc){
 
 	f_error res;
 	f_info info;
-	while (fnames < argc){
+	while (fnames < argc) {
 		res = f_stat(argv[fnames], &info);
-		if (info.fattrib & AM_DIR){
+		if (info.fattrib & AM_DIR) {
 			nprintf("ignoring %s, is a directory", argv[fnames]);
 		} else {
 			char buff[512];
@@ -96,8 +96,8 @@ result_t shfunc_cat(char *argv[], int argc){
 			while (bytes != 0) {
 				res = f_read(&file, buff, sizeof(buff), &bytes);
 				fs_putsError(res);
-				for (int i = 0; i < bytes; i++){
-					if (buff[i] == '\n' || col >= width){
+				for (int i = 0; i < bytes; i++) {
+					if (buff[i] == '\n' || col >= width) {
 						printf("\n\r");
 						line++;
 						if (opts & SH_CAT_DO_NUMLINES) {
@@ -105,7 +105,7 @@ result_t shfunc_cat(char *argv[], int argc){
 						} else {
 							col = 0;
 						}
-						if (opts & SH_CAT_DO_LESS && line >= nextLine){
+						if (opts & SH_CAT_DO_LESS && line >= nextLine) {
 							char tmp = read();
 							if (tmp == ' ') nextLine += height;
 							else nextLine += 1;

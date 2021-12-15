@@ -21,11 +21,11 @@ static const char const mkfs_help_txt[] = {
 	"       [-h show-help][-n volume-name]\r\n"
 };
 
-result_t shfunc_mkfs(char *argv[], int argc){
+result_t shfunc_mkfs(int argc, char *argv[]) {
 	uint8_t opts = 0x00;				// Create something to log what options are ticked
-	for (int i = 0; i < argc; i++){
-		if (argv[i][0] == '-'){
-			switch (argv[i][1]){
+	for (int i = 0; i < argc; i++) {
+		if (argv[i][0] == '-') {
+			switch (argv[i][1]) {
 				case 'h':
 					puts(mkfs_help_txt);
 					return RET_OK;
@@ -43,8 +43,8 @@ result_t shfunc_mkfs(char *argv[], int argc){
 	uint8_t work[512];
 	res = f_mkfs(argv[argc-1], FM_ANY | FM_FAT, 0, work, sizeof(work));
 	fs_putsError(res);
-	if (res == FR_OK){
-		if (opts != 0x00){
+	if (res == FR_OK) {
+		if (opts != 0x00) {
 			FATFS tmpFS;
 
 			memcpy(work, argv[argc-1], strlen(argv[argc-1]));

@@ -36,7 +36,7 @@ static unsigned char linebuff[256];
 static int line_index;
 static bool read_line;
 
-result_t tckBegin(char *argv[], int argc) {
+result_t tckBegin(int argc, char *argv[]) {
 	f_file file;
 	f_info info;
 	f_error res;

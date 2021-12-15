@@ -14,18 +14,15 @@
 
 //---------------------------------------------------
 
-result_t shfunc_ls(char *argv[], int argc){
-
+result_t shfunc_ls(int argc, char *argv[]) {
 	f_error res;
     f_dir dir;
     static f_info info;
 
-	if (argc == 0)
-		res = f_opendir(&dir, ".");
-	else
-		res = f_opendir(&dir, argv[0]);
+	if (argc == 0) res = f_opendir(&dir, ".");
+	else res = f_opendir(&dir, argv[0]);
 
-    if (res == FR_OK){
+    if (res == FR_OK) {
 		char labelTmp[15];
 		uint32_t sizeTmp;
 		FATFS *fsTmp;
@@ -39,10 +36,10 @@ result_t shfunc_ls(char *argv[], int argc){
 		printf("Volume: %s\r\n", labelTmp);
 		printf("Size: %dKB, %dKB free\r\n", ((fsTmp->n_fatent - 2) * fsTmp->csize) / 2 , sizeTmp);
 
-		while (true){
+		while (true) {
             res = f_readdir(&dir, &info);
             if (res != FR_OK || info.fname[0] == 0) break;
-            if (info.fattrib & AM_DIR){
+            if (info.fattrib & AM_DIR) {
 				printf("  <DIR> %s", info.fname);
 				for(int i = 14 - strlen(info.fname); i > 0; i--) putchar(' ');
 				if (info.fsize / 1024 >= 1)
@@ -55,10 +52,10 @@ result_t shfunc_ls(char *argv[], int argc){
 			}
 		}
 		f_readdir(&dir, NULL);
-		while (true){
+		while (true) {
             res = f_readdir(&dir, &info);
             if (res != FR_OK || info.fname[0] == 0) break;
-            if (!(info.fattrib & AM_DIR)){
+            if (!(info.fattrib & AM_DIR)) {
                 printf("        %s", info.fname);
 				for(int i = 14 - strlen(info.fname); i > 0; i--) putchar(' ');
 				if (info.fsize / 1024 >= 1)

@@ -14,7 +14,7 @@
 
 //---------------------------------------------------
 
-result_t shfunc_mon(char *argv[], int argc){
+result_t shfunc_mon(int argc, char *argv[]) {
 	monBegin();
 	return RET_OK;
 }
